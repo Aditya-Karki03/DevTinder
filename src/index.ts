@@ -16,6 +16,6 @@ connectDB()
       console.log("Port is listening at", port);
     });
   })
-  .catch((error) => console.log(error));
+  .catch((error) => console.error(error));
 
 //create a config folder to put every configuration files inside of it
