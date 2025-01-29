@@ -8,5 +8,7 @@ const userController = new UserController();
 userRoutes.post("/signup", userController.createUser);
 userRoutes.get("/feed", userController.getAllUser);
 userRoutes.get("/user", userController.getUser);
+userRoutes.delete("/user", userController.deleteUser);
+userRoutes.patch("/user", userController.updateUser);
 
 export default userRoutes;

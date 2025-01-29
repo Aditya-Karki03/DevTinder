@@ -4,8 +4,6 @@ export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const userData = req.body;
-    console.log(userData);
-    console.log("------DATA BODY-----");
     // const user = await User.create(userData);
     // res.status(201).json({
     //   message: "User Created Successfully!",
@@ -84,6 +82,53 @@ export class UserController {
     } catch (error) {
       res.status(500).json({
         message: "Something went wrong.",
+        data: null,
+      });
+    }
+  }
+  async updateUser(req: Request, res: Response) {
+    const userData = req.body;
+    console.log(userData);
+    try {
+      const user = await User.findByIdAndUpdate(userData.userId, userData);
+      console.log(user);
+      if (user) {
+        res.status(204).json({
+          message: "User data updated successfully!",
+          data: user,
+        });
+      } else {
+        res.status(404).json({
+          message: "Cannot find the user of that id",
+          data: null,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong. Please try again",
+        data: null,
+      });
+    }
+  }
+  async deleteUser(req: Request, res: Response) {
+    const { userId } = req.body;
+    try {
+      const user = await User.findByIdAndDelete(userId);
+      if (!user) {
+        res.status(404).json({
+          message: "User not found to delete",
+          data: user,
+        });
+        return;
+      } else {
+        res.status(201).json({
+          message: "User deleted succssfully!",
+          data: user,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong",
         data: null,
       });
     }
