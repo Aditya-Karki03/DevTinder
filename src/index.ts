@@ -11,6 +11,9 @@ const port = 3000;
 //   res.send("Hello world");
 // });
 
+//middleware to convert the json to valid js object and put into req body
+app.use(express.json());
+
 app.use("/v1", appRouterV1);
 
 connectDB()
