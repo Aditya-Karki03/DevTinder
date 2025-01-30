@@ -1,26 +1,54 @@
 import mongoose from "mongoose";
 import { userInterface, Genders } from "../interface/userInterface";
+import { z } from "zod";
 
-const userSchema = new mongoose.Schema<userInterface>({
-  firstName: {
-    type: String,
-    required: true,
+const emailValidator = (email: string) => {
+  const emailSchema = z.string().email({
+    message: "Invalid Email address",
+  });
+  const { success } = emailSchema.safeParse(email);
+  return success;
+};
+//install isValidator npm package which is used for data sanitization purposes
+const userSchema = new mongoose.Schema<userInterface>(
+  {
+    firstName: {
+      type: String,
+      required: [true, "First name is required"],
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      trim: true,
+      unique: true,
+      validate: {
+        validator: emailValidator,
+        message: "Please fill a valid email address",
+      },
+    },
+    age: {
+      type: Number,
+      required: [true, "Age is required"],
+      min: 18,
+      max: 60,
+    },
+    gender: {
+      type: String,
+      enum: Object.values(Genders),
+    },
   },
-  lastName: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  age: {
-    type: Number,
-    required: true,
-  },
-  gender: {
-    type: String,
-    enum: Object.values(Genders),
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 const User = mongoose.model("User", userSchema);
 export { User };

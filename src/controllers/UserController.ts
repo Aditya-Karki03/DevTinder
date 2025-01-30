@@ -4,6 +4,14 @@ export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const userData = req.body;
+    //always validate the data first even if you have schema defined for that data
+    //because schema will be checked only when attempting to save data into db
+    //after validation encrypt the password using bycrypt
+    //than save the data onto db
+    //DO NOT save lke new User(req.body) or new User(userData)
+    //because we don't know how many extra params a user is sending, can have extra data as well
+    //only save by destructuring the required data from the body
+
     // const user = await User.create(userData);
     // res.status(201).json({
     //   message: "User Created Successfully!",
@@ -27,21 +35,39 @@ export class UserController {
       });
     }
 
-    //another way of doing the same is by creating new instance of user model and saving in db
-    const user = new User(userData);
     try {
+      //another way of doing the same is by creating new instance of user model and saving in db
+      const user = new User(userData);
       await user.save();
       res.status(201).json({
         message: "User created successfully!",
         data: user,
       });
-    } catch (error) {
-      res.status(400).json({
-        message: "Unable to create user.",
+    } catch (error: any) {
+      if (error.name == "ValidationError") {
+        // const errors = Object.values(error.errors).map(
+        //   (err: any) => err.message
+        // );
+        res.status(400).json({
+          message: error.message,
+          user: null,
+        });
+        return;
+      }
+      res.status(500).json({
+        message: "Something went wrong. ",
         user: null,
       });
     }
   }
+  // catch (error: any) {
+  //   if (error.name === "ValidationError") {
+  //     const errors = Object.values(error.errors).map((err: any) => err.message);
+  //     return res.status(400).json({ success: false, errors });
+  //   }
+
+  //   return res.status(500).json({ success: false, message: "Internal Server Error" });
+  // }
 
   async getAllUser(req: Request, res: Response) {
     try {
