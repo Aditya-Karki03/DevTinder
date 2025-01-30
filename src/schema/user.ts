@@ -9,6 +9,15 @@ const emailValidator = (email: string) => {
   const { success } = emailSchema.safeParse(email);
   return success;
 };
+
+const passwordValidator = (password: string) => {
+  const passwordSchema = z.string().min(8, {
+    message: "Please enter a strong password",
+  });
+  const { success } = passwordSchema.safeParse(password);
+  return success;
+};
+
 //install isValidator npm package which is used for data sanitization purposes
 const userSchema = new mongoose.Schema<userInterface>(
   {
@@ -24,6 +33,15 @@ const userSchema = new mongoose.Schema<userInterface>(
       trim: true,
       minlength: 2,
       maxlength: 50,
+    },
+    password: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: {
+        validator: passwordValidator,
+        message: "Please enter a strong password",
+      },
     },
     email: {
       type: String,

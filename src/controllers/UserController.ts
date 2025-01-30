@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
 import { signupDataValidation } from "../utils/validation";
+import bcrypt from "bcrypt";
 export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
-    const { firstName, lastName, age, gender, email } = req.body;
+    const { firstName, lastName, password, age, gender, email } = req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -20,6 +21,8 @@ export class UserController {
         data: null,
       });
     }
+
+    const encryptedPassword = bcrypt.hash(password, 10);
 
     // const user = await User.create(userData);
     // res.status(201).json({
@@ -49,6 +52,7 @@ export class UserController {
       const user = new User({
         firstName,
         lastName,
+        password: encryptedPassword,
         gender,
         age,
         email,
