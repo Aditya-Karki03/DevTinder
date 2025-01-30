@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
+import { signupDataValidation } from "../utils/validation";
 export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
-    const userData = req.body;
+    const { firstName, lastName, age, gender, email } = req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -11,6 +12,14 @@ export class UserController {
     //DO NOT save lke new User(req.body) or new User(userData)
     //because we don't know how many extra params a user is sending, can have extra data as well
     //only save by destructuring the required data from the body
+
+    const { error, message } = signupDataValidation(req);
+    if (error) {
+      res.status(400).json({
+        message,
+        data: null,
+      });
+    }
 
     // const user = await User.create(userData);
     // res.status(201).json({
@@ -20,7 +29,7 @@ export class UserController {
 
     //check if the provided email already exist in the db
     try {
-      const userEmail = await User.find({ email: userData.email });
+      const userEmail = await User.find({ email });
       if (userEmail.length > 0) {
         res.status(403).json({
           message: "User with this email already exist",
@@ -37,7 +46,13 @@ export class UserController {
 
     try {
       //another way of doing the same is by creating new instance of user model and saving in db
-      const user = new User(userData);
+      const user = new User({
+        firstName,
+        lastName,
+        gender,
+        age,
+        email,
+      });
       await user.save();
       res.status(201).json({
         message: "User created successfully!",
@@ -45,29 +60,21 @@ export class UserController {
       });
     } catch (error: any) {
       if (error.name == "ValidationError") {
-        // const errors = Object.values(error.errors).map(
-        //   (err: any) => err.message
-        // );
+        const errors = Object.values(error.errors).map(
+          (err: any) => err.message
+        );
         res.status(400).json({
-          message: error.message,
+          message: errors[0],
           user: null,
         });
         return;
       }
       res.status(500).json({
-        message: "Something went wrong. ",
+        message: "Something went wrong. Please try again",
         user: null,
       });
     }
   }
-  // catch (error: any) {
-  //   if (error.name === "ValidationError") {
-  //     const errors = Object.values(error.errors).map((err: any) => err.message);
-  //     return res.status(400).json({ success: false, errors });
-  //   }
-
-  //   return res.status(500).json({ success: false, message: "Internal Server Error" });
-  // }
 
   async getAllUser(req: Request, res: Response) {
     try {
