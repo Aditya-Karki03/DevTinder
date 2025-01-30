@@ -82,6 +82,39 @@ export class UserController {
     }
   }
 
+  async login(req: Request, res: Response) {
+    const { email, password } = req.body;
+
+    //first we will try finding email
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        res.status(404).json({
+          message: "Invalid Credentials",
+          user: null,
+        });
+        return;
+      }
+      const isValidPassword = await bcrypt.compare(password, user.password);
+      if (!isValidPassword) {
+        res.status(404).json({
+          message: "Invalid Credentials",
+          user: null,
+        });
+        return;
+      }
+      res.status(201).json({
+        message: "User verified successfully",
+        user,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong.",
+        user: null,
+      });
+    }
+  }
+
   async getAllUser(req: Request, res: Response) {
     try {
       const users = await User.find({});
