@@ -20,9 +20,11 @@ export class UserController {
         message,
         data: null,
       });
+      return;
     }
 
-    const encryptedPassword = bcrypt.hash(password, 10);
+    //bcrypt returns us a promise hence we need to await it
+    const encryptedPassword = await bcrypt.hash(password, 10);
 
     // const user = await User.create(userData);
     // res.status(201).json({
