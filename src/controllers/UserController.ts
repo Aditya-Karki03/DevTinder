@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../schema/user";
 import { signupDataValidation } from "../utils/validation";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
@@ -103,6 +104,14 @@ export class UserController {
         });
         return;
       }
+      //create a token with user id
+      const token = jwt.sign(user._id, process.env.JWT_SECRET || "", {
+        expiresIn: "24h",
+      });
+      res.cookie("loginToken", token, {
+        //cookie expires in 24 h
+        expires: new Date(Date.now() * 24 * 60 * 60 * 1000),
+      });
       res.status(201).json({
         message: "User verified successfully",
         user,
@@ -116,6 +125,8 @@ export class UserController {
   }
 
   async getAllUser(req: Request, res: Response) {
+    const cookie = req.cookies;
+    console.log(cookie);
     try {
       const users = await User.find({});
       if (users) {
