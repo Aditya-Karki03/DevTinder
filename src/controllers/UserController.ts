@@ -89,6 +89,7 @@ export class UserController {
     //first we will try finding email
     try {
       const user = await User.findOne({ email });
+
       if (!user) {
         res.status(404).json({
           message: "Invalid Credentials",
@@ -97,6 +98,7 @@ export class UserController {
         return;
       }
       const isValidPassword = await bcrypt.compare(password, user.password);
+
       if (!isValidPassword) {
         res.status(404).json({
           message: "Invalid Credentials",
@@ -104,14 +106,10 @@ export class UserController {
         });
         return;
       }
+      const userId = user._id.toString();
       //create a token with user id
-      const token = jwt.sign(user._id, process.env.JWT_SECRET || "", {
-        expiresIn: "24h",
-      });
-      res.cookie("loginToken", token, {
-        //cookie expires in 24 h
-        expires: new Date(Date.now() * 24 * 60 * 60 * 1000),
-      });
+      const token = jwt.sign({ userId }, process.env.JWT_SECRET || "");
+      res.cookie("loginToken", token);
       res.status(201).json({
         message: "User verified successfully",
         user,
