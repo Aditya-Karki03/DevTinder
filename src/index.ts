@@ -2,6 +2,7 @@ import express from "express";
 import { Request, Response } from "express";
 import { connectDB, disconnectDB } from "./config/db";
 import { config } from "dotenv";
+import cookieParser from "cookie-parser";
 import appRouterV1 from "./routes/v1";
 config();
 const app = express();
@@ -13,6 +14,7 @@ const port = 3000;
 
 //middleware to convert the json to valid js object and put into req body
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/v1", appRouterV1);
 
