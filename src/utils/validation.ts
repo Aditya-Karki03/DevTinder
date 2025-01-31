@@ -1,4 +1,5 @@
 import { Request } from "express";
+import bcrypt from "bcrypt";
 export const signupDataValidation = (req: Request) => {
   const { firstName, lastName, password, gender } = req.body;
   if (!firstName) {
@@ -27,4 +28,12 @@ export const signupDataValidation = (req: Request) => {
       message: "We have data",
     };
   }
+};
+
+export const verifyPassword = async (
+  userPassword: string,
+  passwordFromDb: string
+) => {
+  const isValidPassword = await bcrypt.compare(userPassword, passwordFromDb);
+  return isValidPassword;
 };

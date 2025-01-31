@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
-import { signupDataValidation } from "../utils/validation";
+import { signupDataValidation, verifyPassword } from "../utils/validation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { tokenGenerator } from "../utils/tokenGenerator";
 export class UserController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
@@ -97,7 +98,7 @@ export class UserController {
         });
         return;
       }
-      const isValidPassword = await bcrypt.compare(password, user.password);
+      const isValidPassword = await verifyPassword(password, user.password);
 
       if (!isValidPassword) {
         res.status(404).json({
@@ -108,7 +109,7 @@ export class UserController {
       }
       const userId = user._id.toString();
       //create a token with user id
-      const token = jwt.sign({ userId }, process.env.JWT_SECRET || "");
+      const token = tokenGenerator(userId);
       res.cookie("loginToken", token);
       res.status(201).json({
         message: "User verified successfully",
