@@ -1,16 +1,17 @@
 import express from "express";
-import { UserController } from "../../controllers/UserController";
+import { AuthController } from "../../controllers/AuthController";
 import { userAuth } from "../../middleware/userAuth";
-const userRoutes = express.Router();
+const authRoutes = express.Router();
 
-const userController = new UserController();
+const authController = new AuthController();
 
 //user signup route
-userRoutes.post("/signup", userController.createUser);
-userRoutes.post("/login", userController.login);
-userRoutes.get("/feed", userAuth, userController.getAllUser);
-userRoutes.get("/user", userAuth, userController.getUser);
-userRoutes.delete("/user", userAuth, userController.deleteUser);
-userRoutes.patch("/user", userAuth, userController.updateUser);
+authRoutes.post("/signup", authController.createUser);
+authRoutes.post("/login", authController.login);
+authRoutes.post("/logout", userAuth, authController.logout);
+// userRoutes.get("/feed", userAuth, userController.getAllUser);
+// userRoutes.get("/user", userAuth, userController.getUser);
+// userRoutes.delete("/user", userAuth, userController.deleteUser);
+// userRoutes.patch("/user", userAuth, userController.updateUser);
 
-export default userRoutes;
+export default authRoutes;
