@@ -60,3 +60,18 @@ export const userUpdateDataValidator = (req: Request) => {
     message: "Input Data is Valid",
   };
 };
+
+export const connectionStatusValidator = (status: string) => {
+  const expectedStatus: string[] = ["send", "ignore"];
+  const hasExpectedData = expectedStatus.includes(status);
+  if (!hasExpectedData) {
+    return {
+      error: true,
+      message: "Invalid input data",
+    };
+  }
+  return {
+    error: false,
+    message: "Input parameter is valid",
+  };
+};
