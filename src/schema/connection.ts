@@ -18,3 +18,6 @@ const connectionSchema = new mongoose.Schema<connectionRequest>({
     enum: statusEnum,
   },
 });
+
+const Connection = mongoose.model("Connection", connectionSchema);
+export { Connection };
