@@ -5,10 +5,11 @@ const userProfileRoutes = express.Router();
 
 const userProfileController = new UserProfileController();
 
-userProfileRoutes.get(
-  "/user/profile",
+userProfileRoutes.get("/profile", userAuth, userProfileController.getProfile);
+userProfileRoutes.patch(
+  "/profile",
   userAuth,
-  userProfileController.getProfile
+  userProfileController.updateProfile
 );
 
 export default userProfileRoutes;
