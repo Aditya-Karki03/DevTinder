@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../schema/user";
+import { Types } from "mongoose";
 
 interface jwtPayload {
   userId: string;
@@ -8,10 +9,12 @@ interface jwtPayload {
 }
 
 //since the user cannot be set onto request object hence new type for it
-interface userInfo {
+interface UserInfo {
+  _id: Types.ObjectId;
   firstName: string;
   lastName: string;
   age: number;
+  gender: string;
   email: string;
 }
 
@@ -22,7 +25,7 @@ interface userInfo {
 declare global {
   namespace Express {
     interface Request {
-      user?: userInfo;
+      user?: UserInfo;
     }
   }
 }

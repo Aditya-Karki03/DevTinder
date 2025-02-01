@@ -3,7 +3,7 @@ import { User } from "../schema/user";
 
 export class UserProfileController {
   getProfile(req: Request, res: Response) {
-    const user = req.user;
+    const { user } = req;
     if (user) {
       res.status(201).json({
         message: "Profile Fetched successfully",
@@ -15,6 +15,34 @@ export class UserProfileController {
       message: "Profile not found",
       user: null,
     });
+  }
+  async updateProfile(req: Request, res: Response) {
+    const { user } = req;
+    const { firstName, lastName, gender, email, age } = req.body;
+    try {
+      const userData = await User.findByIdAndUpdate(user?._id, {
+        firstName,
+        lastName,
+        gender,
+        email,
+        age,
+      });
+      if (!userData) {
+        res.status(400).json({
+          message: `${firstName}, your data could not be updated.`,
+          user: null,
+        });
+      }
+      res.status(204).json({
+        message: `${firstName}, your data is updated successfully.`,
+        user: userData,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong.",
+        user: null,
+      });
+    }
   }
   //   async getAllUser(req: Request, res: Response) {
   //     const cookie = req.cookies;
