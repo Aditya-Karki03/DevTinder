@@ -37,3 +37,26 @@ export const verifyPassword = async (
   const isValidPassword = await bcrypt.compare(userPassword, passwordFromDb);
   return isValidPassword;
 };
+
+export const userUpdateDataValidator = (req: Request) => {
+  const expectedData: string[] = [
+    "firstName",
+    "lastName",
+    "gender",
+    "age",
+    "email",
+  ];
+  const hasExpectedData = Object.keys(req.body).every((value: string) =>
+    expectedData.includes(value)
+  );
+  if (!hasExpectedData) {
+    return {
+      error: true,
+      message: "Invalid Input Data",
+    };
+  }
+  return {
+    error: false,
+    message: "Input Data is Valid",
+  };
+};

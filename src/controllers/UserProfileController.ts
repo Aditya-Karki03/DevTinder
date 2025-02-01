@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
+import { userUpdateDataValidator } from "../utils/validation";
 
 export class UserProfileController {
   getProfile(req: Request, res: Response) {
@@ -19,6 +20,15 @@ export class UserProfileController {
   async updateProfile(req: Request, res: Response) {
     const { user } = req;
     const { firstName, lastName, gender, email, age } = req.body;
+
+    //check if user is sending unnecessary data as well
+    const { error, message } = userUpdateDataValidator(req);
+    if (error) {
+      res.status(403).json({
+        message,
+        user: null,
+      });
+    }
     try {
       const userData = await User.findByIdAndUpdate(user?._id, {
         firstName,
@@ -29,13 +39,12 @@ export class UserProfileController {
       });
       if (!userData) {
         res.status(400).json({
-          message: `${firstName}, your data could not be updated.`,
+          message: `Unable to update,your data could not be updated.`,
           user: null,
         });
       }
-      res.status(204).json({
-        message: `${firstName}, your data is updated successfully.`,
-        user: userData,
+      res.status(200).json({
+        message: `${userData?.firstName}, your data is updated successfully`,
       });
     } catch (error) {
       res.status(500).json({
