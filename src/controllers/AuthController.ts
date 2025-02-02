@@ -124,7 +124,10 @@ export class AuthController {
   }
 
   async logout(req: Request, res: Response) {
-    res.cookie("loginToken", null).json({
+    res.cookie("loginToken", null, {
+      expires: new Date(Date.now()),
+    });
+    res.json({
       message: "Logout Successfull",
       user: null,
     });

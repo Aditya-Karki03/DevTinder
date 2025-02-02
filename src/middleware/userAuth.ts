@@ -42,6 +42,7 @@ export const userAuth = async (
       message: "Please signup/login first to continue",
       user: null,
     });
+    return;
   }
   const { userId } = jwt.verify(
     loginToken,
