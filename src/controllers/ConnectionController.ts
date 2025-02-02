@@ -51,7 +51,7 @@ export class ConnectionController {
       if (requestExist) {
         res.status(400).json({
           message: `Connection request was already sent`,
-          user: requestExist,
+          user: null,
         });
         return;
       }
@@ -63,7 +63,7 @@ export class ConnectionController {
       });
       const data = await newUserConnection.save();
       res.status(201).json({
-        message: "Connection sent successfully",
+        message: `Connection ${status} successfully"`,
         user: data,
       });
     } catch (error: any) {
