@@ -1,4 +1,5 @@
 import { Request } from "express";
+import bcrypt from "bcrypt";
 export const signupDataValidation = (req: Request) => {
   const { firstName, lastName, password, gender } = req.body;
   if (!firstName) {
@@ -27,4 +28,50 @@ export const signupDataValidation = (req: Request) => {
       message: "We have data",
     };
   }
+};
+
+export const verifyPassword = async (
+  userPassword: string,
+  passwordFromDb: string
+) => {
+  const isValidPassword = await bcrypt.compare(userPassword, passwordFromDb);
+  return isValidPassword;
+};
+
+export const userUpdateDataValidator = (req: Request) => {
+  const expectedData: string[] = [
+    "firstName",
+    "lastName",
+    "gender",
+    "age",
+    "email",
+  ];
+  const hasExpectedData = Object.keys(req.body).every((value: string) =>
+    expectedData.includes(value)
+  );
+  if (!hasExpectedData) {
+    return {
+      error: true,
+      message: "Invalid Input Data",
+    };
+  }
+  return {
+    error: false,
+    message: "Input Data is Valid",
+  };
+};
+
+export const connectionStatusValidator = (status: string) => {
+  const expectedStatus: string[] = ["send", "ignore"];
+  const hasExpectedData = expectedStatus.includes(status);
+  if (!hasExpectedData) {
+    return {
+      error: true,
+      message: "Invalid input data",
+    };
+  }
+  return {
+    error: false,
+    message: "Input parameter is valid",
+  };
 };

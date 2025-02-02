@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
-import { signupDataValidation } from "../utils/validation";
+import { signupDataValidation, verifyPassword } from "../utils/validation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-export class UserController {
+import { tokenGenerator } from "../utils/tokenGenerator";
+export class AuthController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const { firstName, lastName, password, age, gender, email } = req.body;
@@ -97,7 +98,7 @@ export class UserController {
         });
         return;
       }
-      const isValidPassword = await bcrypt.compare(password, user.password);
+      const isValidPassword = await verifyPassword(password, user.password);
 
       if (!isValidPassword) {
         res.status(404).json({
@@ -108,7 +109,7 @@ export class UserController {
       }
       const userId = user._id.toString();
       //create a token with user id
-      const token = jwt.sign({ userId }, process.env.JWT_SECRET || "");
+      const token = tokenGenerator(userId);
       res.cookie("loginToken", token);
       res.status(201).json({
         message: "User verified successfully",
@@ -122,96 +123,10 @@ export class UserController {
     }
   }
 
-  async getAllUser(req: Request, res: Response) {
-    const cookie = req.cookies;
-    console.log(cookie);
-    try {
-      const users = await User.find({});
-      if (users) {
-        res.status(201).json({
-          message: "All users",
-          data: users,
-        });
-      } else {
-        res.status(404).json({
-          message: "User not found",
-          data: null,
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "No user found",
-        data: null,
-      });
-    }
-  }
-  async getUser(req: Request, res: Response) {
-    const { email } = req.body;
-    try {
-      const user = await User.findOne({ email });
-      if (user) {
-        res.status(201).json({
-          message: "User found",
-          data: user,
-        });
-      } else {
-        res.status(404).json({
-          message: "User does not exist",
-          data: null,
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong.",
-        data: null,
-      });
-    }
-  }
-  async updateUser(req: Request, res: Response) {
-    const userData = req.body;
-    console.log(userData);
-    try {
-      const user = await User.findByIdAndUpdate(userData.userId, userData);
-      console.log(user);
-      if (user) {
-        res.status(204).json({
-          message: "User data updated successfully!",
-          data: user,
-        });
-      } else {
-        res.status(404).json({
-          message: "Cannot find the user of that id",
-          data: null,
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong. Please try again",
-        data: null,
-      });
-    }
-  }
-  async deleteUser(req: Request, res: Response) {
-    const { userId } = req.body;
-    try {
-      const user = await User.findByIdAndDelete(userId);
-      if (!user) {
-        res.status(404).json({
-          message: "User not found to delete",
-          data: user,
-        });
-        return;
-      } else {
-        res.status(201).json({
-          message: "User deleted succssfully!",
-          data: user,
-        });
-      }
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong",
-        data: null,
-      });
-    }
+  async logout(req: Request, res: Response) {
+    res.cookie("loginToken", null).json({
+      message: "Logout Successfull",
+      user: null,
+    });
   }
 }
