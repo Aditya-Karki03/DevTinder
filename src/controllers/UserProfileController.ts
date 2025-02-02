@@ -30,13 +30,19 @@ export class UserProfileController {
       });
     }
     try {
-      const userData = await User.findByIdAndUpdate(user?._id, {
-        firstName,
-        lastName,
-        gender,
-        email,
-        age,
-      });
+      const userData = await User.findByIdAndUpdate(
+        user?._id,
+        {
+          firstName,
+          lastName,
+          gender,
+          email,
+          age,
+        },
+        {
+          new: true,
+        }
+      );
       if (!userData) {
         res.status(400).json({
           message: `Unable to update,your data could not be updated.`,
@@ -45,6 +51,7 @@ export class UserProfileController {
       }
       res.status(200).json({
         message: `${userData?.firstName}, your data is updated successfully`,
+        user: userData,
       });
     } catch (error) {
       res.status(500).json({
