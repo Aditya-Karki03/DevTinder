@@ -6,7 +6,7 @@ const connectionRoutes = express.Router();
 const connectionController = new ConnectionController();
 
 connectionRoutes.post(
-  "/send-connection",
+  "/send-connection/:status/:userId",
   userAuth,
   connectionController.sendConnectionRequest
 );
