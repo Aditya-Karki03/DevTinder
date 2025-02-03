@@ -8,6 +8,6 @@ const appRouterV1 = express.Router();
 appRouterV1.use("/user", authRoutes);
 appRouterV1.use("/user-profile", userProfileRoutes);
 appRouterV1.use("/user-connection", connectionRoutes);
-appRouterV1.use("user-feed", feedRoutes);
+appRouterV1.use("/user-feed", feedRoutes);
 
 export default appRouterV1;
