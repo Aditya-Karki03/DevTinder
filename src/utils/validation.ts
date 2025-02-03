@@ -80,3 +80,8 @@ export const connectionStatusValidator = (status: string) => {
 export const isValidObjectId = (_id: string) => {
   return mongoose.Types.ObjectId.isValid(_id) ? true : false;
 };
+
+export const validStatusType = (status: string) => {
+  const statusTypes: string[] = ["accepted", "rejected"];
+  return statusTypes.includes(status) ? true : false;
+};

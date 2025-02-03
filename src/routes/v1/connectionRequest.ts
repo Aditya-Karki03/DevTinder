@@ -10,5 +10,15 @@ connectionRoutes.post(
   userAuth,
   connectionController.sendConnectionRequest
 );
+connectionRoutes.get(
+  "/get-connection",
+  userAuth,
+  connectionController.getAllConnectionRequest
+);
+connectionRoutes.post(
+  "/review-connection/:status/:connectionId",
+  userAuth,
+  connectionController.acceptConnectionRequest
+);
 
 export default connectionRoutes;
