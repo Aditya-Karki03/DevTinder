@@ -1,5 +1,6 @@
 import { Request } from "express";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 export const signupDataValidation = (req: Request) => {
   const { firstName, lastName, password, gender } = req.body;
   if (!firstName) {
@@ -74,4 +75,13 @@ export const connectionStatusValidator = (status: string) => {
     error: false,
     message: "Input parameter is valid",
   };
+};
+
+export const isValidObjectId = (_id: string) => {
+  return mongoose.Types.ObjectId.isValid(_id) ? true : false;
+};
+
+export const validStatusType = (status: string) => {
+  const statusTypes: string[] = ["accepted", "rejected"];
+  return statusTypes.includes(status) ? true : false;
 };

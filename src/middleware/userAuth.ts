@@ -44,12 +44,12 @@ export const userAuth = async (
     });
     return;
   }
-  const { userId } = jwt.verify(
-    loginToken,
-    process.env.JWT_SECRET || ""
-  ) as jwtPayload;
-
   try {
+    const { userId } = jwt.verify(
+      loginToken,
+      process.env.JWT_SECRET || ""
+    ) as jwtPayload;
+
     const userInfo = await User.findById(userId);
     if (!userInfo) {
       res.status(404).json({
@@ -61,9 +61,9 @@ export const userAuth = async (
     //if the user is found than put the user into the request object
     req.user = userInfo;
     next();
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({
-      message: "Something went wrong.",
+      message: error.message,
       user: null,
     });
   }
