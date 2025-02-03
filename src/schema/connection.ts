@@ -8,10 +8,12 @@ const connectionSchema = new mongoose.Schema<connectionRequest>(
   {
     fromRequest: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     toRequest: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     status: {

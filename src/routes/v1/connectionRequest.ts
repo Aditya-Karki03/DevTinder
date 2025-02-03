@@ -20,5 +20,10 @@ connectionRoutes.post(
   userAuth,
   connectionController.acceptConnectionRequest
 );
+connectionRoutes.get(
+  "/accepted-connection",
+  userAuth,
+  connectionController.getAllAcceptedConnections
+);
 
 export default connectionRoutes;

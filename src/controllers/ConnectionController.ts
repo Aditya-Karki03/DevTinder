@@ -80,10 +80,12 @@ export class ConnectionController {
     //get all connection request with status as "send" to me (loggedIn user)
     const { user } = req;
     try {
+      //use populate method to get all name of the user
+      //to use populate we need to link two collections using ref
       const allConnections = await Connection.find({
         toRequest: user?._id,
         status: "send",
-      });
+      }).populate("fromRequest", ["firstName", "lastName", "gender"]);
       if (allConnections.length == 0) {
         res.status(400).json({
           message: "No Connection request",
@@ -150,6 +152,37 @@ export class ConnectionController {
       res.status(500).json({
         message: "Something went wrong",
         user: null,
+      });
+    }
+  }
+  //getAll accepted Connections for the logged In user
+  async getAllAcceptedConnections(req: Request, res: Response) {
+    const { user } = req;
+    try {
+      //get all the connections either sent by you or send to you and are at accepted state
+      const allAcceptedConnections = await Connection.find({
+        $or: [
+          {
+            fromRequest: user?._id,
+            status: "accept",
+          },
+          {
+            toRequest: user?._id,
+            status: "accept",
+          },
+        ],
+      }).populate("fromRequest", ["firstName", "lastName", "gender"]);
+      //send only the required data
+      const data = allAcceptedConnections.map(
+        (connection: any) => connection.fromRequest
+      );
+      res.status(200).json({
+        message: `You have total of ${allAcceptedConnections.length} friends`,
+        user: data,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong.",
       });
     }
   }
