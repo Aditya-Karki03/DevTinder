@@ -171,10 +171,17 @@ export class ConnectionController {
             status: "accept",
           },
         ],
-      }).populate("fromRequest", ["firstName", "lastName", "gender"]);
+      })
+        .populate("fromRequest", ["firstName", "lastName", "gender"])
+        .populate("toRequest", ["firstName", "lastName", "gender"]);
       //send only the required data
-      const data = allAcceptedConnections.map(
-        (connection: any) => connection.fromRequest
+      //fromRequest can output the loggedIn as well as the toRequest
+      const data = allAcceptedConnections.map((connection: any) =>
+        /* bugfix: allAcceptedConnections can have the data of loggedIn user as well either on 
+        toRequest or on fromRequest hence we need to remove them */
+        connection.fromRequest._id.equals(user?._id)
+          ? connection.toRequest
+          : connection.fromRequest
       );
       res.status(200).json({
         message: `You have total of ${allAcceptedConnections.length} friends`,
