@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { loginFormSchema } from "../schema/schema";
-import { ILoginFormData } from "../Types/types";
+import { loginFormSchema } from "../../schema/schema";
+import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const Login = () => {
