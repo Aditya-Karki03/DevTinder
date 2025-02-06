@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
 const Login = () => {
   const {
@@ -13,8 +14,20 @@ const Login = () => {
     mode: "onSubmit", //validates form after onSubmit gets triggered
   });
   console.log(errors);
-  const submitForm = (data: ILoginFormData) => {
-    console.log(data);
+  const submitForm = async (data: ILoginFormData) => {
+    // console.log(data);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/v1/user/login",
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <form
