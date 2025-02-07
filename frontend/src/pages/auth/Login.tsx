@@ -2,6 +2,10 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
+import { loginRequest } from "./slice";
+import { RootState } from "../../redux/store";
+import { LoaderCircle } from "lucide-react";
 
 const Login = () => {
   const {
@@ -12,14 +16,19 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit", //validates form after onSubmit gets triggered
   });
-  console.log(errors);
+  const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state?.auth?.loading);
+  const isLoggedIn = useSelector((state: RootState) => state?.auth?.isLoggedIn);
+  const error = useSelector((state: RootState) => state?.auth?.error);
+  const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
   const submitForm = (data: ILoginFormData) => {
     console.log(data);
+    dispatch(loginRequest(data));
   };
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
-      className="min-h-screen flex justify-center items-center border border-rose-600 p-4"
+      className="min-h-screen flex justify-center items-center  p-4"
     >
       {/* sm:p-8 */}
       <div className="max-w-md w-full p-6  bg-white/10 rounded-xl shadow-lg space-y-8">
@@ -64,9 +73,13 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full text-center bg-blue-500 py-3 rounded-md cursor-pointer hover:bg-blue-600 transition-all"
+          className="w-full flex justify-center bg-blue-500 py-3 rounded-md cursor-pointer hover:bg-blue-600 transition-all"
         >
-          Sign In
+          {loading ? (
+            <LoaderCircle className="w-6 h-6 text-center text-white animate-spin" />
+          ) : (
+            "Sign In"
+          )}
         </button>
       </div>
     </form>

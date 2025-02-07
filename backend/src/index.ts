@@ -4,6 +4,7 @@ import { connectDB, disconnectDB } from "./config/db";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import appRouterV1 from "./routes/v1";
+import cors from "cors";
 config();
 const app = express();
 const port = 3000;
@@ -11,6 +12,15 @@ const port = 3000;
 // app.use("/login", (req: Request, res: Response) => {
 //   res.send("Hello world");
 // });
+
+if (process.env.NODE_ENV === "development") {
+  app.use(
+    cors({
+      origin: process.env.WEB_ENDPOINT || "",
+      credentials: true,
+    })
+  );
+}
 
 //middleware to convert the json to valid js object and put into req body
 app.use(express.json());
