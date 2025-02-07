@@ -29,6 +29,7 @@ export default tseslint.config(
           argsIgnorePattern: "^_", // Ignores variables that start with _
         },
       ],
+      "@typescript-eslint/no-explicit-any": "off",
     },
   }
 );
