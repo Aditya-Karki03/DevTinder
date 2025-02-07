@@ -1,30 +1,25 @@
 import axios from "axios";
 import { ILoginFormData, ILoginResponseData } from "../../Types/types";
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import { loginRequest, loginSuccessfull } from "./slice";
+import { loginFail, loginRequest, loginSuccessfull } from "./slice";
 import { PayloadAction } from "@reduxjs/toolkit";
-const fetchAPICall = async (data: ILoginFormData) => {
-  try {
-    const response: ILoginResponseData = await axios.post(
-      "http://localhost:3000/v1/user/login",
-      data,
-      {
-        withCredentials: true,
-      }
-    );
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-};
+import * as Api from "../../services/api";
 
 //worker saga
 function* getLoginData(action: PayloadAction<ILoginFormData>) {
   try {
-    const data: ILoginResponseData = yield call(fetchAPICall, action.payload);
+    const data: ILoginResponseData = yield call(
+      Api.loginApiCall,
+      action.payload
+    );
     yield put(loginSuccessfull(data.data.user));
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    let errorMessage: string = "Something went wrong while logging in";
+    if (error?.response?.data?.message) {
+      errorMessage = error?.response?.data?.message;
+    }
+    yield put(loginFail(errorMessage));
+    // yield put(loginFail())
   }
 }
 
