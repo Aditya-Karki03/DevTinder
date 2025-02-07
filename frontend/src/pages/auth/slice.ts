@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ILoginFormData } from "../../Types/types";
 
 interface IUser {
   _id: string;
@@ -23,7 +24,7 @@ const loginUserSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginRequest: (state) => {
+    loginRequest: (state, _action: PayloadAction<ILoginFormData>) => {
       state.loading = true;
       //remove any previous error
       state.error = null;
