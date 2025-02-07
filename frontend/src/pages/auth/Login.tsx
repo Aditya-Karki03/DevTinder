@@ -15,7 +15,7 @@ const Login = () => {
   });
   console.log(errors);
   const submitForm = async (data: ILoginFormData) => {
-    // console.log(data);
+    console.log(data);
     try {
       const response = await axios.post(
         "http://localhost:3000/v1/user/login",

@@ -13,7 +13,14 @@ const port = 3000;
 //   res.send("Hello world");
 // });
 
-app.use(cors());
+if (process.env.NODE_ENV === "development") {
+  app.use(
+    cors({
+      origin: process.env.WEB_ENDPOINT || "",
+      credentials: true,
+    })
+  );
+}
 
 //middleware to convert the json to valid js object and put into req body
 app.use(express.json());
