@@ -16,3 +16,10 @@ export const logoutApiCall = () => {
     withCredentials: true,
   });
 };
+
+//api to get user profile
+export const getProfileApiCall = () => {
+  return axios.get(`${API_URL}/v1/user-profile/profile`, {
+    withCredentials: true,
+  });
+};
