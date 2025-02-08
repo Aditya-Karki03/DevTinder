@@ -64,7 +64,14 @@ export class AuthController {
       await user.save();
       res.status(201).json({
         message: "User created successfully!",
-        data: user,
+        user: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gender: user.gender,
+          age: user.age,
+          email: user.email,
+        },
       });
     } catch (error: any) {
       if (error.name == "ValidationError") {
@@ -98,7 +105,10 @@ export class AuthController {
         });
         return;
       }
-      const isValidPassword = await verifyPassword(password, user.password);
+      const isValidPassword = await verifyPassword(
+        password,
+        user?.password || ""
+      );
 
       if (!isValidPassword) {
         res.status(404).json({
@@ -111,11 +121,21 @@ export class AuthController {
       //create a token with user id
       const token = tokenGenerator(userId);
       res.cookie("loginToken", token);
+      //provide user with all data except the password in the response
+      //using destructuring separated password from the userData and rest of the data goes to the user
       res.status(201).json({
         message: "User verified successfully",
-        user,
+        user: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          gender: user.gender,
+          age: user.age,
+          email: user.email,
+        },
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         message: "Something went wrong.",
         user: null,
