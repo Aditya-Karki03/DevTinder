@@ -40,7 +40,7 @@ export class AuthController {
       if (userEmail.length > 0) {
         res.status(403).json({
           message: "User with this email already exist",
-          data: userEmail,
+          data: null,
         });
         return;
       }
