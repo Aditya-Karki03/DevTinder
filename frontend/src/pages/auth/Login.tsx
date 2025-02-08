@@ -6,6 +6,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "./slice";
 import { RootState } from "../../redux/store";
 import { LoaderCircle } from "lucide-react";
+import Notification from "../../components/Notification";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Login = () => {
   const {
@@ -16,20 +19,33 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit", //validates form after onSubmit gets triggered
   });
+  //to navigate
+  const navigate = useNavigate();
+  //to dispatch action
   const dispatch = useDispatch();
+  //subscribing to the store
   const loading = useSelector((state: RootState) => state?.auth?.loading);
   const isLoggedIn = useSelector((state: RootState) => state?.auth?.isLoggedIn);
   const error = useSelector((state: RootState) => state?.auth?.error);
-  const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
+  // const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
+
+  //form submission and api call
   const submitForm = (data: ILoginFormData) => {
     console.log(data);
     dispatch(loginRequest(data));
   };
+  //if loggedIn move to dashboard
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn]);
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
       className="min-h-screen flex justify-center items-center  p-4"
     >
+      {error && <Notification message={error} />}
       {/* sm:p-8 */}
       <div className="max-w-md w-full p-6  bg-white/10 rounded-xl shadow-lg space-y-8">
         <div className="text-center space-y-1.5">

@@ -5,10 +5,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/auth/Login.tsx";
 import Dashboard from "../src/pages/dashboard/Dashboard.tsx";
 import Feed from "./components/Feed.tsx";
-import Profile from "./components/Profile.tsx";
+import Profile from "./pages/profile/Profile.tsx";
 import Lovers from "./components/Lovers.tsx";
 import { Provider } from "react-redux";
 import store from "./redux/store.ts";
+// import Protection from "./components/Protection.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,6 +19,8 @@ createRoot(document.getElementById("root")!).render(
           <Route>
             <Route index element={<Login />} />
           </Route>
+          {/* enable protected routes */}
+          {/* element={<Protection />} */}
           <Route>
             <Route path="dashboard" element={<Dashboard />}>
               <Route index element={<Feed />} />
