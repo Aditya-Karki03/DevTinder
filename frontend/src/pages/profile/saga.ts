@@ -14,7 +14,7 @@ function* getProfile() {
     }
     const data: IError = {
       error: message,
-      errorCode: error?.response?.data?.statusCode,
+      errorCode: error?.response?.status,
     };
     yield put(profileFailure(data));
   }

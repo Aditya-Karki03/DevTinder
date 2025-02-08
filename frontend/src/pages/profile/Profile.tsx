@@ -18,7 +18,7 @@ const Profile = () => {
     if (error?.errorCode == "401") {
       navigate("/");
     }
-  }, [dispatch]);
+  }, [error]);
   return <div className="">This is the profile page</div>;
 };
 export default Profile;
