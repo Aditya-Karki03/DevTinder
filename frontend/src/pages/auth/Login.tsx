@@ -8,6 +8,7 @@ import { RootState } from "../../redux/store";
 import { LoaderCircle } from "lucide-react";
 import Notification from "../../components/Notification";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Login = () => {
   const {
@@ -34,9 +35,11 @@ const Login = () => {
     dispatch(loginRequest(data));
   };
   //if loggedIn move to dashboard
-  if (isLoggedIn) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn]);
   return (
     <form
       onSubmit={handleSubmit(submitForm)}

@@ -17,3 +17,7 @@ export interface ILoginResponseData {
     user: IUserLoginData;
   };
 }
+export interface ILogoutResponseData {
+  message: string;
+  user: null;
+}
