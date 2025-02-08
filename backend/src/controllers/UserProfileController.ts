@@ -8,7 +8,14 @@ export class UserProfileController {
     if (user) {
       res.status(201).json({
         message: "Profile Fetched successfully",
-        user,
+        user: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          age: user.age,
+          gender: user.gender,
+        },
       });
       return;
     }
