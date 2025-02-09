@@ -4,7 +4,14 @@ import {
   ILogoutResponseData,
 } from "../../Types/types";
 import { call, put, takeLatest } from "redux-saga/effects";
-import { loginFail, loginRequest, loginSuccessfull, logout } from "./slice";
+import {
+  loginFail,
+  loginRequest,
+  loginSuccessfull,
+  logoutFailure,
+  logoutRequest,
+  logoutSuccessfull,
+} from "./slice";
 import { PayloadAction } from "@reduxjs/toolkit";
 import * as Api from "../../services/api";
 
@@ -19,7 +26,8 @@ function* getLoginData(action: PayloadAction<ILoginFormData>) {
       Api.loginApiCall,
       action.payload
     );
-    yield put(loginSuccessfull(data.data.user));
+    console.log(data.data.user);
+    yield put(loginSuccessfull(data?.data?.user));
   } catch (error: any) {
     let errorMessage: string = "Something went wrong while logging in";
     if (error?.response?.data?.message) {
@@ -33,13 +41,14 @@ function* getLoginData(action: PayloadAction<ILoginFormData>) {
 function* loggingOut() {
   try {
     const data: ILogoutResponseData = yield call(Api.logoutApiCall);
-    yield put(logout);
+    yield put(logoutSuccessfull);
   } catch (error: any) {
+    console.log(error);
     let errorMessage = "Something went wrong while logging out";
     if (error?.response?.data?.message) {
       errorMessage = error?.response?.data?.message;
     }
-    yield put(loginFail(errorMessage));
+    yield put(logoutFailure(errorMessage));
   }
 }
 
@@ -56,6 +65,6 @@ function* loggingOut() {
 //
 const authSaga = [
   takeLatest(loginRequest, getLoginData),
-  takeLatest(logout, loggingOut),
+  takeLatest(logoutRequest, loggingOut),
 ];
 export default authSaga;

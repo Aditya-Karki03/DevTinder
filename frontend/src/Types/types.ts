@@ -8,6 +8,7 @@ interface IUserLoginData {
   email: string;
   firstName: string;
   lastName: string;
+  gender: string;
   _id: string;
 }
 
