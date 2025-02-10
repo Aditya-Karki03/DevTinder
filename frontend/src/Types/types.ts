@@ -3,7 +3,7 @@ export interface ILoginFormData {
   password: string;
 }
 
-interface IUserLoginData {
+export interface IUserLoginData {
   age: number;
   email: string;
   firstName: string;

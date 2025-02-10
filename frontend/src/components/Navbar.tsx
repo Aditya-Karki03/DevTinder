@@ -1,23 +1,12 @@
 import { BellDot, User } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-
-import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../redux/store";
-import { logoutRequest } from "../pages/auth/slice";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context";
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const error = useSelector((store: RootState) => store?.auth?.error);
-  const userName = useSelector((store: RootState) => store?.auth?.user);
+  const { logout, loggedInUser } = useAuth();
   const handleLogout = () => {
-    if (error) {
-      navigate("/");
-    }
-    dispatch(logoutRequest());
+    logout();
   };
-  console.log(userName);
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -76,7 +65,7 @@ const Navbar = () => {
               <div className="w-2xs h-20  shadow-2xl  flex items-center ">
                 <User />
                 <span className="font-bold text-gray-200">
-                  {userName?.firstName} {userName?.lastName}
+                  {loggedInUser?.firstName} {loggedInUser?.lastName}
                 </span>
               </div>
             </li>
