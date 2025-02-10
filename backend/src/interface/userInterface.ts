@@ -4,6 +4,9 @@ export enum Genders {
   Others = "others",
 }
 
+// photoURL,
+// about,
+// skills,
 export interface userInterface {
   firstName: string;
   lastName: string;
@@ -11,4 +14,7 @@ export interface userInterface {
   email: string;
   age: number;
   gender: Genders;
+  photoUrl?: string;
+  about: string;
+  skills: string[];
 }

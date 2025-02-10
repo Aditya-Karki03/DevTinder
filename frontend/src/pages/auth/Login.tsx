@@ -2,13 +2,14 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch, useSelector } from "react-redux";
-import { loginRequest } from "./slice";
-import { RootState } from "../../redux/store";
+// import { useDispatch, useSelector } from "react-redux";
+// import { loginRequest } from "./slice";
+// import { RootState } from "../../redux/store";
 import { LoaderCircle } from "lucide-react";
 import Notification from "../../components/Notification";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+// import { useEffect } from "react";
+import { useAuth } from "../../context";
 
 const Login = () => {
   const {
@@ -19,27 +20,28 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit", //validates form after onSubmit gets triggered
   });
-  //to navigate
+  const { login, error, loginInProgress } = useAuth();
+  // //to navigate
   const navigate = useNavigate();
-  //to dispatch action
-  const dispatch = useDispatch();
-  //subscribing to the store
-  const loading = useSelector((state: RootState) => state?.auth?.loading);
-  const isLoggedIn = useSelector((state: RootState) => state?.auth?.isLoggedIn);
-  const error = useSelector((state: RootState) => state?.auth?.error);
-  // const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
+  // //to dispatch action
+  // const dispatch = useDispatch();
+  // //subscribing to the store
+  // const loading = useSelector((state: RootState) => state?.auth?.loading);
+  // const isLoggedIn = useSelector((state: RootState) => state?.auth?.isLoggedIn);
+  // const error = useSelector((state: RootState) => state?.auth?.error);
+  // // const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
 
   //form submission and api call
   const submitForm = (data: ILoginFormData) => {
-    console.log(data);
-    dispatch(loginRequest(data));
+    login(data);
+    navigate("/dashboard");
   };
   //if loggedIn move to dashboard
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/dashboard");
-    }
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [isLoggedIn]);
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
@@ -91,7 +93,7 @@ const Login = () => {
           type="submit"
           className="w-full flex justify-center bg-blue-500 py-3 rounded-md cursor-pointer hover:bg-blue-600 transition-all"
         >
-          {loading ? (
+          {loginInProgress ? (
             <LoaderCircle className="w-6 h-6 text-center text-white animate-spin" />
           ) : (
             "Sign In"
