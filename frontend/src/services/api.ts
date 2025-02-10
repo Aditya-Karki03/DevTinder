@@ -23,3 +23,10 @@ export const getProfileApiCall = () => {
     withCredentials: true,
   });
 };
+
+//api to get user feed
+export const getFeedApiCall = () => {
+  return axios.get(`${API_URL}/v1/user-feed/all`, {
+    withCredentials: true,
+  });
+};

@@ -57,3 +57,24 @@ export interface IProfileInitialState {
   error: IError | null;
   loading: boolean;
 }
+
+export interface IUsersInFeed {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+}
+
+export interface IFeedState {
+  userFeed: IUsersInFeed[] | null;
+  userFeedLoading: boolean;
+  userFeedSuccessfull: boolean;
+  userFeedFailure: boolean;
+  error: IError | null;
+}
+export interface IUserFeedResponse {
+  data: {
+    message: string;
+    user: IUsersInFeed[];
+  };
+}
