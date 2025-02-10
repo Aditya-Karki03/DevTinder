@@ -9,26 +9,29 @@ import Profile from "./pages/profile/Profile.tsx";
 import Lovers from "./components/Lovers.tsx";
 import { Provider } from "react-redux";
 import store from "./redux/store.ts";
+import AuthProvider from "./context/index.tsx";
+import ErrorComponent from "./components/ErrorComponent.tsx";
 // import Protection from "./components/Protection.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <Routes>
-          <Route>
-            <Route index element={<Login />} />
-          </Route>
-          {/* enable protected routes */}
-          {/* element={<Protection />} */}
-          <Route>
-            <Route path="dashboard" element={<Dashboard />}>
-              <Route index element={<Feed />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="lovers" element={<Lovers />} />
+        <AuthProvider>
+          <Routes>
+            <Route>
+              <Route index element={<Login />} />
             </Route>
-          </Route>
-        </Routes>
+            <Route>
+              <Route path="dashboard" element={<Dashboard />}>
+                <Route index element={<Feed />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="lovers" element={<Lovers />} />
+              </Route>
+              <Route path="*" element={<ErrorComponent />} />
+            </Route>
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </Provider>
   </StrictMode>
