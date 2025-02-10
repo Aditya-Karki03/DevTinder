@@ -63,7 +63,16 @@ export class UserProfileController {
       }
       res.status(200).json({
         message: `${userData?.firstName}, your data is updated successfully`,
-        user: userData,
+        user: {
+          firstName: userData?.firstName,
+          lastName: userData?.lastName,
+          email: userData?.email,
+          age: userData?.age,
+          gender: userData?.gender,
+          photoUrl: userData?.photoUrl,
+          about: userData?.about,
+          skills: userData?.skills,
+        },
       });
     } catch (error) {
       res.status(500).json({
