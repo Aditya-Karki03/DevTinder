@@ -10,6 +10,7 @@ import Notification from "../../components/Notification";
 import { useNavigate } from "react-router-dom";
 // import { useEffect } from "react";
 import { useAuth } from "../../context";
+import { useEffect } from "react";
 
 const Login = () => {
   const {
@@ -20,7 +21,7 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit", //validates form after onSubmit gets triggered
   });
-  const { login, error, loginInProgress } = useAuth();
+  const { login, error, loginInProgress, isLoggedIn } = useAuth();
   // //to navigate
   const navigate = useNavigate();
   // //to dispatch action
@@ -34,20 +35,21 @@ const Login = () => {
   //form submission and api call
   const submitForm = (data: ILoginFormData) => {
     login(data);
-    navigate("/dashboard");
+    // navigate("/dashboard");
   };
-  //if loggedIn move to dashboard
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [isLoggedIn]);
+
+  // if loggedIn move to dashboard
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn]);
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
       className="min-h-screen flex justify-center items-center  p-4"
     >
-      {error && <Notification message={error} />}
+      {error && <Notification message={error?.error} />}
       {/* sm:p-8 */}
       <div className="max-w-md w-full p-6  bg-white/10 rounded-xl shadow-lg space-y-8">
         <div className="text-center space-y-1.5">

@@ -5,7 +5,7 @@
 //we need to get the loggedInUser if successful
 
 import { createContext, useContext, useEffect, useRef } from "react";
-import { IUserLoginData } from "../Types/types";
+import { IError, IUserLoginData } from "../Types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchUserProfileRequest, loginRequest, logoutRequest } from "./slice";
@@ -15,10 +15,11 @@ import { useNavigate } from "react-router-dom";
 interface IContextData {
   login: (data: { email: string; password: string }) => void;
   logout: () => void;
-  error: string | null;
+  error: IError | null;
   loginInProgress: boolean;
   logoutInProgress: boolean;
   loggedInUser: IUserLoginData | null;
+  isLoggedIn: boolean;
   isLoggedOut: boolean;
   fetchingLoggedInUser: () => void;
 }
@@ -33,6 +34,7 @@ export const AuthContext = createContext<IContextData>({
   loginInProgress: false,
   logoutInProgress: false,
   loggedInUser: null,
+  isLoggedIn: false,
   isLoggedOut: false,
   fetchingLoggedInUser: () => {
     console.log("Fetching User Profile");
@@ -74,6 +76,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   useEffect(() => {
     console.log(error);
+    // if (error?.errorCode == "401") {
+    //   navigate("/");
+    // }
     //or a notification saying this was the error
   }, [error]);
   useEffect(() => {
@@ -83,10 +88,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isLoggedOut]);
 
   useEffect(() => {
-    if (loggedInUser) {
+    if (isLoggedIn) {
+      console.log("IAMHERE_____---------");
       navigate("/dashboard");
     }
-  }, []);
+  }, [dispatch]);
 
   //make useEffect call to get the getTheLoggedInUser
   useEffect(() => {
@@ -101,6 +107,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     loggedInUser,
     login,
     logout,
+    isLoggedIn,
     isLoggedOut,
     fetchingLoggedInUser,
   };

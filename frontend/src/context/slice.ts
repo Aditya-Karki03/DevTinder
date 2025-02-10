@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ILoginFormData, IProfileData } from "../Types/types";
+import { IError, ILoginFormData, IProfileData } from "../Types/types";
 
 interface IUser {
   _id: string;
@@ -25,7 +25,7 @@ interface loginState {
   fetchingUserProfile: boolean;
   fetchingUserSuccess: boolean;
   fetchingUserFailure: boolean;
-  error: null | string;
+  error: IError | null;
 }
 
 const initialState: loginState = {
@@ -56,7 +56,7 @@ const loginUserSlice = createSlice({
       //we will not put data from the response of login
       // state.loggedInUser = action.payload;
     },
-    loginFail: (state, action: PayloadAction<string>) => {
+    loginFail: (state, action: PayloadAction<IError>) => {
       state.loginInProgress = false;
       state.loggedInUser = null;
       state.isLoggedIn = false;
@@ -75,12 +75,10 @@ const loginUserSlice = createSlice({
       state.isLoggedOut = true;
       state.logoutInProgress = false;
     },
-    logoutFailure: (state, action: PayloadAction<string>) => {
+    logoutFailure: (state, action: PayloadAction<IError>) => {
       state.isLoggedIn = true;
       state.isLoggedOut = false;
-      state.error =
-        action.payload ||
-        "An error occurred during logging out. Please try again later ";
+      state.error = action.payload;
     },
     fetchUserProfileRequest: (state) => {
       state.fetchingUserProfile = true;
@@ -92,7 +90,7 @@ const loginUserSlice = createSlice({
       state.isLoggedIn = true;
       state.loggedInUser = action.payload;
     },
-    fetchUserProfileFailure: (state, action: PayloadAction<string>) => {
+    fetchUserProfileFailure: (state, action: PayloadAction<IError>) => {
       state.fetchingUserProfile = false;
       state.error = action.payload;
     },
