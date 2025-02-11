@@ -7,6 +7,7 @@ import {
 } from "./slice";
 import { IUserFeedResponse } from "../../Types/types";
 
+//the feed should contain all the friends, not the connection request and all
 function* getUserFeedData() {
   try {
     const data: IUserFeedResponse = yield call(API.getFeedApiCall);

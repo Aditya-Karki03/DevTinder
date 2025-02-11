@@ -69,6 +69,10 @@ export interface IUsersInFeed {
   firstName: string;
   lastName: string;
   gender: string;
+  age: string;
+  photoUrl: string;
+  skills: string[];
+  about: string;
 }
 
 export interface IFeedState {

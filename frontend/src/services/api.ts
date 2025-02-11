@@ -30,3 +30,15 @@ export const getFeedApiCall = () => {
     withCredentials: true,
   });
 };
+
+//api to accept or reject connection request, status and id of the user who sent the connection request will come
+export const reviewConnectionRequest = (status: string, id: string) => {
+  const data = {};
+  return axios.post(
+    `${API_URL}/v1/user-connection/review-connection/${status}/${id}`,
+    data,
+    {
+      withCredentials: true,
+    }
+  );
+};

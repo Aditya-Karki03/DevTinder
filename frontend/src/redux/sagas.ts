@@ -1,7 +1,7 @@
 import { all } from "redux-saga/effects";
 import authSaga from "../context/saga";
 import { getProfileSaga } from "../pages/profile/saga";
-import { getFeedSaga } from "../pages/dashboard/saga";
+import { getFeedSaga } from "../pages/connection-Request/saga";
 
 export default function* rootSaga() {
   yield all([...authSaga, ...getProfileSaga, ...getFeedSaga]);
