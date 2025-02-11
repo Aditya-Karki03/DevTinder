@@ -84,3 +84,14 @@ export interface IUserFeedResponse {
     user: IUsersInFeed[];
   };
 }
+
+export interface ISignUpFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: string;
+  gender: string;
+  about: string;
+  skills: string[];
+  photoUrl: string;
+}

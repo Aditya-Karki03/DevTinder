@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { profileRequest } from "./slice";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { Edit2 } from "lucide-react";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,11 @@ const Profile = () => {
   return (
     <div className="flex flex-col flex-grow justify-center items-center  p-6">
       <div className="flex flex-col items-center bg-gray-900 rounded-2xl shadow-xl p-8 max-w-2xl w-full space-y-6 transition-all duration-300 hover:shadow-2xl">
+        <div className="flex justify-end w-full cursor-pointer ">
+          <div className="w-10 h-10 rounded-full hover:bg-gray-700 flex justify-center items-center">
+            <Edit2 />
+          </div>
+        </div>
         <div className="relative">
           <img
             src={userProfileData?.photoUrl}
