@@ -7,7 +7,17 @@ import { tokenGenerator } from "../utils/tokenGenerator";
 export class AuthController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
-    const { firstName, lastName, password, age, gender, email } = req.body;
+    const {
+      firstName,
+      lastName,
+      password,
+      age,
+      gender,
+      email,
+      photoUrl,
+      about,
+      skills,
+    } = req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -15,6 +25,8 @@ export class AuthController {
     //DO NOT save lke new User(req.body) or new User(userData)
     //because we don't know how many extra params a user is sending, can have extra data as well
     //only save by destructuring the required data from the body
+
+    //photoURL, about skills
 
     const { error, message } = signupDataValidation(req);
     if (error) {
@@ -60,6 +72,9 @@ export class AuthController {
         gender,
         age,
         email,
+        about,
+        skills,
+        photoUrl,
       });
       await user.save();
       res.status(201).json({
@@ -71,6 +86,9 @@ export class AuthController {
           gender: user.gender,
           age: user.age,
           email: user.email,
+          about: user.about,
+          skills: user.skills,
+          photoUrl: user.photoUrl,
         },
       });
     } catch (error: any) {
@@ -132,6 +150,9 @@ export class AuthController {
           gender: user.gender,
           age: user.age,
           email: user.email,
+          about: user.about,
+          skills: user.skills,
+          photoUrl: user.photoUrl,
         },
       });
     } catch (error) {

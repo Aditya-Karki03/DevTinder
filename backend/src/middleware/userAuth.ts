@@ -16,6 +16,9 @@ interface UserInfo {
   age: number;
   gender: string;
   email: string;
+  photoUrl?: string;
+  about: string;
+  skills: string[];
 }
 
 //globally declaring that we are adding a user type on the Request object

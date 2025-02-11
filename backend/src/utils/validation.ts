@@ -2,7 +2,7 @@ import { Request } from "express";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 export const signupDataValidation = (req: Request) => {
-  const { firstName, lastName, password, gender } = req.body;
+  const { firstName, lastName, password, gender, about, skills } = req.body;
   if (!firstName) {
     return {
       error: true,
@@ -22,6 +22,17 @@ export const signupDataValidation = (req: Request) => {
     return {
       error: true,
       message: "Please Enter Your Gender",
+    };
+  } else if (!about) {
+    return {
+      error: true,
+      message:
+        "Please tell briefly tell us about yourself, and limit it within 50 words max.",
+    };
+  } else if (skills.length == 0) {
+    return {
+      error: true,
+      message: "Please mention your skills, to get better match for you",
     };
   } else {
     return {

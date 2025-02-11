@@ -5,6 +5,7 @@
 //we need to get the loggedInUser if successful
 
 import { createContext, useContext, useEffect, useRef } from "react";
+
 import { IError, IUserLoginData } from "../Types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -76,9 +77,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   };
   useEffect(() => {
     console.log(error);
+
     // if (error?.errorCode == "401") {
     //   navigate("/");
     // }
+
     //or a notification saying this was the error
   }, [error]);
   useEffect(() => {
@@ -88,10 +91,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isLoggedOut]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      console.log("IAMHERE_____---------");
+    if (loggedInUser) {
       navigate("/dashboard");
     }
+  }, []);
+
   }, [dispatch]);
 
   //make useEffect call to get the getTheLoggedInUser
