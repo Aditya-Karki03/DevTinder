@@ -3,7 +3,6 @@
 //need error message because error can also occur
 //need loading which tells if loading or not
 //we need to get the loggedInUser if successful
-
 import { createContext, useContext, useEffect, useRef } from "react";
 
 import { IError, IUserLoginData } from "../Types/types";
@@ -12,7 +11,6 @@ import { RootState } from "../redux/store";
 import { fetchUserProfileRequest, loginRequest, logoutRequest } from "./slice";
 import { useNavigate } from "react-router-dom";
 
-//
 interface IContextData {
   login: (data: { email: string; password: string }) => void;
   logout: () => void;
@@ -41,17 +39,14 @@ export const AuthContext = createContext<IContextData>({
     console.log("Fetching User Profile");
   },
 });
-
 //declare a custom hook called useAuth to wrap the context api
 export const useAuth = (): IContextData => {
   return useContext(AuthContext);
 };
-
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const fetchProfile = useRef(true);
-
   const error = useSelector((store: RootState) => store?.auth?.error);
   const loginInProgress = useSelector(
     (store: RootState) => store?.auth?.loginInProgress
@@ -97,10 +92,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   }, [dispatch]);
-
   //make useEffect call to get the getTheLoggedInUser
   useEffect(() => {
-    fetchProfile.current = false;
     dispatch(fetchUserProfileRequest());
   }, [isLoggedIn]); //isLoggedIn
 
@@ -115,6 +108,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoggedOut,
     fetchingLoggedInUser,
   };
+
   return (
     <AuthContext.Provider value={authValues}>{children}</AuthContext.Provider>
   );
