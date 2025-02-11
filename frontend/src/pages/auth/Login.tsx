@@ -2,13 +2,9 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useDispatch, useSelector } from "react-redux";
-// import { loginRequest } from "./slice";
-// import { RootState } from "../../redux/store";
 import { LoaderCircle } from "lucide-react";
 import Notification from "../../components/Notification";
-import { useNavigate } from "react-router-dom";
-// import { useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context";
 import { useEffect } from "react";
 
@@ -19,7 +15,7 @@ const Login = () => {
     handleSubmit,
   } = useForm<ILoginFormData>({
     resolver: zodResolver(loginFormSchema),
-    mode: "onSubmit", //validates form after onSubmit gets triggered
+    mode: "onSubmit",
   });
   const { login, error, loginInProgress, isLoggedIn } = useAuth();
   // //to navigate
@@ -101,6 +97,13 @@ const Login = () => {
             "Sign In"
           )}
         </button>
+        <p className="w-full text-center">
+          Don't have account.{" "}
+          <Link to={"/register"} className="text-blue-400">
+            Register
+          </Link>{" "}
+          here
+        </p>
       </div>
     </form>
   );
