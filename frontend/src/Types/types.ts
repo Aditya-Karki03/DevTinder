@@ -33,6 +33,9 @@ export interface IProfileResponseData {
       email: string;
       age: number;
       gender: string;
+      photoUrl: string;
+      about: string;
+      skills: string[];
     };
   };
 }
@@ -45,6 +48,9 @@ export interface IProfileData {
   email: string;
   age: number;
   gender: string;
+  photoUrl: string;
+  about: string;
+  skills: string[];
 }
 export interface IError {
   error: string;
@@ -77,4 +83,16 @@ export interface IUserFeedResponse {
     message: string;
     user: IUsersInFeed[];
   };
+}
+
+
+export interface ISignUpFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: string;
+  gender: string;
+  about: string;
+  skills: string[];
+  photoUrl: string;
 }

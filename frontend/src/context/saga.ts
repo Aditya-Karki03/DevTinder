@@ -1,4 +1,5 @@
 import {
+  IError,
   ILoginFormData,
   ILoginResponseData,
   ILogoutResponseData,
@@ -32,11 +33,15 @@ function* getLoginData(action: PayloadAction<ILoginFormData>) {
     );
     yield put(loginSuccessfull(data?.data?.user));
   } catch (error: any) {
-    let errorMessage: string = "Something went wrong while logging in";
+    let message: string = "Something went wrong while logging in";
     if (error?.response?.data?.message) {
-      errorMessage = error?.response?.data?.message;
+      message = error?.response?.data?.message;
     }
-    yield put(loginFail(errorMessage));
+    const data: IError = {
+      error: message,
+      errorCode: error?.response?.status,
+    };
+    yield put(loginFail(data));
     // yield put(loginFail())
   }
 }
@@ -51,7 +56,11 @@ function* loggingOut() {
     if (error?.response?.data?.message) {
       errorMessage = error?.response?.data?.message;
     }
-    yield put(logoutFailure(errorMessage));
+    const data: IError = {
+      error: errorMessage,
+      errorCode: error?.response?.status,
+    };
+    yield put(logoutFailure(data));
   }
 }
 
@@ -64,7 +73,11 @@ function* fetchMyProfile() {
     if (error?.response?.data?.message) {
       errorMessage = error?.response?.data?.message;
     }
-    yield put(fetchUserProfileFailure(errorMessage));
+    const data: IError = {
+      error: errorMessage,
+      errorCode: error?.response?.status,
+    };
+    yield put(fetchUserProfileFailure(data));
   }
 }
 

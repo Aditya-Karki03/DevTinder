@@ -11,6 +11,8 @@ import { Provider } from "react-redux";
 import store from "./redux/store.ts";
 import AuthProvider from "./context/index.tsx";
 import ErrorComponent from "./components/ErrorComponent.tsx";
+
+import Register from "./pages/Register/Register.tsx";
 // import Protection from "./components/Protection.tsx";
 
 createRoot(document.getElementById("root")!).render(
@@ -28,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="profile" element={<Profile />} />
                 <Route path="lovers" element={<Lovers />} />
               </Route>
+              <Route path="register" element={<Register />} /> 
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>
