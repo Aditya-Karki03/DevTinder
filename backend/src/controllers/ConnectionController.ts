@@ -85,7 +85,15 @@ export class ConnectionController {
       const allConnections = await Connection.find({
         toRequest: user?._id,
         status: "send",
-      }).populate("fromRequest", ["firstName", "lastName", "gender"]);
+      }).populate("fromRequest", [
+        "firstName",
+        "lastName",
+        "gender",
+        "age",
+        "photoUrl",
+        "about",
+        "skills",
+      ]);
       if (allConnections.length == 0) {
         res.status(400).json({
           message: "No Connection request",

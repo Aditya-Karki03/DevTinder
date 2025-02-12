@@ -1,3 +1,5 @@
+import { StringValidation } from "zod";
+
 export interface ILoginFormData {
   email: string;
   password: string;
@@ -64,24 +66,36 @@ export interface IProfileInitialState {
   loading: boolean;
 }
 
-export interface IUsersInFeed {
+export interface IUserConnectionData {
   _id: string;
   firstName: string;
   lastName: string;
   gender: string;
+  age: string;
+  photoUrl: string;
+  skills: string[];
+  about: string;
 }
 
 export interface IFeedState {
-  userFeed: IUsersInFeed[] | null;
-  userFeedLoading: boolean;
-  userFeedSuccessfull: boolean;
-  userFeedFailure: boolean;
+  userReviewConnections: IUserConnectionData[] | null;
+  userAllRequestLoading: boolean;
+  fetchReviewConnectionsSuccessfull: boolean;
+  fetchReviewConnectionsFailure: boolean;
   error: IError | null;
+  //following data is for reviewing/rejecting the connection request
+  acceptOrRejectionMessage: string | null;
+  reviewingTheRequest: boolean;
+  errorInReviewingRequest: IError | null;
+  allConnectionRequest: boolean;
+  wantToConnectUsers: ILovers[] | null;
+  connectionsLoading: boolean;
+  errorInGettingConnection: IError | null;
 }
 export interface IUserFeedResponse {
   data: {
     message: string;
-    user: IUsersInFeed[];
+    user: IUserConnectionData[];
   };
 }
 
@@ -95,4 +109,41 @@ export interface ISignUpFormData {
   about: string;
   skills: string[];
   photoUrl: string;
+}
+
+export interface ILovers {
+  _id: string;
+  fromRequest: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    age: string;
+    gender: string;
+    photoUrl: string;
+    about: string;
+    skills: string[];
+    toRequest: string;
+    status: string;
+  };
+}
+
+export interface IGetConnectionResponse {
+  data: {
+    message: string;
+    user: ILovers[];
+  };
+}
+
+export interface IShowAllFriends {
+  data: {
+    message: string;
+    user: IProfileData[];
+  };
+}
+export interface IFriendsState {
+  getFriendsSuccessful: boolean;
+  getFriendsFailure: boolean;
+  error: IError | null;
+  friends: IProfileData[] | null;
+  loading: boolean;
 }

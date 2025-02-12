@@ -30,3 +30,29 @@ export const getFeedApiCall = () => {
     withCredentials: true,
   });
 };
+
+//api to accept or reject connection request, status and id of the user who sent the connection request will come
+export const reviewConnectionRequest = (status: string, id: string) => {
+  const data = {};
+  return axios.post(
+    `${API_URL}/v1/user-connection/review-connection/${status}/${id}`,
+    data,
+    {
+      withCredentials: true,
+    }
+  );
+};
+
+//api to get all the connection request
+export const getAllConnectionRequest = () => {
+  return axios.get(`${API_URL}/v1/user-connection/get-connection`, {
+    withCredentials: true,
+  });
+};
+
+//api to get all the friends
+export const getAllFriends = () => {
+  return axios.get(`${API_URL}/v1/user-connection/accepted-connection`, {
+    withCredentials: true,
+  });
+};
