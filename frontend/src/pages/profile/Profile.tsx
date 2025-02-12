@@ -12,7 +12,7 @@ const Profile = () => {
   const userProfileData = useSelector(
     (store: RootState) => store?.profile?.profileData
   );
-  const loading = useSelector((store: RootState) => store?.profile?.loading);
+  //const loading = useSelector((store: RootState) => store?.profile?.loading);
   useEffect(() => {
     dispatch(profileRequest());
     if (error?.errorCode == "401") {

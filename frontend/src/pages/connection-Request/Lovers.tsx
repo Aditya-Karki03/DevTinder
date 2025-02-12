@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   acceptOrRejectConnectionRequest,
-  feedRequest,
   getAllIncomingConnectionRequest,
 } from "./slice";
-import store, { RootState } from "../../redux/store";
+import { RootState } from "../../redux/store";
 
 const Lovers = () => {
   const fetchData = useRef(true);
@@ -16,10 +15,10 @@ const Lovers = () => {
   const connectionRequests = useSelector(
     (store: RootState) => store?.feed?.wantToConnectUsers
   );
-  const error = useSelector((store: RootState) => store?.feed?.error);
-  const feedIsLoading = useSelector(
-    (store: RootState) => store?.feed?.userAllRequestLoading
-  );
+  // const error = useSelector((store: RootState) => store?.feed?.error);
+  // const feedIsLoading = useSelector(
+  //   (store: RootState) => store?.feed?.userAllRequestLoading
+  // );
   useEffect(() => {
     if (fetchData.current) {
       fetchData.current = false;

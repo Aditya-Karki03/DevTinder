@@ -2,7 +2,6 @@ import {
   IError,
   ILoginFormData,
   ILoginResponseData,
-  ILogoutResponseData,
   IProfileResponseData,
 } from "../Types/types";
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -48,7 +47,7 @@ function* getLoginData(action: PayloadAction<ILoginFormData>) {
 
 function* loggingOut() {
   try {
-    const data: ILogoutResponseData = yield call(Api.logoutApiCall);
+    yield call(Api.logoutApiCall);
     yield put(logoutSuccessfull());
   } catch (error: any) {
     console.log(error);

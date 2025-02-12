@@ -3,7 +3,7 @@
 //need error message because error can also occur
 //need loading which tells if loading or not
 //we need to get the loggedInUser if successful
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 import { IError, IUserLoginData } from "../Types/types";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,7 +46,7 @@ export const useAuth = (): IContextData => {
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const fetchProfile = useRef(true);
+  // const fetchProfile = useRef(true);
   const error = useSelector((store: RootState) => store?.auth?.error);
   const loginInProgress = useSelector(
     (store: RootState) => store?.auth?.loginInProgress
