@@ -64,7 +64,7 @@ export interface IProfileInitialState {
   loading: boolean;
 }
 
-export interface IUsersInFeed {
+export interface IUserConnectionData {
   _id: string;
   firstName: string;
   lastName: string;
@@ -76,16 +76,16 @@ export interface IUsersInFeed {
 }
 
 export interface IFeedState {
-  userFeed: IUsersInFeed[] | null;
-  userFeedLoading: boolean;
-  userFeedSuccessfull: boolean;
-  userFeedFailure: boolean;
+  userReviewConnections: IUserConnectionData[] | null;
+  userAllRequestLoading: boolean;
+  fetchReviewConnectionsSuccessfull: boolean;
+  fetchReviewConnectionsFailure: boolean;
   error: IError | null;
 }
 export interface IUserFeedResponse {
   data: {
     message: string;
-    user: IUsersInFeed[];
+    user: IUserConnectionData[];
   };
 }
 

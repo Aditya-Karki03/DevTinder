@@ -3,13 +3,13 @@
 //userFeed failure
 //error
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IError, IFeedState, IUsersInFeed } from "../../Types/types";
+import { IError, IFeedState, IUserConnectionData } from "../../Types/types";
 
 const initialState: IFeedState = {
-  userFeed: null,
-  userFeedLoading: false,
-  userFeedSuccessfull: false,
-  userFeedFailure: false,
+  userReviewConnections: null,
+  userAllRequestLoading: false,
+  fetchReviewConnectionsSuccessfull: false,
+  fetchReviewConnectionsFailure: false,
   error: null,
 };
 
@@ -18,17 +18,20 @@ const userFeedSlice = createSlice({
   initialState,
   reducers: {
     feedRequest: (state) => {
-      state.userFeedLoading = true;
+      state.userAllRequestLoading = true;
       state.error = null;
     },
-    feedRecievedSuccessful: (state, action: PayloadAction<IUsersInFeed[]>) => {
-      state.userFeedSuccessfull = true;
-      state.userFeedLoading = false;
-      state.userFeed = action.payload;
+    feedRecievedSuccessful: (
+      state,
+      action: PayloadAction<IUserConnectionData[]>
+    ) => {
+      state.fetchReviewConnectionsSuccessfull = true;
+      state.userAllRequestLoading = false;
+      state.userReviewConnections = action.payload;
     },
     feedRecievedFailure: (state, action: PayloadAction<IError>) => {
       state.error = action.payload;
-      state.userFeedLoading = false;
+      state.userAllRequestLoading = false;
     },
   },
 });

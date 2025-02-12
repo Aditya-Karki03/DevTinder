@@ -6,10 +6,12 @@ import store, { RootState } from "../../redux/store";
 const Lovers = () => {
   const fetchData = useRef(true);
   const dispatch = useDispatch();
-  const feedData = useSelector((store: RootState) => store?.feed?.userFeed);
+  const feedData = useSelector(
+    (store: RootState) => store?.feed?.userReviewConnections
+  );
   const error = useSelector((store: RootState) => store?.feed?.error);
   const feedIsLoading = useSelector(
-    (store: RootState) => store?.feed?.userFeedLoading
+    (store: RootState) => store?.feed?.userAllRequestLoading
   );
 
   useEffect(() => {
