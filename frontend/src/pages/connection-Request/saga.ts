@@ -63,6 +63,7 @@ function* acceptConnectionRequest(
     const data: string = yield call(() =>
       API.reviewConnectionRequest(action.payload.status, action.payload.id)
     );
+    console.log(data);
     yield put(acceptOrRejectConnectionSuccessfull(data));
   } catch (error: any) {
     let errorMessage =

@@ -49,3 +49,10 @@ export const getAllConnectionRequest = () => {
     withCredentials: true,
   });
 };
+
+//api to get all the friends
+export const getAllFriends = () => {
+  return axios.get(`${API_URL}/v1/user-connection/accepted-connection`, {
+    withCredentials: true,
+  });
+};

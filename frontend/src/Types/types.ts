@@ -132,3 +132,17 @@ export interface IGetConnectionResponse {
     user: ILovers[];
   };
 }
+
+export interface IShowAllFriends {
+  data: {
+    message: string;
+    user: IProfileData[];
+  };
+}
+export interface IFriendsState {
+  getFriendsSuccessful: boolean;
+  getFriendsFailure: boolean;
+  error: IError | null;
+  friends: IProfileData[] | null;
+  loading: boolean;
+}
