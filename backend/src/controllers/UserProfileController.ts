@@ -8,7 +8,16 @@ export class UserProfileController {
     if (user) {
       res.status(201).json({
         message: "Profile Fetched successfully",
-        user,
+        user: {
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          gender: user?.gender,
+          email: user?.email,
+          age: user?.age,
+          about: user?.about,
+          skills: user?.skills,
+          photoUrl: user?.photoUrl,
+        },
       });
       return;
     }
@@ -19,8 +28,8 @@ export class UserProfileController {
   }
   async updateProfile(req: Request, res: Response) {
     const { user } = req;
-    const { firstName, lastName, gender, email, age } = req.body;
-
+    const { firstName, lastName, gender, email, age, about, skills, photoUrl } =
+      req.body;
     //check if user is sending unnecessary data as well
     const { error, message } = userUpdateDataValidator(req);
     if (error) {
@@ -38,6 +47,9 @@ export class UserProfileController {
           gender,
           email,
           age,
+          about,
+          skills,
+          photoUrl,
         },
         {
           new: true,
@@ -51,7 +63,16 @@ export class UserProfileController {
       }
       res.status(200).json({
         message: `${userData?.firstName}, your data is updated successfully`,
-        user: userData,
+        user: {
+          firstName: userData?.firstName,
+          lastName: userData?.lastName,
+          email: userData?.email,
+          age: userData?.age,
+          gender: userData?.gender,
+          photoUrl: userData?.photoUrl,
+          about: userData?.about,
+          skills: userData?.skills,
+        },
       });
     } catch (error) {
       res.status(500).json({

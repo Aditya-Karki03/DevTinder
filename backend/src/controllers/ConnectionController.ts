@@ -180,8 +180,26 @@ export class ConnectionController {
           },
         ],
       })
-        .populate("fromRequest", ["firstName", "lastName", "gender"])
-        .populate("toRequest", ["firstName", "lastName", "gender"]);
+        .populate("fromRequest", [
+          "firstName",
+          "lastName",
+          "gender",
+          "age",
+          "email",
+          "about",
+          "skills",
+          "photoUrl",
+        ])
+        .populate("toRequest", [
+          "firstName",
+          "lastName",
+          "gender",
+          "age",
+          "email",
+          "about",
+          "skills",
+          "photoUrl",
+        ]);
       //send only the required data
       //fromRequest can output the loggedIn as well as the toRequest
       const data = allAcceptedConnections.map((connection: any) =>

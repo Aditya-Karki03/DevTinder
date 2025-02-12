@@ -37,7 +37,7 @@ export class FeedController {
       const filteredUser = await User.find({
         $and: [{ _id: { $nin: Array.from(set) } }, { _id: { $ne: user?._id } }],
       })
-        .select("firstName lastName gender age email skills about photoUrl")
+        .select("firstName lastName gender age email about skills photoUrl")
         .skip(skip)
         .limit(limit);
       //   const filteredUser = allUsers.filter(

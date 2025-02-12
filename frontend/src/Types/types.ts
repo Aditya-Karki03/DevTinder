@@ -99,6 +99,7 @@ export interface IUserFeedResponse {
   };
 }
 
+
 export interface ISignUpFormData {
   firstName: string;
   lastName: string;
