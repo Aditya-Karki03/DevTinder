@@ -1,3 +1,5 @@
+import { StringValidation } from "zod";
+
 export interface ILoginFormData {
   email: string;
   password: string;
@@ -81,6 +83,14 @@ export interface IFeedState {
   fetchReviewConnectionsSuccessfull: boolean;
   fetchReviewConnectionsFailure: boolean;
   error: IError | null;
+  //following data is for reviewing/rejecting the connection request
+  acceptOrRejectionMessage: string | null;
+  reviewingTheRequest: boolean;
+  errorInReviewingRequest: IError | null;
+  allConnectionRequest: boolean;
+  wantToConnectUsers: ILovers[] | null;
+  connectionsLoading: boolean;
+  errorInGettingConnection: IError | null;
 }
 export interface IUserFeedResponse {
   data: {
@@ -98,4 +108,27 @@ export interface ISignUpFormData {
   about: string;
   skills: string[];
   photoUrl: string;
+}
+
+export interface ILovers {
+  _id: string;
+  fromRequest: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    age: string;
+    gender: string;
+    photoUrl: string;
+    about: string;
+    skills: string[];
+    toRequest: string;
+    status: string;
+  };
+}
+
+export interface IGetConnectionResponse {
+  data: {
+    message: string;
+    user: ILovers[];
+  };
 }

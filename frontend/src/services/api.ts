@@ -42,3 +42,10 @@ export const reviewConnectionRequest = (status: string, id: string) => {
     }
   );
 };
+
+//api to get all the connection request
+export const getAllConnectionRequest = () => {
+  return axios.get(`${API_URL}/v1/user-connection/get-connection`, {
+    withCredentials: true,
+  });
+};
