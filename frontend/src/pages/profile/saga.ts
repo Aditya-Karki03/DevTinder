@@ -1,5 +1,5 @@
 import { call, put, takeEvery } from "redux-saga/effects";
-import { IError, IProfileData, IProfileResponseData } from "../../Types/types";
+import { IError, IProfileResponseData } from "../../Types/types";
 import * as API from "../../services/api";
 import { profileFailure, profileRequest, profileSuccessfull } from "./slice";
 

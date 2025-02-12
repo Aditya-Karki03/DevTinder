@@ -1,5 +1,3 @@
-import { StringValidation } from "zod";
-
 export interface ILoginFormData {
   email: string;
   password: string;
@@ -98,7 +96,6 @@ export interface IUserFeedResponse {
     user: IUserConnectionData[];
   };
 }
-
 
 export interface ISignUpFormData {
   firstName: string;

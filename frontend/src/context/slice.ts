@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ILoginFormData, IProfileData } from "../Types/types";
-import { IError, ILoginFormData, IProfileData } from "../Types/types";
-
+import { ILoginFormData, IProfileData, IError } from "../Types/types";
 
 interface IUser {
   _id: string;

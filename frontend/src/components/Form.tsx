@@ -16,7 +16,7 @@ const Form = () => {
   });
   const onSubmit = (data: ISignUpFormData) => {
     console.log("Hello");
-    const formData = new FormData();
+    // const formData = new FormData();
     console.log(data);
   };
   return (

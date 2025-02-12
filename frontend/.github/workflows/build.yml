@@ -1,0 +1,19 @@
+# name of the CI (Continous Integration)
+name: Build on PR
+# the above named workflow will run on the Pull request and will only work for the master branch
+on:
+  pull_request:
+    branches: -master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -uses: actions/checkout@v3
+      -name: Use Node.js
+      uses: actions/setup-node@v3
+      with: node-version: '23'
+      -name: Install Dependencies
+      run: npm install
+      -name: Run Build
+      run: npm run build
+
