@@ -4,7 +4,7 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/auth/Login.tsx";
 import Dashboard from "./components/Dashboard.tsx";
-import Feed from "./components/Feed.tsx";
+import Feed from "./pages/feed/Feed.tsx";
 import Profile from "./pages/profile/Profile.tsx";
 import Lovers from "./pages/connection-Request/Lovers.tsx";
 import { Provider } from "react-redux";
@@ -32,7 +32,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="requests" element={<Lovers />} />
                 <Route path="connections" element={<Connection />} />
               </Route>
-              <Route path="register" element={<Register />} /> 
+              <Route path="register" element={<Register />} />
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>

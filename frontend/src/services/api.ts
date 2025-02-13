@@ -56,3 +56,10 @@ export const getAllFriends = () => {
     withCredentials: true,
   });
 };
+
+//api to get all the feedData
+export const getAllFeedData = () => {
+  return axios.get(`${API_URL}/v1/user-feed/all`, {
+    withCredentials: true,
+  });
+};

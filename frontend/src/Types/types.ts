@@ -144,3 +144,17 @@ export interface IFriendsState {
   friends: IProfileData[] | null;
   loading: boolean;
 }
+
+export interface IFeedInitialState {
+  getFeedSuccessfull: boolean;
+  getFeedFailure: boolean;
+  error: IError | null;
+  loading: boolean;
+  feedData: IProfileData[] | null;
+}
+export interface IFeedDataResponse {
+  data: {
+    message: string;
+    user: IProfileData[];
+  };
+}
