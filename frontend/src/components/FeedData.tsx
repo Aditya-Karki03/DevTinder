@@ -1,17 +1,53 @@
 import { useState } from "react";
+import {
+  motion,
+  MotionValue,
+  useDragControls,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+} from "motion/react";
 
 interface IFeed {
   about: string;
   photoUrl: string;
   firstName: string;
   lastName: string;
+  // x: MotionValue<number>;
 }
 
 const FeedData = ({ about, photoUrl }: IFeed) => {
   const [readMore, setReadMore] = useState(false);
+  //very similar to useState, here value of x is set to 0
+  //the x defines, how mch we moved into x direction in the browser
+  const x = useMotionValue(0);
+  //useMotionValueEvent tracks how much it moves in the x direction
+  // useMotionValueEvent(x, "change", (latest) => {
+  //   // console.log("121212");
+  //   console.log(latest);
+  // });
+
+  //useTransform hook will let me transform my motion div to something
+  //if my x=-150 than opacity=0, if x=0 than opacity=1, if x=150 than opacity=0
+  const opacity = useTransform(x, [-250, 0, 250], [0, 1, 0]);
+  const rotate = useTransform(x, [-250, 250], [-20, 20]);
+  // const backgroundColor = useTransform(x, [-10, 10], ["white", "blue"]);
+
+  const controlls = useDragControls();
+  console.log(controlls);
   return (
-    <div className="mx-auto border border-white/10 h-full w-md rounded-2xl overflow-hidden relative">
+    <motion.div
+      style={{ gridRow: 1, gridColumn: 1, x, opacity, rotate }}
+      className="mx-auto border bg-black border-white/10 h-full w-md rounded-2xl overflow-hidden relative hover:cursor-grab active:cursor-grabbing "
+      drag="x"
+      dragControls={controlls}
+      dragConstraints={{
+        left: 0,
+        right: 0,
+      }}
+    >
       <img
+        draggable={false}
         src={`${photoUrl}`}
         alt="photo"
         className="w-full h-10/12 object-cover rounded"
@@ -59,7 +95,7 @@ const FeedData = ({ about, photoUrl }: IFeed) => {
           </p>
         </div>
       </div> */}
-    </div>
+    </motion.div>
   );
 };
 export default FeedData;
