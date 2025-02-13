@@ -3,6 +3,7 @@ import authSaga from "../context/saga";
 import { getProfileSaga } from "../pages/profile/saga";
 import { getFeedSaga } from "../pages/connection-Request/saga";
 import { getFriendsSaga } from "../pages/connections/saga";
+import { feedSaga } from "../pages/feed/saga";
 
 export default function* rootSaga() {
   yield all([
@@ -10,5 +11,6 @@ export default function* rootSaga() {
     ...getProfileSaga,
     ...getFeedSaga,
     ...getFriendsSaga,
+    ...feedSaga,
   ]);
 }
