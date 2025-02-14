@@ -151,10 +151,23 @@ export interface IFeedInitialState {
   error: IError | null;
   loading: boolean;
   feedData: IProfileData[] | null;
+  //below is for send connection/rejecting the feed
+  connectionRejectionSuccess: boolean;
+  connectionRejectionFailure: boolean;
+  connectionRejectionLoading: boolean;
+  connectionRejectionError: IError | null;
+  message: string | null;
 }
 export interface IFeedDataResponse {
   data: {
     message: string;
     user: IProfileData[];
+  };
+}
+
+export interface IConnectionResponse {
+  data: {
+    message: string;
+    user: IProfileData;
   };
 }

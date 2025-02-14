@@ -7,6 +7,12 @@ const initialState: IFeedInitialState = {
   feedData: null,
   error: null,
   loading: false,
+  //below is for send connection/rejecting the feed
+  connectionRejectionSuccess: false,
+  connectionRejectionFailure: false,
+  connectionRejectionError: null,
+  connectionRejectionLoading: false,
+  message: null,
 };
 
 const feedDataSlice = createSlice({
@@ -27,11 +33,35 @@ const feedDataSlice = createSlice({
       state.getFeedFailure = true;
       state.error = action.payload;
     },
+    manipulateFeedData: (state, action: PayloadAction<IProfileData[]>) => {
+      state.feedData = action.payload;
+    },
+    //below is reducers for send connection/rejecting the feed
+    connectionRejectionRequest: (
+      state,
+      _action: PayloadAction<{ status: string; id: string }>
+    ) => {
+      state.connectionRejectionLoading = true;
+      state.connectionRejectionError = null;
+    },
+    connectionRejectionSuccess: (state) => {
+      state.connectionRejectionLoading = false;
+      state.connectionRejectionSuccess = true;
+    },
+    connectionRejectionFailure: (state, action: PayloadAction<IError>) => {
+      state.connectionRejectionLoading = false;
+      state.connectionRejectionFailure = true;
+      state.connectionRejectionError = action.payload;
+    },
   },
 });
 export const {
   getFeedDataFailure,
   getFeedDataRequest,
   getFeedDataSuccessfull,
+  manipulateFeedData,
+  connectionRejectionRequest,
+  connectionRejectionSuccess,
+  connectionRejectionFailure,
 } = feedDataSlice.actions;
 export default feedDataSlice.reducer;

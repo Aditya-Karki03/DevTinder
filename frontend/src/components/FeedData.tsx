@@ -1,8 +1,6 @@
 import { useState } from "react";
 import {
   motion,
-  MotionValue,
-  useDragControls,
   useMotionValue,
   useMotionValueEvent,
   useTransform,
@@ -13,19 +11,20 @@ interface IFeed {
   photoUrl: string;
   firstName: string;
   lastName: string;
-  // x: MotionValue<number>;
+  setRightSwipe: (data: number) => void;
+  setId: (data: string) => void;
 }
 
-const FeedData = ({ about, photoUrl }: IFeed) => {
+const FeedData = ({ about, photoUrl, setRightSwipe }: IFeed) => {
   const [readMore, setReadMore] = useState(false);
   //very similar to useState, here value of x is set to 0
   //the x defines, how mch we moved into x direction in the browser
   const x = useMotionValue(0);
   //useMotionValueEvent tracks how much it moves in the x direction
-  // useMotionValueEvent(x, "change", (latest) => {
-  //   // console.log("121212");
-  //   console.log(latest);
-  // });
+  useMotionValueEvent(x, "change", (latest) => {
+    // console.log("121212");
+    setRightSwipe(latest);
+  });
 
   //useTransform hook will let me transform my motion div to something
   //if my x=-150 than opacity=0, if x=0 than opacity=1, if x=150 than opacity=0
@@ -33,14 +32,11 @@ const FeedData = ({ about, photoUrl }: IFeed) => {
   const rotate = useTransform(x, [-250, 250], [-20, 20]);
   // const backgroundColor = useTransform(x, [-10, 10], ["white", "blue"]);
 
-  const controlls = useDragControls();
-  console.log(controlls);
   return (
     <motion.div
       style={{ gridRow: 1, gridColumn: 1, x, opacity, rotate }}
       className="mx-auto border bg-black border-white/10 h-full w-md rounded-2xl overflow-hidden relative hover:cursor-grab active:cursor-grabbing "
       drag="x"
-      dragControls={controlls}
       dragConstraints={{
         left: 0,
         right: 0,
@@ -61,19 +57,17 @@ const FeedData = ({ about, photoUrl }: IFeed) => {
           />
         </div>
 
-        <div className="flex-grow">
-          <p className="text-sm overflow-y-scroll">
-            {readMore ? about.substring(0, 100) : about}
-            {about.length > 100 && (
-              <button
-                onClick={() => setReadMore((prev) => !prev)}
-                className="font-semibold cursor-pointer ml-1"
-              >
-                {readMore ? "Read More" : "Read less"}
-              </button>
-            )}
-          </p>
-        </div>
+        <p className="text-sm overflow-y-scroll  h-20">
+          {readMore ? about.substring(0, 100) : about}
+          {about.length > 100 && (
+            <button
+              onClick={() => setReadMore((prev) => !prev)}
+              className="font-semibold cursor-pointer ml-1"
+            >
+              {readMore ? "Read More" : "Read less"}
+            </button>
+          )}
+        </p>
       </div>
       {/* <div className="flex my-auto items-center space-x-4 border border-orange-400 absolute bottom-[4%]   overflow-y-scroll">
         <img
