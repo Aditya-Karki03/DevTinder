@@ -1,42 +1,50 @@
-import { Edit2, MoveLeft, MoveRight } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { MoveLeft, MoveRight } from "lucide-react";
+import {
+  FieldName,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import { ISignUpFormData } from "../Types/types";
-import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerFormSchema } from "../schema/schema";
-import { useState } from "react";
+import {
+  emailFormSchema,
+  personalInfoFormSchema,
+  emailFormSchemaType,
+  personalInfoFormSchemaType,
+  imageFormSchema,
+  imageFormSchemaType,
+  registerFormSchema,
+} from "../schema/schema";
+import { useEffect, useState } from "react";
+import FormEmail from "./FormEmail";
+import FormPersonalInfo from "./FormPersonalInfo";
+import FormPhoto from "./FormPhoto";
+
+type FormData = emailFormSchemaType &
+  personalInfoFormSchemaType &
+  imageFormSchemaType;
+
 const Form = () => {
   const [step, setStep] = useState(0);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ISignUpFormData>({
-    resolver: zodResolver(registerFormSchema),
-    mode: "onSubmit",
-  });
-  const onSubmit = (data: ISignUpFormData) => {
-    console.log("Hello");
-    // const formData = new FormData();
-    console.log(data);
+
+  //it tells depending on which step, which schema is to be parsed by zodValidtor
+  const formToValidate = () => {
+    if (step === 0) {
+      return emailFormSchema;
+    } else if (step === 1) return personalInfoFormSchema;
+    else return imageFormSchema;
   };
+
+  const methods = useForm<FormData>({
+    resolver: zodResolver(formToValidate()),
+    mode: "all",
+  });
 
   //1. Email verification with OTP
   //2. Firstname, lastname, age, gender, about, skills
   //3. Upload photo
 
-  const handleNext = () => {
-    if (step < 2) {
-      setStep((prev) => prev + 1);
-    }
-    console.log(step);
-  };
-  const handlePrev = () => {
-    if (step > 0) {
-      setStep((prev) => prev - 1);
-    }
-    console.log(step);
-  };
   const steps = [
     {
       id: "step-1",
@@ -54,6 +62,27 @@ const Form = () => {
       fields: ["Photo"],
     },
   ];
+
+  const handleNext: SubmitHandler<FormData> = (data) => {
+    console.log(step);
+    if (step < 2) {
+      setStep((prev) => prev + 1);
+    }
+    if (step == 2) {
+      // console.log("Final Form Submission", data);
+    }
+    console.log(step);
+  };
+  const handlePrev = () => {
+    if (step > 0) {
+      setStep((prev) => prev - 1);
+    }
+    console.log(step);
+  };
+  const handleNext2 = () => {
+    alert("Hello world");
+  };
+  console.log(methods.formState.errors);
   return (
     // <form
     //   encType="multipart/form-data"
@@ -196,46 +225,56 @@ const Form = () => {
     //     </p>
     //   </div>
     // </form>
-    <div className="w-full flex flex-col justify-between items-center px-5">
-      <div className="w-full flex justify-around">
-        <span
-          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 0 || step == 1 || step == 2
-              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-              : "bg-white"
-          }`}
-        ></span>
-        <span
-          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 1 || step == 2
-              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-              : "bg-white"
-          }`}
-        ></span>
-        <span
-          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 2
-              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-              : "bg-white"
-          }`}
-        ></span>
-      </div>
-      <div className="flex w-full justify-between">
-        <button
-          className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
-          onClick={handlePrev}
-        >
-          <MoveLeft />
-        </button>
-        <p>{step}</p>
-        <button
-          className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
-          onClick={handleNext}
-        >
-          <MoveRight />
-        </button>
-      </div>
-    </div>
+
+    <FormProvider {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(handleNext)}
+        className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3"
+      >
+        <div className="w-full flex justify-around">
+          <span
+            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+              step == 0 || step == 1 || step == 2
+                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                : "bg-white"
+            }`}
+          ></span>
+          <span
+            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+              step == 1 || step == 2
+                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                : "bg-white"
+            }`}
+          ></span>
+          <span
+            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+              step == 2
+                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                : "bg-white"
+            }`}
+          ></span>
+        </div>
+        <div className="w-full min-h-2/3  ">
+          {step === 0 && <FormEmail />}
+          {step === 1 && <FormPersonalInfo />}
+          {step === 2 && <FormPhoto />}
+        </div>
+        <div className="flex w-full justify-between">
+          <button
+            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
+            onClick={handlePrev}
+          >
+            <MoveLeft />
+          </button>
+          <button
+            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
+            type="submit"
+          >
+            <MoveRight />
+          </button>
+        </div>
+      </form>
+    </FormProvider>
   );
 };
 export default Form;
