@@ -3,7 +3,7 @@ import Form from "../../components/Form";
 const Register = () => {
   return (
     <div className="h-screen flex justify-center items-center ">
-      <div className="flex h-10/12 flex-col bg-white/10 rounded-2xl  p-4 ">
+      <div className="flex h-11/12 flex-col bg-white/10 rounded-2xl  p-4 ">
         <div className="text-center space-y-2 my-5">
           <h2 className="font-extrabold text-4xl text-gray-300">
             Welcome to Developer Tinder!

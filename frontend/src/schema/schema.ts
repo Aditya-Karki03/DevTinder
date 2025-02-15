@@ -13,7 +13,7 @@ const acceptedImgTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const registerFormSchema = z.object({
   email: z.string().email({
-    message: "Invalid Email",
+    message: "Please Enter a Valid Email Address",
   }),
   password: z.string().min(5, {
     message: "Password must be 5 characters",

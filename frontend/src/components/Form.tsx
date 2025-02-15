@@ -2,14 +2,24 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { formSteps } from "../services/constants";
 import { useState } from "react";
-import { regitrationFormSchemaType } from "../schema/schema";
+import {
+  registerFormSchema,
+  regitrationFormSchemaType,
+} from "../schema/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "motion/react";
+
+type fieldName = keyof regitrationFormSchemaType;
+
 const Form = () => {
   const {
     register,
     trigger,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<regitrationFormSchemaType>({
+    resolver: zodResolver(registerFormSchema),
+  });
   const [step, setStep] = useState(0);
   const onSubmit: SubmitHandler<regitrationFormSchemaType> = (data) => {
     console.log(data);
@@ -23,13 +33,26 @@ const Form = () => {
     console.log(step);
   };
 
+  const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
+    console.log(data);
+  };
+
   //to handle right
-  const handleNext = () => {
+  const handleNext = async () => {
+    //this is how we will validate our form step by step
+    //it will get all the fields in that form, eg: for 1st: email & password
+    const fields = formSteps[step].fields;
+    console.log(fields);
+    //below will trigger formValidation for selected fields only and will return promise hence await
+    const success = await trigger(fields as fieldName[], { shouldFocus: true });
+    console.log(success);
+    if (!success) return;
     if (step < 2) {
       setStep((prev) => prev + 1);
     }
     if (step == 2) {
       console.log("Final Form Submission");
+      // handleSubmit(()=>processForm())
     }
   };
   return (
@@ -58,9 +81,12 @@ const Form = () => {
         ></span>
       </div>
       {/* onSubmit={handleSubmit(onSubmit)} */}
-      <form className="w-full min-h-8/10">
+      <form className="w-full min-h-8/10 ">
         {step === 0 && (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+          <motion.div
+            animate={{ x: "-50%", opacity: 1 }}
+            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+          >
             <div className="w-full max-w-md">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
                 Enter Your Email & Click on Verify
@@ -86,6 +112,11 @@ const Form = () => {
                   } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                   placeholder="Enter your email"
                 />
+                {errors?.email && (
+                  <p className="text-sm text-red-500">
+                    {errors?.email?.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -103,12 +134,17 @@ const Form = () => {
                   } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                   placeholder="Enter your password"
                 />
+                {errors?.password && (
+                  <p className="text-sm text-red-500">
+                    {errors?.password?.message}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
         {step === 1 && (
-          <div className="w-full h-full flex flex-col items-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+          <motion.div className="w-full h-full flex flex-col items-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
             <div className="w-full max-w-4xl">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
                 Enter Your Personal Information
@@ -138,6 +174,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                     placeholder="Enter your firstname"
                   />
+                  {errors?.firstName && (
+                    <p className="text-sm text-red-500">
+                      {errors?.firstName?.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -155,6 +196,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                     placeholder="Enter your age"
                   />
+                  {errors?.age && (
+                    <p className="text-sm text-red-500">
+                      {errors?.age?.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -172,6 +218,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                     placeholder="Enter your skills"
                   />
+                  {errors?.skills && (
+                    <p className="text-sm text-red-500">
+                      {errors?.skills?.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -192,6 +243,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                     placeholder="Enter your lastname"
                   />
+                  {errors?.lastName && (
+                    <p className="text-sm text-red-500">
+                      {errors?.lastName?.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -209,6 +265,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
                     placeholder="Enter your gender"
                   />
+                  {errors?.gender && (
+                    <p className="text-sm text-red-500">
+                      {errors?.gender?.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -229,10 +290,10 @@ const Form = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
         {step === 2 && (
-          <div className="w-full h-full">
+          <motion.div className="w-full h-full">
             <div className="relative w-full h-1/4 min-h-[200px]">
               <input
                 type="file"
@@ -268,7 +329,7 @@ const Form = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </form>
       <div className="flex w-full justify-between">

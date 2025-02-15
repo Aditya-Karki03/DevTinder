@@ -2,7 +2,7 @@ export const formSteps = [
   {
     id: "Step-1",
     name: "Email Veriifcation",
-    fields: ["email", "otp"],
+    fields: ["email", "password"],
   },
   {
     id: "Step-2",
