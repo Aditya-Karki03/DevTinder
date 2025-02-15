@@ -68,8 +68,8 @@ const Form = () => {
     if (step < 2) {
       setStep((prev) => prev + 1);
     }
-    if (step == 2) {
-      // console.log("Final Form Submission", data);
+    if (step == 1) {
+      console.log("Final Form Submission", data);
     }
     console.log(step);
   };
@@ -78,9 +78,6 @@ const Form = () => {
       setStep((prev) => prev - 1);
     }
     console.log(step);
-  };
-  const handleNext2 = () => {
-    alert("Hello world");
   };
   console.log(methods.formState.errors);
   return (
@@ -229,6 +226,7 @@ const Form = () => {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(handleNext)}
+        encType="multipart/form-data"
         className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3"
       >
         <div className="w-full flex justify-around">

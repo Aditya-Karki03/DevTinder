@@ -8,7 +8,7 @@ export const loginFormSchema = z.object({
   }),
 });
 
-const maxImgSize = 5000000;
+const maxImgSize = 5 * 1024 * 1024;
 const acceptedImgTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const registerFormSchema = z.object({
@@ -39,10 +39,10 @@ export const registerFormSchema = z.object({
   // }),
   image: z
     .any()
-    .refine((img) => img?.size <= maxImgSize, {
+    .refine((images) => images?.[0].size <= maxImgSize, {
       message: "Image size should be within 5MB",
     })
-    .refine((file) => acceptedImgTypes.includes(file?.type), {
+    .refine((images) => acceptedImgTypes.includes(images?.[0].type), {
       message: "Only .jpg, .jpeg, .png and .webp formats are supported",
     }),
 });
