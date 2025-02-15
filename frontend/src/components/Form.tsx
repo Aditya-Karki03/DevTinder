@@ -20,6 +20,16 @@ import { useEffect, useState } from "react";
 import FormEmail from "./FormEmail";
 import FormPersonalInfo from "./FormPersonalInfo";
 import FormPhoto from "./FormPhoto";
+import RegistrationProvider, {
+  IContextRegistration,
+  useRegistration,
+} from "../context/register-context";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  emailAndPassword,
+  personalInfo,
+} from "../context/register-context/slice";
+import { RootState } from "../redux/store";
 
 type FormData = emailFormSchemaType &
   personalInfoFormSchemaType &
@@ -27,6 +37,10 @@ type FormData = emailFormSchemaType &
 
 const Form = () => {
   const [step, setStep] = useState(0);
+  const dispatch = useDispatch();
+  const { about } = useRegistration();
+  //all registration data is stored in the redux store so for now accessing using useSelector
+  const allData = useSelector((store: RootState) => store?.registration);
 
   //it tells depending on which step, which schema is to be parsed by zodValidtor
   const formToValidate = () => {
@@ -45,33 +59,31 @@ const Form = () => {
   //2. Firstname, lastname, age, gender, about, skills
   //3. Upload photo
 
-  const steps = [
-    {
-      id: "step-1",
-      name: "Email Verification",
-      fields: ["Email", "OTP"],
-    },
-    {
-      id: "step-2",
-      name: "Personal Information",
-      fields: ["firstName", "lastName", "age", "gender", "about", "skills"],
-    },
-    {
-      id: "step-3",
-      name: "Upload Picture",
-      fields: ["Photo"],
-    },
-  ];
-
   const handleNext: SubmitHandler<FormData> = (data) => {
-    console.log(step);
+    if (data?.email && data?.password) {
+      dispatch(emailAndPassword(data));
+    } else if (
+      data?.firstName &&
+      data?.lastName &&
+      data?.age &&
+      data?.gender &&
+      data?.skills &&
+      data?.about
+    ) {
+      const { image, email, password, ...personalInfoData } = data;
+      dispatch(personalInfo(personalInfoData));
+    } else if (data?.image) {
+      const { image } = data;
+      dispatch(image(image));
+    }
+
     if (step < 2) {
       setStep((prev) => prev + 1);
     }
-    if (step == 1) {
-      console.log("Final Form Submission", data);
+    if (step == 2) {
+      console.log("Final Form Submission", allData);
     }
-    console.log(step);
+    console.log(allData);
   };
   const handlePrev = () => {
     if (step > 0) {
@@ -222,57 +234,58 @@ const Form = () => {
     //     </p>
     //   </div>
     // </form>
-
-    <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(handleNext)}
-        encType="multipart/form-data"
-        className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3"
-      >
-        <div className="w-full flex justify-around">
-          <span
-            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-              step == 0 || step == 1 || step == 2
-                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                : "bg-white"
-            }`}
-          ></span>
-          <span
-            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-              step == 1 || step == 2
-                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                : "bg-white"
-            }`}
-          ></span>
-          <span
-            className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-              step == 2
-                ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                : "bg-white"
-            }`}
-          ></span>
-        </div>
-        <div className="w-full min-h-2/3  ">
-          {step === 0 && <FormEmail />}
-          {step === 1 && <FormPersonalInfo />}
-          {step === 2 && <FormPhoto />}
-        </div>
-        <div className="flex w-full justify-between">
-          <button
-            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
-            onClick={handlePrev}
-          >
-            <MoveLeft />
-          </button>
-          <button
-            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
-            type="submit"
-          >
-            <MoveRight />
-          </button>
-        </div>
-      </form>
-    </FormProvider>
+    <RegistrationProvider>
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit(handleNext)}
+          encType="multipart/form-data"
+          className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3"
+        >
+          <div className="w-full flex justify-around">
+            <span
+              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+                step == 0 || step == 1 || step == 2
+                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                  : "bg-white"
+              }`}
+            ></span>
+            <span
+              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+                step == 1 || step == 2
+                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                  : "bg-white"
+              }`}
+            ></span>
+            <span
+              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+                step == 2
+                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+                  : "bg-white"
+              }`}
+            ></span>
+          </div>
+          <div className="w-full min-h-2/3  ">
+            {step === 0 && <FormEmail />}
+            {step === 1 && <FormPersonalInfo />}
+            {step === 2 && <FormPhoto />}
+          </div>
+          <div className="flex w-full justify-between">
+            <button
+              className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
+              onClick={handlePrev}
+            >
+              <MoveLeft />
+            </button>
+            <button
+              className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
+              type="submit"
+            >
+              <MoveRight />
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </RegistrationProvider>
   );
 };
 export default Form;

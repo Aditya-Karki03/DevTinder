@@ -171,3 +171,15 @@ export interface IConnectionResponse {
     user: IProfileData;
   };
 }
+
+export interface IRegistrationFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  age: string;
+  gender: string;
+  photoUrl: any;
+  about: string;
+  skills: string;
+}
