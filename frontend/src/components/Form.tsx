@@ -1,291 +1,291 @@
+import { SubmitHandler, useForm } from "react-hook-form";
 import { MoveLeft, MoveRight } from "lucide-react";
-import {
-  FieldName,
-  FormProvider,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
-import { ISignUpFormData } from "../Types/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  emailFormSchema,
-  personalInfoFormSchema,
-  emailFormSchemaType,
-  personalInfoFormSchemaType,
-  imageFormSchema,
-  imageFormSchemaType,
-  registerFormSchema,
-} from "../schema/schema";
-import { useEffect, useState } from "react";
-import FormEmail from "./FormEmail";
-import FormPersonalInfo from "./FormPersonalInfo";
-import FormPhoto from "./FormPhoto";
-import RegistrationProvider, {
-  IContextRegistration,
-  useRegistration,
-} from "../context/register-context";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  emailAndPassword,
-  personalInfo,
-} from "../context/register-context/slice";
-import { RootState } from "../redux/store";
-
-type FormData = emailFormSchemaType &
-  personalInfoFormSchemaType &
-  imageFormSchemaType;
-
+import { formSteps } from "../services/constants";
+import { useState } from "react";
+import { regitrationFormSchemaType } from "../schema/schema";
 const Form = () => {
+  const {
+    register,
+    trigger,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const [step, setStep] = useState(0);
-  const dispatch = useDispatch();
-  const { about } = useRegistration();
-  //all registration data is stored in the redux store so for now accessing using useSelector
-  const allData = useSelector((store: RootState) => store?.registration);
-
-  //it tells depending on which step, which schema is to be parsed by zodValidtor
-  const formToValidate = () => {
-    if (step === 0) {
-      return emailFormSchema;
-    } else if (step === 1) return personalInfoFormSchema;
-    else return imageFormSchema;
+  const onSubmit: SubmitHandler<regitrationFormSchemaType> = (data) => {
+    console.log(data);
   };
 
-  const methods = useForm<FormData>({
-    resolver: zodResolver(formToValidate()),
-    mode: "all",
-  });
-
-  //1. Email verification with OTP
-  //2. Firstname, lastname, age, gender, about, skills
-  //3. Upload photo
-
-  const handleNext: SubmitHandler<FormData> = (data) => {
-    if (data?.email && data?.password) {
-      dispatch(emailAndPassword(data));
-    } else if (
-      data?.firstName &&
-      data?.lastName &&
-      data?.age &&
-      data?.gender &&
-      data?.skills &&
-      data?.about
-    ) {
-      const { image, email, password, ...personalInfoData } = data;
-      dispatch(personalInfo(personalInfoData));
-    } else if (data?.image) {
-      const { image } = data;
-      dispatch(image(image));
-    }
-
-    if (step < 2) {
-      setStep((prev) => prev + 1);
-    }
-    if (step == 2) {
-      console.log("Final Form Submission", allData);
-    }
-    console.log(allData);
-  };
+  //to move left
   const handlePrev = () => {
     if (step > 0) {
       setStep((prev) => prev - 1);
     }
     console.log(step);
   };
-  console.log(methods.formState.errors);
+
+  //to handle right
+  const handleNext = () => {
+    if (step < 2) {
+      setStep((prev) => prev + 1);
+    }
+    if (step == 2) {
+      console.log("Final Form Submission");
+    }
+  };
   return (
-    // <form
-    //   encType="multipart/form-data"
-    //   onSubmit={handleSubmit(onSubmit)}
-    //   className=" mx-auto bg-white/10 backdrop-blur-sm p-8 rounded-xl shadow-lg space-y-6 border border-white/20"
-    // >
-    //   <div className="space-y-6">
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="firstName"
-    //         className="block text-sm font-medium text-white"
-    //       >
-    //         First name
-    //       </label>
-    //       <input
-    //         type="text"
-    //         {...register("firstName")}
-    //         placeholder="First Name"
-    //         className={`w-full px-2 py-3 bg-white/5 border border-white/10 rounded-md outline-none transition-all duration-200 placeholder:text-white/50 text-white ${
-    //           errors.firstName
-    //             ? "focus:border-red-500"
-    //             : "focus:border-blue-500"
-    //         }`}
-    //       />
-    //       {errors?.firstName && (
-    //         <p className="text-sm text-red-400">{errors.firstName?.message}</p>
-    //       )}
-    //     </div>
+    <div className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3">
+      <div className="w-full flex justify-around">
+        <span
+          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+            step == 0 || step == 1 || step == 2
+              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+              : "bg-white"
+          }`}
+        ></span>
+        <span
+          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+            step == 1 || step == 2
+              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+              : "bg-white"
+          }`}
+        ></span>
+        <span
+          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+            step == 2
+              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+              : "bg-white"
+          }`}
+        ></span>
+      </div>
+      {/* onSubmit={handleSubmit(onSubmit)} */}
+      <form className="w-full min-h-8/10">
+        {step === 0 && (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+            <div className="w-full max-w-md">
+              <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
+                Enter Your Email & Click on Verify
+              </h2>
+              <p className="text-gray-400 text-sm text-center">
+                Please provide your credentials to continue
+              </p>
+            </div>
 
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="lastName"
-    //         className="block text-sm font-medium text-white"
-    //       >
-    //         Last Name
-    //       </label>
-    //       <input
-    //         type="text"
-    //         {...register("lastName")}
-    //         placeholder="Last Name"
-    //         className={`w-full px-2 py-3 bg-white/5 border border-white/10 rounded-md outline-none transition-all duration-200 placeholder:text-white/50 text-white ${
-    //           errors.lastName ? "focus:border-red-500" : "focus:border-blue-500"
-    //         }`}
-    //       />
-    //       {errors?.lastName && (
-    //         <p className="text-sm text-red-400">{errors.lastName?.message}</p>
-    //       )}
-    //     </div>
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="email"
-    //         className="block text-sm font-medium text-white"
-    //       >
-    //         Email:
-    //       </label>
-    //       <input
-    //         type="text"
-    //         {...register("email")}
-    //         placeholder="emails"
-    //         className={`w-full px-2 py-3 bg-white/5 border border-white/10 rounded-md outline-none transition-all duration-200 placeholder:text-white/50 text-white ${
-    //           errors.email ? "focus:border-red-500" : "focus:border-blue-500"
-    //         }`}
-    //       />
-    //       {errors?.email && (
-    //         <p className="text-sm text-red-400">{errors.email?.message}</p>
-    //       )}
-    //     </div>
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="about"
-    //         className="block text-sm font-medium text-white"
-    //       >
-    //         Tell us about yourself:
-    //       </label>
-    //       <textarea
-    //         {...register("about")}
-    //         rows={4}
-    //         placeholder="Share something about yourself..."
-    //         className={`w-full px-2 py-3 bg-white/5 border border-white/10 rounded-md outline-none transition-all duration-200 placeholder:text-white/50 text-white ${
-    //           errors.about ? "focus:border-red-500" : "focus:border-blue-500"
-    //         }`}
-    //       />
-    //       {errors?.about && (
-    //         <p className="text-sm text-red-400">{errors.about?.message}</p>
-    //       )}
-    //     </div>
+            <div className="w-full max-w-md space-y-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-300"
+                >
+                  Email
+                </label>
+                <input
+                  type="text"
+                  {...register("email")}
+                  className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
+                    errors?.email ? "border-red-500/50" : "border-white/10"
+                  } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                  placeholder="Enter your email"
+                />
+              </div>
 
-    //     {/* Skills */}
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="skills"
-    //         className="block text-sm font-medium text-white"
-    //       >
-    //         Skills
-    //       </label>
-    //       <input
-    //         type="text"
-    //         {...register("skills")}
-    //         placeholder="e.g., JavaScript, React, Node.js (comma separated)"
-    //         className={`w-full px-2 py-3 bg-white/5 border border-white/10 rounded-md outline-none transition-all duration-200 placeholder:text-white/50 text-white ${
-    //           errors.skills ? "focus:border-red-500" : "focus:border-blue-500"
-    //         }`}
-    //       />
-    //       {errors?.skills && (
-    //         <p className="text-sm text-red-400">{errors.skills?.message}</p>
-    //       )}
-    //     </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-300"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  {...register("password")}
+                  className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
+                    errors?.password ? "border-red-500/50" : "border-white/10"
+                  } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        {step === 1 && (
+          <div className="w-full h-full flex flex-col items-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+            <div className="w-full max-w-4xl">
+              <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
+                Enter Your Personal Information
+              </h2>
+              <p className="text-gray-400 text-sm text-center">
+                Please fill in all the required details
+              </p>
+            </div>
 
-    //     {/* Photo Upload */}
-    //     <div className="space-y-2">
-    //       <label
-    //         htmlFor="photo"
-    //         className="flex items-center gap-2 text-sm font-medium text-white cursor-pointer group"
-    //       >
-    //         <div className="p-2 border border-white/20 rounded-lg group-hover:border-white/50 transition-colors duration-200 bg-white/5">
-    //           <Edit2 className="w-5 h-5 text-white/70 group-hover:text-white" />
-    //         </div>
-    //         <span>Upload Photo</span>
-    //       </label>
-    //       <input
-    //         type="file"
-    //         id="photo"
-    //         accept=".png, .jpg, .jpeg, .svg"
-    //         className="hidden"
-    //       />
-    //     </div>
+            <div className="w-full max-w-4xl grid grid-cols-2 gap-8 pt-4">
+              {/* Left Column */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Firstname
+                  </label>
+                  <input
+                    type="text"
+                    {...register("firstName")}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.firstName
+                        ? "border-red-500/50"
+                        : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                    placeholder="Enter your firstname"
+                  />
+                </div>
 
-    //     {/* Submit Button */}
-    //     <button
-    //       type="submit"
-    //       className="w-full bg-blue-500 hover:bg-blue-600  text-white font-medium py-2 px-4 rounded-lg focus:ring-4 focus:ring-white/30 transition-all duration-200 border border-white/20 hover:cursor-pointer"
-    //     >
-    //       Sign up
-    //     </button>
-    //     <p className="text-center mt-2">
-    //       Already have an account?{" "}
-    //       <Link to={"/"} className="text-blue-400">
-    //         Login
-    //       </Link>
-    //     </p>
-    //   </div>
-    // </form>
-    <RegistrationProvider>
-      <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(handleNext)}
-          encType="multipart/form-data"
-          className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3"
+                <div className="space-y-2">
+                  <label
+                    htmlFor="age"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Age
+                  </label>
+                  <input
+                    type="number"
+                    {...register("age")}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.age ? "border-red-500/50" : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                    placeholder="Enter your age"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="skills"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Skills
+                  </label>
+                  <input
+                    type="text"
+                    {...register("skills")}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.skills ? "border-red-500/50" : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                    placeholder="Enter your skills"
+                  />
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Lastname
+                  </label>
+                  <input
+                    type="text"
+                    {...register("lastName")}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.lastName ? "border-red-500/50" : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                    placeholder="Enter your lastname"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="gender"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    Gender
+                  </label>
+                  <input
+                    type="text"
+                    {...register("gender")}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.gender ? "border-red-500/50" : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                    placeholder="Enter your gender"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label
+                    htmlFor="about"
+                    className="block text-sm font-medium text-gray-300"
+                  >
+                    About
+                  </label>
+                  <textarea
+                    {...register("about")}
+                    rows={4}
+                    className={`w-full px-4 py-3 rounded-lg bg-black/20 border ${
+                      errors?.about ? "border-red-500/50" : "border-white/10"
+                    } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 resize-none`}
+                    placeholder="Tell us about yourself"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
+          <div className="w-full h-full">
+            <div className="relative w-full h-1/4 min-h-[200px]">
+              <input
+                type="file"
+                {...register("image")}
+                className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+              />
+              <div className="w-full h-full border-2 border-dashed border-white/20 rounded-lg bg-black/20 backdrop-blur-sm flex flex-col items-center justify-center p-6 hover:border-blue-500/50 transition-colors duration-200">
+                <div className="flex flex-col items-center gap-3 text-gray-300">
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  <div className="text-center">
+                    <p className="text-gray-200 font-medium">
+                      Drag and drop your image here
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      or click to select file
+                    </p>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </form>
+      <div className="flex w-full justify-between">
+        <button
+          className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
+          onClick={handlePrev}
         >
-          <div className="w-full flex justify-around">
-            <span
-              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-                step == 0 || step == 1 || step == 2
-                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                  : "bg-white"
-              }`}
-            ></span>
-            <span
-              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-                step == 1 || step == 2
-                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                  : "bg-white"
-              }`}
-            ></span>
-            <span
-              className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-                step == 2
-                  ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
-                  : "bg-white"
-              }`}
-            ></span>
-          </div>
-          <div className="w-full min-h-2/3  ">
-            {step === 0 && <FormEmail />}
-            {step === 1 && <FormPersonalInfo />}
-            {step === 2 && <FormPhoto />}
-          </div>
-          <div className="flex w-full justify-between">
-            <button
-              className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
-              onClick={handlePrev}
-            >
-              <MoveLeft />
-            </button>
-            <button
-              className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
-              type="submit"
-            >
-              <MoveRight />
-            </button>
-          </div>
-        </form>
-      </FormProvider>
-    </RegistrationProvider>
+          <MoveLeft />
+        </button>
+        <button
+          className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
+          onClick={handleNext}
+        >
+          <MoveRight />
+        </button>
+      </div>
+    </div>
   );
 };
 export default Form;

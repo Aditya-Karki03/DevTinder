@@ -67,3 +67,4 @@ export const imageFormSchema = registerFormSchema.pick({
 export type emailFormSchemaType = z.infer<typeof emailFormSchema>;
 export type personalInfoFormSchemaType = z.infer<typeof personalInfoFormSchema>;
 export type imageFormSchemaType = z.infer<typeof imageFormSchema>;
+export type regitrationFormSchemaType = z.infer<typeof registerFormSchema>;
