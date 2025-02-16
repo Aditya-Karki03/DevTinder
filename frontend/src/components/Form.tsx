@@ -7,7 +7,7 @@ import {
   regitrationFormSchemaType,
 } from "../schema/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion } from "motion/react";
+import { easeInOut, motion } from "motion/react";
 
 type fieldName = keyof regitrationFormSchemaType;
 
@@ -81,10 +81,12 @@ const Form = () => {
         ></span>
       </div>
       {/* onSubmit={handleSubmit(onSubmit)} */}
-      <form className="w-full min-h-8/10 ">
+      <form className="w-full min-h-8/10 overflow-hidden">
         {step === 0 && (
           <motion.div
-            animate={{ x: "-50%", opacity: 1 }}
+            initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
           >
             <div className="w-full max-w-md">
@@ -144,7 +146,12 @@ const Form = () => {
           </motion.div>
         )}
         {step === 1 && (
-          <motion.div className="w-full h-full flex flex-col items-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+          <motion.div
+            initial={{ x: `${step >= 1 ? "50%" : "-50%"}`, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full h-full flex flex-col items-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+          >
             <div className="w-full max-w-4xl">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
                 Enter Your Personal Information
