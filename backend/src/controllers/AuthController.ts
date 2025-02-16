@@ -4,7 +4,43 @@ import { signupDataValidation, verifyPassword } from "../utils/validation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
+import { generateOtp } from "../utils/otpGenerator";
 export class AuthController {
+  //method to verify email, if email does not exist send OTP
+  async verifyEmail(req: Request, res: Response) {
+    const { email } = req.body;
+    //check if email exist in the db
+    try {
+      const user = await User.findOne({ email });
+      if (user) {
+        res.status(400).json({
+          message:
+            "User with this email already exist. Try with different email",
+          otp: null,
+        });
+        return;
+      }
+      const otp = await generateOtp(email);
+      //write a logic to send otp via email
+      if (otp) {
+        res.status(200).json({
+          message: "OTP Sent Successfully",
+          otp,
+        });
+        return;
+      }
+      res.status(400).json({
+        message: "Unable to generate OTP, at this moment",
+        otp: null,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong, while processing OTP. Please try again",
+        otp: null,
+      });
+    }
+  }
+
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const {

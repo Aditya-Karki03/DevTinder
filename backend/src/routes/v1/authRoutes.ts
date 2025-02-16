@@ -5,6 +5,7 @@ const authRoutes = express.Router();
 
 const authController = new AuthController();
 
+authRoutes.post("/verify-email", authController.verifyEmail);
 //user signup route
 authRoutes.post("/signup", authController.createUser);
 authRoutes.post("/login", authController.login);
