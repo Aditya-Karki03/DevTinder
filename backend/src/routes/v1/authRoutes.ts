@@ -5,7 +5,8 @@ const authRoutes = express.Router();
 
 const authController = new AuthController();
 
-authRoutes.post("/verify-email", authController.sendOtpForEmailVerification);
+authRoutes.post("/send-otp", authController.sendOtpForEmailVerification);
+authRoutes.post("/verify-otp", authController.otpVerification);
 //user signup route
 authRoutes.post("/signup", authController.createUser);
 authRoutes.post("/login", authController.login);

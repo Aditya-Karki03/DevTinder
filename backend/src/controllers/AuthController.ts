@@ -4,7 +4,7 @@ import { signupDataValidation, verifyPassword } from "../utils/validation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
-import { generateOtp } from "../utils/otpGenerator";
+import { generateOtp, verifyOtp } from "../utils/otpGenerator";
 import { sendOtpEmail } from "../utils/email";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
@@ -40,6 +40,22 @@ export class AuthController {
         otp: null,
       });
     }
+  }
+
+  async otpVerification(req: Request, res: Response) {
+    const { otp, hash, email } = req.body;
+    const { isVerified, message } = await verifyOtp(email, hash, otp);
+    if (!isVerified) {
+      res.status(400).json({
+        isVerified,
+        message,
+      });
+      return;
+    }
+    res.status(200).json({
+      isVerified,
+      message,
+    });
   }
 
   //method to create instance of user in the database
