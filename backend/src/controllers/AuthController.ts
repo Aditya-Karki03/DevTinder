@@ -5,9 +5,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
 import { generateOtp } from "../utils/otpGenerator";
+import { sendOtpEmail } from "../utils/email";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
-  async verifyEmail(req: Request, res: Response) {
+  async sendOtpForEmailVerification(req: Request, res: Response) {
     const { email } = req.body;
     //check if email exist in the db
     try {
@@ -16,22 +17,22 @@ export class AuthController {
         res.status(400).json({
           message:
             "User with this email already exist. Try with different email",
-          otp: null,
         });
         return;
       }
-      const otp = await generateOtp(email);
+      const { hashedData, otp } = await generateOtp(email);
       //write a logic to send otp via email
-      if (otp) {
-        res.status(200).json({
-          message: "OTP Sent Successfully",
-          otp,
+      const mailResponse = await sendOtpEmail(otp.toString(), email);
+      if (mailResponse.error) {
+        res.status(500).json({
+          message:
+            "Unable to send OTP, please contact CEO: adityakarki03@gmail.com",
         });
         return;
       }
-      res.status(400).json({
-        message: "Unable to generate OTP, at this moment",
-        otp: null,
+      res.status(200).json({
+        message: `OTP sent to ${email}`,
+        hash: hashedData,
       });
     } catch (error) {
       res.status(500).json({

@@ -10,7 +10,10 @@ export const generateOtp = async (email: string) => {
   const data = `${email}.${randomSixDigitOtp}.${validityTime}`;
   const hash = await bcrypt.hash(data, 10);
   const fullHash = `${hash}.${validityTime}`;
-  return fullHash;
+  return {
+    hashedData: fullHash,
+    otp: randomSixDigitOtp,
+  };
 };
 
 export const verifyOtp = async (email: string, hash: string, otp: string) => {
