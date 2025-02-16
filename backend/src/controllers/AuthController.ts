@@ -4,7 +4,60 @@ import { signupDataValidation, verifyPassword } from "../utils/validation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
+import { generateOtp, verifyOtp } from "../utils/otpGenerator";
+import { sendOtpEmail } from "../utils/email";
 export class AuthController {
+  //method to verify email, if email does not exist send OTP
+  async sendOtpForEmailVerification(req: Request, res: Response) {
+    const { email } = req.body;
+    //check if email exist in the db
+    try {
+      const user = await User.findOne({ email });
+      if (user) {
+        res.status(400).json({
+          message:
+            "User with this email already exist. Try with different email",
+        });
+        return;
+      }
+      const { hashedData, otp } = await generateOtp(email);
+      //write a logic to send otp via email
+      const mailResponse = await sendOtpEmail(otp.toString(), email);
+      if (mailResponse.error) {
+        res.status(500).json({
+          message:
+            "Unable to send OTP, please contact CEO: adityakarki03@gmail.com",
+        });
+        return;
+      }
+      res.status(200).json({
+        message: `OTP sent to ${email}`,
+        hash: hashedData,
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Something went wrong, while processing OTP. Please try again",
+        otp: null,
+      });
+    }
+  }
+
+  async otpVerification(req: Request, res: Response) {
+    const { otp, hash, email } = req.body;
+    const { isVerified, message } = await verifyOtp(email, hash, otp);
+    if (!isVerified) {
+      res.status(400).json({
+        isVerified,
+        message,
+      });
+      return;
+    }
+    res.status(200).json({
+      isVerified,
+      message,
+    });
+  }
+
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const {

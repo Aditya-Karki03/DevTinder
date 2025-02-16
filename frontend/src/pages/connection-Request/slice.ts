@@ -63,7 +63,7 @@ const userFeedSlice = createSlice({
     //reducers to accept or reject the connection request
     acceptOrRejectConnectionRequest: (
       state,
-      _action: PayloadAction<{ id: string; status: string }>
+      _action: PayloadAction<{ status: string; id: string }>
     ) => {
       state.errorInReviewingRequest = null;
       state.reviewingTheRequest = true;
