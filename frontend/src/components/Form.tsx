@@ -1,13 +1,16 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { MoveLeft, MoveRight } from "lucide-react";
+import { Loader2, MoveLeft, MoveRight } from "lucide-react";
 import { formSteps } from "../services/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   registerFormSchema,
   regitrationFormSchemaType,
+  otpSchema,
 } from "../schema/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { easeInOut, motion } from "motion/react";
+import { motion } from "motion/react";
+import { useRegistration } from "../context/register-context";
+import ReactOtpInput from "react-otp-input";
 
 type fieldName = keyof regitrationFormSchemaType;
 
@@ -17,14 +20,24 @@ const Form = () => {
     trigger,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<regitrationFormSchemaType>({
     resolver: zodResolver(registerFormSchema),
   });
   const [step, setStep] = useState(0);
+  const [otp, setOtp] = useState("");
+  const {
+    sendOtp,
+    verifyOtp,
+    otpVerified,
+    error,
+    otpSendingInProgress,
+    hash,
+    registeredUser,
+  } = useRegistration();
   const onSubmit: SubmitHandler<regitrationFormSchemaType> = (data) => {
     console.log(data);
   };
-
   //to move left
   const handlePrev = () => {
     if (step > 0) {
@@ -42,39 +55,80 @@ const Form = () => {
     //this is how we will validate our form step by step
     //it will get all the fields in that form, eg: for 1st: email & password
     const fields = formSteps[step].fields;
-    console.log(fields);
     //below will trigger formValidation for selected fields only and will return promise hence await
     const success = await trigger(fields as fieldName[], { shouldFocus: true });
     console.log(success);
     if (!success) return;
-    if (step < 2) {
+    //if 1st step than make api request to generate OTP
+    if (step == 0) {
+      const email = getValues("email");
+      sendOtp({ email });
+      if (error) return;
+    }
+    if (step < 3) {
       setStep((prev) => prev + 1);
     }
-    if (step == 2) {
+    if (step == 3) {
       console.log("Final Form Submission");
       // handleSubmit(()=>processForm())
     }
   };
+  useEffect(() => {
+    //autmatically trigger the handleOtpSubmit function
+    if (otp.length == 6) {
+      handleOtp();
+    }
+  }, [otp]);
+  const handleOtp = () => {
+    const data = otpSchema.safeParse({ otp });
+
+    if (!data.success) {
+      //toaster to notification purposes
+      // return <Notification error={true} message="Invalid OTP" />;
+      return;
+    }
+    verifyOtp({ email: registeredUser?.email || "", otp, hash: hash || "" });
+    if (!otpVerified) {
+      //give a message for the toaster
+      return;
+    }
+    setStep((prev) => prev + 1);
+  };
+
+  if (otpSendingInProgress) {
+    return (
+      <div className="h-full w-full bg-transparent flex justify-center items-center">
+        <Loader2 className="text-white w-14 h-14 animate-spin" />
+      </div>
+    );
+  }
   return (
     <div className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3">
       <div className="w-full flex justify-around">
         <span
           className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 0 || step == 1 || step == 2
+            step == 0 || step == 1 || step == 2 || step == 3
               ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
               : "bg-white"
           }`}
         ></span>
         <span
           className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 1 || step == 2
+            step == 1 || step == 2 || step == 3
               ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
               : "bg-white"
           }`}
         ></span>
         <span
           className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
-            step == 2
+            step == 2 || step == 3
+              ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
+              : "bg-white"
+          }`}
+        ></span>
+        <span
+          className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
+            step == 3
               ? "bg-gradient-to-r from-blue-500 via-red-300 to-pink-500"
               : "bg-white"
           }`}
@@ -83,69 +137,112 @@ const Form = () => {
       {/* onSubmit={handleSubmit(onSubmit)} */}
       <form className="w-full min-h-8/10 overflow-hidden">
         {step === 0 && (
-          <motion.div
-            initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
-          >
-            <div className="w-full max-w-md">
-              <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
-                Enter Your Email & Click on Verify
-              </h2>
-              <p className="text-gray-400 text-sm text-center">
-                Please provide your credentials to continue
-              </p>
-            </div>
-
-            <div className="w-full max-w-md space-y-4">
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Email
-                </label>
-                <input
-                  type="text"
-                  {...register("email")}
-                  className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
-                    errors?.email ? "border-red-500/50" : "border-white/10"
-                  } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
-                  placeholder="Enter your email"
-                />
-                {errors?.email && (
-                  <p className="text-sm text-red-500">
-                    {errors?.email?.message}
-                  </p>
-                )}
+          <>
+            {otpSendingInProgress ? (
+              <div className="h-full w-full opacity-5 flex justify-center items-center">
+                <Loader2 className="text-white w-14 h-14 animate-spin" />
               </div>
-
-              <div className="space-y-2">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-300"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  {...register("password")}
-                  className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
-                    errors?.password ? "border-red-500/50" : "border-white/10"
-                  } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
-                  placeholder="Enter your password"
-                />
-                {errors?.password && (
-                  <p className="text-sm text-red-500">
-                    {errors?.password?.message}
+            ) : (
+              <motion.div
+                initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+              >
+                <div className="w-full max-w-md">
+                  <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
+                    Enter Your Email & Click on Verify
+                  </h2>
+                  <p className="text-gray-400 text-sm text-center">
+                    Please provide your credentials to continue
                   </p>
-                )}
-              </div>
-            </div>
-          </motion.div>
+                </div>
+
+                <div className="w-full max-w-md space-y-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-gray-300"
+                    >
+                      Email
+                    </label>
+                    <input
+                      type="text"
+                      {...register("email")}
+                      className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
+                        errors?.email ? "border-red-500/50" : "border-white/10"
+                      } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                      placeholder="Enter your email"
+                    />
+                    {errors?.email && (
+                      <p className="text-sm text-red-500">
+                        {errors?.email?.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* <div className="space-y-2">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-300"
+        >
+          Password
+        </label>
+        <input
+          type="password"
+          {...register("password")}
+          className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
+            errors?.password ? "border-red-500/50" : "border-white/10"
+          } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+          placeholder="Enter your password"
+        />
+        {errors?.password && (
+          <p className="text-sm text-red-500">
+            {errors?.password?.message}
+          </p>
+        )}
+      </div> */}
+                </div>
+              </motion.div>
+            )}
+          </>
         )}
         {step === 1 && (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+            <div className="text-center flex flex-col justify-center items-center gap-3.5 ">
+              <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1 ">
+                Enter Your Email & Click on Verify
+              </h2>
+              <ReactOtpInput
+                onChange={setOtp}
+                value={otp}
+                numInputs={6}
+                renderSeparator={<span>-</span>}
+                renderInput={(props) => <input {...props} />}
+                inputStyle={{
+                  width: "40px",
+                  height: "40px",
+                  margin: "0 8px",
+                  fontSize: "20px",
+                  borderRadius: "5px",
+                  border: "2px solid #ccc",
+                  textAlign: "center",
+                }}
+                containerStyle={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              />
+              <button
+                // onClick={handleOtp}
+                className="bg-blue-500 px-5 py-2 rounded-md"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
           <motion.div
             initial={{ x: `${step >= 1 ? "50%" : "-50%"}`, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}

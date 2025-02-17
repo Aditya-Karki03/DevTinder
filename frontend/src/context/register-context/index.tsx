@@ -1,3 +1,13 @@
+import { createContext, useContext } from "react";
+import { IError, IOtpVerifier, IRegistrationFormData } from "../../Types/types";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  otpGenerationRequest,
+  otpVerificationFailure,
+  otpVerificationRequest,
+} from "./slice";
+import { RootState } from "../../redux/store";
+
 // import React, { createContext, useContext, useState, useEffect } from "react";
 // import { RootState } from "../../redux/store";
 // import { useSelector, UseSelector } from "react-redux";
@@ -91,3 +101,63 @@
 // };
 
 // export default RegistrationProvider;
+
+interface IRegistration {
+  sendOtp: (data: { email: string }) => void;
+  verifyOtp: (data: IOtpVerifier) => void;
+  error: IError | null;
+  hash?: string | null;
+  otpSendingInProgress: boolean;
+  otpVerified: boolean;
+  registeredUser: IRegistrationFormData | null;
+}
+
+const defaultValues: IRegistration = {
+  sendOtp: () => console.log("OTP Send"),
+  verifyOtp: () => console.log("Verify Otp"),
+  error: null,
+  hash: null,
+  otpSendingInProgress: false,
+  otpVerified: false,
+  registeredUser: null,
+};
+export const RegistrationContext = createContext<IRegistration>(defaultValues);
+export const useRegistration = (): IRegistration => {
+  return useContext(RegistrationContext);
+};
+
+function RegistrationProvider({ children }: { children: React.ReactNode }) {
+  const dispatch = useDispatch();
+  const sendOtp = (data: { email: string }) => {
+    dispatch(otpGenerationRequest(data));
+  };
+  const verifyOtp = ({ email, otp, hash }: IOtpVerifier) =>
+    dispatch(otpVerificationRequest({ email, otp, hash }));
+  const error = useSelector((store: RootState) => store.registration.error);
+  const otpSendingInProgress = useSelector(
+    (store: RootState) => store?.registration?.otpLoading
+  );
+  const otpVerified = useSelector(
+    (store: RootState) => store?.registration?.otpGenerationSuccess
+  );
+  const registeredUser = useSelector(
+    (store: RootState) => store?.registration?.userData
+  );
+  const hash =
+    useSelector((store: RootState) => store?.registration?.hash) || "";
+  const registrationValues = {
+    verifyOtp,
+    sendOtp,
+    error,
+    hash,
+    otpSendingInProgress,
+    otpVerified,
+    registeredUser,
+  };
+  return (
+    <RegistrationContext.Provider value={registrationValues}>
+      {children}
+    </RegistrationContext.Provider>
+  );
+}
+export default RegistrationProvider;

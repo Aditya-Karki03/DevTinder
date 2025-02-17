@@ -3,14 +3,11 @@ import { ILoginFormData, IOtpVerifier } from "../Types/types";
 const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
 
 //api to send otp
-export const sendOtp = (email: string) => {
-  return axios.post(
-    `${API_URL}/v1/user/send-otp`,
-    { email },
-    {
-      withCredentials: true,
-    }
-  );
+export const sendOtp = (data: { email: string }) => {
+  console.log("Sending OTP");
+  return axios.post(`${API_URL}/v1/user/send-otp`, data, {
+    withCredentials: true,
+  });
 };
 
 //api to verify otp

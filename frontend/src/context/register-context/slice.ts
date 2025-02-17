@@ -6,6 +6,7 @@ import {
   IRegistrationInitialState,
   IError,
   IOtpGeneratorResponse,
+  IOtpVerifier,
 } from "../../Types/types";
 
 // const initialState: IRegistrationFormData = {
@@ -56,12 +57,24 @@ import {
 //   registrationSlice.actions;
 // export default registrationSlice.reducer;
 
+const initialUserData = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  age: "",
+  gender: "",
+  photoUrl: "",
+  about: "",
+  skills: "",
+};
+
 const initialState: IRegistrationInitialState = {
   otpGenerationSuccess: false,
   otpGenerationFailure: false,
   otpLoading: false,
   error: null,
-  userData: null,
+  userData: initialUserData,
+  hash: null,
   otpVerificationFailure: false,
   otpVerificationSuccess: false,
   verifyingOtp: false,
@@ -71,23 +84,32 @@ const registrationSlice = createSlice({
   name: "registration",
   initialState,
   reducers: {
-    otpGenerationRequest: (
-      state,
-      _action: PayloadAction<{ email: string }>
-    ) => {
-      state.otpLoading = false;
+    otpGenerationRequest: (state, action: PayloadAction<{ email: string }>) => {
+      state.otpLoading = true;
       state.error = null;
+      state.userData.email = action.payload.email;
     },
-    otpGenerationSuccessful: (
-      state,
-      _action: PayloadAction<IOtpGeneratorResponse>
-    ) => {
+    otpGenerationSuccessful: (state, action: PayloadAction<string>) => {
       state.otpLoading = false;
       state.otpGenerationSuccess = true;
+      state.hash = action.payload;
     },
     otpGenerationFailure: (state, action: PayloadAction<IError>) => {
       state.otpLoading = false;
       state.otpGenerationFailure = true;
+      state.error = action.payload;
+    },
+    otpVerificationRequest: (state, _action: PayloadAction<IOtpVerifier>) => {
+      state.verifyingOtp = true;
+      state.error = null;
+    },
+    otpVerificationSuccessful: (state) => {
+      state.verifyingOtp = false;
+      state.otpVerificationSuccess = true;
+    },
+    otpVerificationFailure: (state, action: PayloadAction<IError>) => {
+      state.verifyingOtp = false;
+      state.otpVerificationFailure = true;
       state.error = action.payload;
     },
   },
@@ -96,5 +118,8 @@ export const {
   otpGenerationFailure,
   otpGenerationRequest,
   otpGenerationSuccessful,
+  otpVerificationFailure,
+  otpVerificationRequest,
+  otpVerificationSuccessful,
 } = registrationSlice.actions;
 export default registrationSlice.reducer;

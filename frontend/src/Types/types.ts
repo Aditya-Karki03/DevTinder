@@ -173,14 +173,14 @@ export interface IConnectionResponse {
 }
 
 export interface IRegistrationFormData {
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-  age: string | null;
-  gender: string | null;
-  photoUrl: any | null;
-  about: string | null;
-  skills: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: string;
+  gender: string;
+  photoUrl: any;
+  about: string;
+  skills: string;
 }
 
 export interface IOtpVerifier {
@@ -196,13 +196,21 @@ export interface IOtpGeneratorResponse {
   };
 }
 
+export interface IOtpVerificationResponse {
+  data: {
+    isVerified: boolean;
+    message: string;
+  };
+}
+
 export interface IRegistrationInitialState {
   //for OTP Generation
   otpGenerationSuccess: boolean;
   otpGenerationFailure: boolean;
   error: IError | null;
   otpLoading: boolean;
-  userData: IRegistrationFormData | null;
+  userData: IRegistrationFormData;
+  hash?: string | null;
   //for OTP Verification
   otpVerificationSuccess: boolean;
   otpVerificationFailure: boolean;
