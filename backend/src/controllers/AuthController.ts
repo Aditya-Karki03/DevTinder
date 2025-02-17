@@ -17,6 +17,7 @@ export class AuthController {
         res.status(400).json({
           message:
             "User with this email already exist. Try with different email",
+          hash: null,
         });
         return;
       }
@@ -27,6 +28,7 @@ export class AuthController {
         res.status(500).json({
           message:
             "Unable to send OTP, please contact CEO: adityakarki03@gmail.com",
+          hash: null,
         });
         return;
       }
@@ -37,7 +39,7 @@ export class AuthController {
     } catch (error) {
       res.status(500).json({
         message: "Something went wrong, while processing OTP. Please try again",
-        otp: null,
+        hash: null,
       });
     }
   }
