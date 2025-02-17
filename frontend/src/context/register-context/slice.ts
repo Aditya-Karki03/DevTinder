@@ -7,6 +7,7 @@ import {
   IError,
   IOtpGeneratorResponse,
   IOtpVerifier,
+  IStepTwoData,
 } from "../../Types/types";
 
 // const initialState: IRegistrationFormData = {
@@ -112,6 +113,12 @@ const registrationSlice = createSlice({
       state.otpVerificationFailure = true;
       state.error = action.payload;
     },
+    submitRegisteredUserToStore: (
+      state,
+      action: PayloadAction<IStepTwoData>
+    ) => {
+      state.userData = { ...state.userData, ...action.payload };
+    },
   },
 });
 export const {
@@ -121,5 +128,6 @@ export const {
   otpVerificationFailure,
   otpVerificationRequest,
   otpVerificationSuccessful,
+  submitRegisteredUserToStore,
 } = registrationSlice.actions;
 export default registrationSlice.reducer;

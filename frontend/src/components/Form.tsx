@@ -37,7 +37,7 @@ const Form = () => {
     verifyOtp,
     otpVerified,
     error,
-    otpSendingInProgress,
+    personalInfo,
     hash,
     registeredUser,
     otpVerificationInProgress,
@@ -76,6 +76,25 @@ const Form = () => {
       if (!success) {
         return;
       }
+    }
+    if (step == 2) {
+      const inpData = getValues([
+        "firstName",
+        "lastName",
+        "age",
+        "gender",
+        "skills",
+        "about",
+      ]);
+      const data = {
+        firstName: inpData[0],
+        lastName: inpData[1],
+        age: inpData[2],
+        gender: inpData[3],
+        skills: inpData[4],
+        about: inpData[5],
+      };
+      personalInfo(data);
     }
     if (step < 3) {
       setStep((prev) => prev + 1);

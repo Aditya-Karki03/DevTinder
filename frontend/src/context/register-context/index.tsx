@@ -1,10 +1,16 @@
 import { createContext, useContext } from "react";
-import { IError, IOtpVerifier, IRegistrationFormData } from "../../Types/types";
+import {
+  IError,
+  IOtpVerifier,
+  IRegistrationFormData,
+  IStepTwoData,
+} from "../../Types/types";
 import { useDispatch, useSelector } from "react-redux";
 import {
   otpGenerationRequest,
   otpVerificationFailure,
   otpVerificationRequest,
+  submitRegisteredUserToStore,
 } from "./slice";
 import { RootState } from "../../redux/store";
 
@@ -105,6 +111,7 @@ import { RootState } from "../../redux/store";
 interface IRegistration {
   sendOtp: (data: { email: string }) => void;
   verifyOtp: (data: IOtpVerifier) => void;
+  personalInfo: (data: IStepTwoData) => void;
   error: IError | null;
   hash?: string | null;
   otpSendingInProgress: boolean;
@@ -116,6 +123,7 @@ interface IRegistration {
 const defaultValues: IRegistration = {
   sendOtp: () => console.log("OTP Send"),
   verifyOtp: () => console.log("Verify Otp"),
+  personalInfo: () => console.log("Personal Info"),
   error: null,
   hash: null,
   otpSendingInProgress: false,
@@ -135,6 +143,11 @@ function RegistrationProvider({ children }: { children: React.ReactNode }) {
   };
   const verifyOtp = ({ email, otp, hash }: IOtpVerifier) =>
     dispatch(otpVerificationRequest({ email, otp, hash }));
+
+  const personalInfo = (data: IStepTwoData) => {
+    dispatch(submitRegisteredUserToStore(data));
+  };
+
   const error = useSelector((store: RootState) => store.registration.error);
   const otpSendingInProgress = useSelector(
     (store: RootState) => store?.registration?.otpLoading
@@ -153,6 +166,7 @@ function RegistrationProvider({ children }: { children: React.ReactNode }) {
   const registrationValues = {
     verifyOtp,
     sendOtp,
+    personalInfo,
     error,
     hash,
     otpSendingInProgress,

@@ -216,3 +216,12 @@ export interface IRegistrationInitialState {
   otpVerificationFailure: boolean;
   verifyingOtp: boolean;
 }
+
+export interface IStepTwoData {
+  firstName: string;
+  lastName: string;
+  age: string;
+  gender: string;
+  skills: string;
+  about: string;
+}
