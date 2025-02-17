@@ -108,6 +108,7 @@ interface IRegistration {
   error: IError | null;
   hash?: string | null;
   otpSendingInProgress: boolean;
+  otpVerificationInProgress: boolean;
   otpVerified: boolean;
   registeredUser: IRegistrationFormData | null;
 }
@@ -118,6 +119,7 @@ const defaultValues: IRegistration = {
   error: null,
   hash: null,
   otpSendingInProgress: false,
+  otpVerificationInProgress: false,
   otpVerified: false,
   registeredUser: null,
 };
@@ -138,10 +140,13 @@ function RegistrationProvider({ children }: { children: React.ReactNode }) {
     (store: RootState) => store?.registration?.otpLoading
   );
   const otpVerified = useSelector(
-    (store: RootState) => store?.registration?.otpGenerationSuccess
+    (store: RootState) => store?.registration?.otpVerificationSuccess
   );
   const registeredUser = useSelector(
     (store: RootState) => store?.registration?.userData
+  );
+  const otpVerificationInProgress = useSelector(
+    (store: RootState) => store?.registration?.verifyingOtp
   );
   const hash =
     useSelector((store: RootState) => store?.registration?.hash) || "";
@@ -151,6 +156,7 @@ function RegistrationProvider({ children }: { children: React.ReactNode }) {
     error,
     hash,
     otpSendingInProgress,
+    otpVerificationInProgress,
     otpVerified,
     registeredUser,
   };

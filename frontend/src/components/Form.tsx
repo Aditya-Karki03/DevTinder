@@ -34,6 +34,7 @@ const Form = () => {
     otpSendingInProgress,
     hash,
     registeredUser,
+    otpVerificationInProgress,
   } = useRegistration();
   const onSubmit: SubmitHandler<regitrationFormSchemaType> = (data) => {
     console.log(data);
@@ -234,10 +235,15 @@ const Form = () => {
                 }}
               />
               <button
-                // onClick={handleOtp}
-                className="bg-blue-500 px-5 py-2 rounded-md"
+                type="button"
+                className="bg-blue-500 px-5 py-2 rounded-md cursor-pointer hover:bg-blue-600 duration-100 w-30 flex justify-center items-center"
+                onClick={handleOtp}
               >
-                Submit
+                {otpVerificationInProgress ? (
+                  <Loader2 className="h-6 w-6 flex justify-center items-center animate-spin text-white" />
+                ) : (
+                  "Submit"
+                )}
               </button>
             </div>
           </div>
