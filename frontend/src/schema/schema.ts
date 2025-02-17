@@ -47,7 +47,7 @@ export const registerFormSchema = z.object({
   // }),
   image: z
     .any()
-    .refine((images) => images?.[0].size <= maxImgSize, {
+    .refine((images) => images?.[0]?.size <= maxImgSize, {
       message: "Image size should be within 5MB",
     })
     .refine((images) => acceptedImgTypes.includes(images?.[0].type), {

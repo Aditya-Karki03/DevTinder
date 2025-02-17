@@ -6,11 +6,16 @@ export const formSteps = [
   },
   {
     id: "Step-2",
+    name: "Otp Verification",
+    fields: [],
+  },
+  {
+    id: "Step-3",
     name: "Personal Information",
     fields: ["firstName", "lastName", "age", "gender", "skills", "about"],
   },
   {
-    id: "Step-3",
+    id: "Step-4",
     name: "Upload Your Profile Picture",
     fields: ["Image"],
   },

@@ -26,6 +26,12 @@ const Form = () => {
   });
   const [step, setStep] = useState(0);
   const [otp, setOtp] = useState("");
+  useEffect(() => {
+    //autmatically trigger the handleOtpSubmit function
+    if (otp.length == 6) {
+      handleNext();
+    }
+  }, [otp]);
   const {
     sendOtp,
     verifyOtp,
@@ -36,9 +42,6 @@ const Form = () => {
     registeredUser,
     otpVerificationInProgress,
   } = useRegistration();
-  const onSubmit: SubmitHandler<regitrationFormSchemaType> = (data) => {
-    console.log(data);
-  };
   //to move left
   const handlePrev = () => {
     if (step > 0) {
@@ -56,6 +59,7 @@ const Form = () => {
     //this is how we will validate our form step by step
     //it will get all the fields in that form, eg: for 1st: email & password
     const fields = formSteps[step].fields;
+    console.log(fields);
     //below will trigger formValidation for selected fields only and will return promise hence await
     const success = await trigger(fields as fieldName[], { shouldFocus: true });
     console.log(success);
@@ -66,6 +70,13 @@ const Form = () => {
       sendOtp({ email });
       if (error) return;
     }
+    if (step == 1) {
+      const { success, message } = handleOtp();
+      //give a message for the toaster
+      if (!success) {
+        return;
+      }
+    }
     if (step < 3) {
       setStep((prev) => prev + 1);
     }
@@ -74,38 +85,31 @@ const Form = () => {
       // handleSubmit(()=>processForm())
     }
   };
-  useEffect(() => {
-    //autmatically trigger the handleOtpSubmit function
-    if (otp.length == 6) {
-      handleOtp();
-    }
-  }, [otp]);
+
   const handleOtp = () => {
     const data = otpSchema.safeParse({ otp });
-
     if (!data.success) {
-      //toaster to notification purposes
-      // return <Notification error={true} message="Invalid OTP" />;
-      return;
+      return {
+        success: false,
+        message: "Invalid OTP input",
+      };
     }
     verifyOtp({ email: registeredUser?.email || "", otp, hash: hash || "" });
     if (!otpVerified) {
-      //give a message for the toaster
-      return;
+      return {
+        success: false,
+        message: "Invalid OTP input",
+      };
     }
-    setStep((prev) => prev + 1);
+    return {
+      success: true,
+      message: "OTP verified successfully",
+    };
   };
 
-  if (otpSendingInProgress) {
-    return (
-      <div className="h-full w-full bg-transparent flex justify-center items-center">
-        <Loader2 className="text-white w-14 h-14 animate-spin" />
-      </div>
-    );
-  }
   return (
     <div className="w-full h-full flex flex-col justify-around items-center px-10 border border-white/20 rounded-lg bg-white/3">
-      <div className="w-full flex justify-around">
+      <div className="w-full flex justify-around gap-4">
         <span
           className={`w-56 h-1 rounded-2xl transition-colors ease-in-out duration-1000 ${
             step == 0 || step == 1 || step == 2 || step == 3
@@ -138,51 +142,44 @@ const Form = () => {
       {/* onSubmit={handleSubmit(onSubmit)} */}
       <form className="w-full min-h-8/10 overflow-hidden">
         {step === 0 && (
-          <>
-            {otpSendingInProgress ? (
-              <div className="h-full w-full opacity-5 flex justify-center items-center">
-                <Loader2 className="text-white w-14 h-14 animate-spin" />
-              </div>
-            ) : (
-              <motion.div
-                initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
-              >
-                <div className="w-full max-w-md">
-                  <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
-                    Enter Your Email & Click on Verify
-                  </h2>
-                  <p className="text-gray-400 text-sm text-center">
-                    Please provide your credentials to continue
+          <motion.div
+            initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+          >
+            <div className="w-full max-w-md">
+              <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
+                Enter Your Email & Click on Verify
+              </h2>
+              <p className="text-gray-400 text-sm text-center">
+                Please provide your credentials to continue
+              </p>
+            </div>
+            <div className="w-full max-w-md space-y-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-300"
+                >
+                  Email
+                </label>
+                <input
+                  type="text"
+                  {...register("email")}
+                  className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
+                    errors?.email ? "border-red-500/50" : "border-white/10"
+                  } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
+                  placeholder="Enter your email"
+                />
+                {errors?.email && (
+                  <p className="text-sm text-red-500">
+                    {errors?.email?.message}
                   </p>
-                </div>
+                )}
+              </div>
 
-                <div className="w-full max-w-md space-y-4">
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-gray-300"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="text"
-                      {...register("email")}
-                      className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
-                        errors?.email ? "border-red-500/50" : "border-white/10"
-                      } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
-                      placeholder="Enter your email"
-                    />
-                    {errors?.email && (
-                      <p className="text-sm text-red-500">
-                        {errors?.email?.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* <div className="space-y-2">
+              {/* <div className="space-y-2">
         <label
           htmlFor="password"
           className="block text-sm font-medium text-gray-300"
@@ -203,13 +200,17 @@ const Form = () => {
           </p>
         )}
       </div> */}
-                </div>
-              </motion.div>
-            )}
-          </>
+            </div>
+          </motion.div>
         )}
+
         {step === 1 && (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm">
+          <motion.div
+            initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+          >
             <div className="text-center flex flex-col justify-center items-center gap-3.5 ">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1 ">
                 Enter Your Email & Click on Verify
@@ -237,7 +238,7 @@ const Form = () => {
               <button
                 type="button"
                 className="bg-blue-500 px-5 py-2 rounded-md cursor-pointer hover:bg-blue-600 duration-100 w-30 flex justify-center items-center"
-                onClick={handleOtp}
+                onClick={handleNext}
               >
                 {otpVerificationInProgress ? (
                   <Loader2 className="h-6 w-6 flex justify-center items-center animate-spin text-white" />
@@ -246,7 +247,7 @@ const Form = () => {
                 )}
               </button>
             </div>
-          </div>
+          </motion.div>
         )}
         {step === 2 && (
           <motion.div
@@ -265,7 +266,6 @@ const Form = () => {
             </div>
 
             <div className="w-full max-w-4xl grid grid-cols-2 gap-8 pt-4">
-              {/* Left Column */}
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label
@@ -402,7 +402,7 @@ const Form = () => {
             </div>
           </motion.div>
         )}
-        {step === 2 && (
+        {step === 3 && (
           <motion.div className="w-full h-full">
             <div className="relative w-full h-1/4 min-h-[200px]">
               <input
