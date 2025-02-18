@@ -5,6 +5,7 @@ import { getFeedSaga } from "../pages/connection-Request/saga";
 import { getFriendsSaga } from "../pages/connections/saga";
 import { feedSaga } from "../pages/feed/saga";
 import { registrationSaga } from "../context/register-context/saga";
+import { signUpSaga } from "../pages/Register/saga";
 
 export default function* rootSaga() {
   yield all([
@@ -14,5 +15,6 @@ export default function* rootSaga() {
     ...getFriendsSaga,
     ...feedSaga,
     ...registrationSaga,
+    ...signUpSaga,
   ]);
 }

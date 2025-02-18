@@ -225,3 +225,18 @@ export interface IStepTwoData {
   skills: string;
   about: string;
 }
+
+export interface ISignUpInitialState {
+  signUpSuccessful: boolean;
+  signUpFailure: boolean;
+  userData: IRegistrationFormData | null;
+  error: IError | null;
+  loading: boolean;
+}
+
+export interface ISignupResponse {
+  data: {
+    message: string;
+    user: IRegistrationFormData;
+  };
+}
