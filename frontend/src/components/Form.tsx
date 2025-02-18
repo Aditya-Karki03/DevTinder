@@ -163,7 +163,10 @@ const Form = () => {
         ></span>
       </div>
       {/* onSubmit={handleSubmit(onSubmit)} */}
-      <form className="w-full min-h-8/10 overflow-hidden">
+      <form
+        className="w-full min-h-8/10 overflow-hidden"
+        encType="multipart/form-data"
+      >
         {step === 0 && (
           <motion.div
             initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
