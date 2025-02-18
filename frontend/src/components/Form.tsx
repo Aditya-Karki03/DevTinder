@@ -51,6 +51,7 @@ const Form = () => {
 
   const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
     console.log(data);
+    console.log(registeredUser);
   };
 
   //to handle right
@@ -105,7 +106,7 @@ const Form = () => {
 
     if (step == 3) {
       console.log("Final Form Submission");
-      // handleSubmit(()=>processForm())
+      // handleSubmit(() => processForm());
     }
   };
 
@@ -164,6 +165,7 @@ const Form = () => {
       </div>
       {/* onSubmit={handleSubmit(onSubmit)} */}
       <form
+        onSubmit={handleSubmit(processForm)}
         className="w-full min-h-8/10 overflow-hidden"
         encType="multipart/form-data"
       >
@@ -475,6 +477,17 @@ const Form = () => {
                 {errors?.image?.message?.toString()}
               </p>
             )}
+            {step === 3 && (
+              <div className="w-full flex justify-center items-center my-7">
+                <button
+                  onSubmit={handleSubmit(processForm)}
+                  type="submit"
+                  className="px-4 py-1 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
+                >
+                  Submit
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </form>
@@ -485,12 +498,14 @@ const Form = () => {
         >
           <MoveLeft />
         </button>
-        <button
-          className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
-          onClick={handleNext}
-        >
-          <MoveRight />
-        </button>
+        {step !== 3 && (
+          <button
+            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
+            onClick={handleNext}
+          >
+            <MoveRight />
+          </button>
+        )}
       </div>
     </div>
   );
