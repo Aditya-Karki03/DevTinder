@@ -2,6 +2,7 @@ import { Request } from "express";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 export const signupDataValidation = (req: Request) => {
+  const profilePicture = req.file;
   const { firstName, lastName, password, gender, about, skills } = req.body;
   if (!firstName) {
     return {
@@ -33,6 +34,11 @@ export const signupDataValidation = (req: Request) => {
     return {
       error: true,
       message: "Please mention your skills, to get better match for you",
+    };
+  } else if (!profilePicture) {
+    return {
+      error: true,
+      message: "Please upload your picture",
     };
   } else {
     return {

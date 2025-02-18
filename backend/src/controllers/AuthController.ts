@@ -62,6 +62,7 @@ export class AuthController {
 
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
+    const profilePicture = req.file;
     const {
       firstName,
       lastName,
@@ -83,6 +84,8 @@ export class AuthController {
 
     //photoURL, about skills
 
+    //just showing
+    console.log(profilePicture);
     const { error, message } = signupDataValidation(req);
     if (error) {
       res.status(400).json({
