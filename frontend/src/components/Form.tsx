@@ -47,7 +47,6 @@ const Form = () => {
     if (step > 0) {
       setStep((prev) => prev - 1);
     }
-    console.log(step);
   };
 
   const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
@@ -58,11 +57,14 @@ const Form = () => {
   const handleNext = async () => {
     //this is how we will validate our form step by step
     //it will get all the fields in that form, eg: for 1st: email & password
-    const fields = formSteps[step].fields;
-    console.log(fields);
+    // const field:string = formSteps[step].fields;
+
     //below will trigger formValidation for selected fields only and will return promise hence await
-    const success = await trigger(fields as fieldName[], { shouldFocus: true });
-    console.log(success);
+
+    const success = await trigger(formSteps[step].fields as fieldName[], {
+      shouldFocus: true,
+    });
+
     if (!success) return;
     //if 1st step than make api request to generate OTP
     if (step == 0) {
@@ -77,6 +79,7 @@ const Form = () => {
         return;
       }
     }
+
     if (step == 2) {
       const inpData = getValues([
         "firstName",
@@ -99,6 +102,7 @@ const Form = () => {
     if (step < 3) {
       setStep((prev) => prev + 1);
     }
+
     if (step == 3) {
       console.log("Final Form Submission");
       // handleSubmit(()=>processForm())
@@ -232,7 +236,7 @@ const Form = () => {
           >
             <div className="text-center flex flex-col justify-center items-center gap-3.5 ">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1 ">
-                Enter Your Email & Click on Verify
+                Enter Your OTP & Click on Verify
               </h2>
               <ReactOtpInput
                 onChange={setOtp}
@@ -262,7 +266,7 @@ const Form = () => {
                 {otpVerificationInProgress ? (
                   <Loader2 className="h-6 w-6 flex justify-center items-center animate-spin text-white" />
                 ) : (
-                  "Submit"
+                  "Verify"
                 )}
               </button>
             </div>
@@ -416,6 +420,11 @@ const Form = () => {
                     } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 resize-none`}
                     placeholder="Tell us about yourself"
                   />
+                  {errors?.about && (
+                    <p className="text-sm text-red-500">
+                      {errors?.about?.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -458,6 +467,11 @@ const Form = () => {
                 </div>
               </div>
             </div>
+            {errors.image && (
+              <p className="w-full text-center text-red-500">
+                {errors?.image?.message?.toString()}
+              </p>
+            )}
           </motion.div>
         )}
       </form>

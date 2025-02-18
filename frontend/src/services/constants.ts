@@ -2,7 +2,7 @@ export const formSteps = [
   {
     id: "Step-1",
     name: "Email Veriifcation",
-    fields: ["email", "password"],
+    fields: ["email"],
   },
   {
     id: "Step-2",
@@ -17,6 +17,6 @@ export const formSteps = [
   {
     id: "Step-4",
     name: "Upload Your Profile Picture",
-    fields: ["Image"],
+    fields: ["image"],
   },
 ];

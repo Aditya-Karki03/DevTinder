@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import {
   IError,
   IOtpVerifier,
@@ -155,14 +155,17 @@ function RegistrationProvider({ children }: { children: React.ReactNode }) {
   const otpVerified = useSelector(
     (store: RootState) => store?.registration?.otpVerificationSuccess
   );
+
   const registeredUser = useSelector(
     (store: RootState) => store?.registration?.userData
   );
   const otpVerificationInProgress = useSelector(
     (store: RootState) => store?.registration?.verifyingOtp
   );
-  const hash =
-    useSelector((store: RootState) => store?.registration?.hash) || "";
+  const hash = useSelector(
+    (store: RootState) => store?.registration?.hash || ""
+  );
+
   const registrationValues = {
     verifyOtp,
     sendOtp,

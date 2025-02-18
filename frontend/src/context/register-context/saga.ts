@@ -40,10 +40,13 @@ function* otpVerification(action: PayloadAction<IOtpVerifier>) {
     const data: IOtpVerificationResponse = yield call(() =>
       API.verifyOtp(action.payload)
     );
+    console.log("I am or not");
     if (data.data?.isVerified) {
+      console.log("I am verified");
       yield put(otpVerificationSuccessful());
       return;
     }
+    console.log("I am not verified");
     const errData: IError = {
       error: data?.data?.message,
       errorCode: "404",
@@ -51,6 +54,7 @@ function* otpVerification(action: PayloadAction<IOtpVerifier>) {
     yield put(otpVerificationFailure(errData));
   } catch (error: any) {
     let errorMessage = "Something went wrong. While verifying OTP";
+    console.log(errorMessage);
     if (error?.response?.data?.message) {
       errorMessage = error?.response?.data?.message;
     }

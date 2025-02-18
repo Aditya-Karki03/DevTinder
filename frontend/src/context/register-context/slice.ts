@@ -93,11 +93,13 @@ const registrationSlice = createSlice({
     otpGenerationSuccessful: (state, action: PayloadAction<string>) => {
       state.otpLoading = false;
       state.otpGenerationSuccess = true;
+      state.otpGenerationFailure = false;
       state.hash = action.payload;
     },
     otpGenerationFailure: (state, action: PayloadAction<IError>) => {
       state.otpLoading = false;
       state.otpGenerationFailure = true;
+      state.otpGenerationSuccess = false;
       state.error = action.payload;
     },
     otpVerificationRequest: (state, _action: PayloadAction<IOtpVerifier>) => {
@@ -107,10 +109,12 @@ const registrationSlice = createSlice({
     otpVerificationSuccessful: (state) => {
       state.verifyingOtp = false;
       state.otpVerificationSuccess = true;
+      state.otpVerificationFailure = false;
     },
     otpVerificationFailure: (state, action: PayloadAction<IError>) => {
       state.verifyingOtp = false;
       state.otpVerificationFailure = true;
+      state.otpVerificationSuccess = false;
       state.error = action.payload;
     },
     submitRegisteredUserToStore: (
