@@ -11,10 +11,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import { useRegistration } from "../context/register-context";
 import ReactOtpInput from "react-otp-input";
+import { useDispatch } from "react-redux";
+import { signUpRequest } from "../pages/Register/slice";
+import { IRegistrationFormData } from "../Types/types";
 
 type fieldName = keyof regitrationFormSchemaType;
 
 const Form = () => {
+  const dispatch = useDispatch();
   const {
     register,
     trigger,
@@ -50,8 +54,9 @@ const Form = () => {
   };
 
   const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
-    console.log(data);
-    console.log(registeredUser);
+    // console.log(data);
+    // console.log(registeredUser);
+    dispatch(signUpRequest(data as IRegistrationFormData));
   };
 
   //to handle right

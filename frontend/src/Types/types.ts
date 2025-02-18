@@ -178,7 +178,7 @@ export interface IRegistrationFormData {
   email: string;
   age: string;
   gender: string;
-  photoUrl: any;
+  image: any; //changed from photoUrl to image
   about: string;
   skills: string;
 }
