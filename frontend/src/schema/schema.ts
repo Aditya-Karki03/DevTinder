@@ -9,7 +9,7 @@ export const loginFormSchema = z.object({
 });
 
 const maxImgSize = 5 * 1024 * 1024;
-// const acceptedImgTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const acceptedImgTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const otpSchema = z.object({
   otp: z
@@ -47,12 +47,17 @@ export const registerFormSchema = z.object({
   // skills: z.array(z.string(), {
   //   message: "Please enter some skills",
   // }),
-  image: z.any().refine((images) => images?.[0]?.size <= maxImgSize, {
-    message: "Image size should be within 5MB",
-  }),
-  // .refine((images) => acceptedImgTypes.includes(images?.[0].type), {
-  //   message: "Only .jpg, .jpeg, .png and .webp formats are supported",
-  // }),
+  image: z
+    .any()
+    .refine((images) => !images?.[0] || images?.[0]?.size <= maxImgSize, {
+      message: "Image size should be within 5MB",
+    })
+    .refine(
+      (images) => !images?.[0] || acceptedImgTypes.includes(images?.[0]?.type),
+      {
+        message: "Only .jpg, .jpeg, .png and .webp formats are supported",
+      }
+    ),
 });
 
 export type regitrationFormSchemaType = z.infer<typeof registerFormSchema>;
