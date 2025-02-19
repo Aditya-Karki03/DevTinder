@@ -11,8 +11,9 @@ import {
   signUpRequestFailure,
   signUpRequestSuccess,
 } from "./slice";
+import { regitrationFormSchemaType } from "../../schema/schema";
 
-function* signUp(action: PayloadAction<IRegistrationFormData>) {
+function* signUp(action: PayloadAction<regitrationFormSchemaType>) {
   try {
     const data: ISignupResponse = yield call(() =>
       API.signUpRequest(action.payload)

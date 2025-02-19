@@ -4,6 +4,7 @@ import {
   IOtpVerifier,
   IRegistrationFormData,
 } from "../Types/types";
+import { regitrationFormSchemaType } from "../schema/schema";
 const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
 
 //api to send otp
@@ -22,7 +23,7 @@ export const verifyOtp = (data: IOtpVerifier) => {
 };
 
 //api to sign up
-export const signUpRequest = (data: IRegistrationFormData) => {
+export const signUpRequest = (data: regitrationFormSchemaType) => {
   return axios.post(`${API_URL}/v1/user/signup`, data, {
     withCredentials: true,
   });

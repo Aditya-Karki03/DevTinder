@@ -6,6 +6,7 @@ import {
   ISignupResponse,
 } from "../../Types/types";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { regitrationFormSchemaType } from "../../schema/schema";
 
 const initialState: ISignUpInitialState = {
   signUpSuccessful: false,
@@ -18,7 +19,10 @@ const signUpSlice = createSlice({
   name: "Signup",
   initialState,
   reducers: {
-    signUpRequest: (state, _action: PayloadAction<IRegistrationFormData>) => {
+    signUpRequest: (
+      state,
+      _action: PayloadAction<regitrationFormSchemaType>
+    ) => {
       state.loading = true;
       state.error = null;
     },

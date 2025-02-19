@@ -56,7 +56,7 @@ const Form = () => {
   const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
     // console.log(data);
     // console.log(registeredUser);
-    dispatch(signUpRequest(data as IRegistrationFormData));
+    dispatch(signUpRequest(data));
   };
 
   //to handle right
