@@ -10,13 +10,13 @@ const emailValidator = (email: string) => {
   return success;
 };
 
-const passwordValidator = (password: string) => {
-  const passwordSchema = z.string().min(8, {
-    message: "Please enter a strong password",
-  });
-  const { success } = passwordSchema.safeParse(password);
-  return success;
-};
+// const passwordValidator = (password: string) => {
+//   const passwordSchema = z.string().min(8, {
+//     message: "Please enter a strong password",
+//   });
+//   const { success } = passwordSchema.safeParse(password);
+//   return success;
+// };
 
 const photoValidator = (url: string) => {
   const validPhotoExtensions = ["jpg", "jpeg", "png", "svg"];
@@ -52,15 +52,15 @@ const userSchema = new mongoose.Schema<userInterface>(
       minlength: 2,
       maxlength: 50,
     },
-    password: {
-      type: String,
-      required: true,
-      trim: true,
-      validate: {
-        validator: passwordValidator,
-        message: "Please enter a strong password",
-      },
-    },
+    // password: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    //   validate: {
+    //     validator: passwordValidator,
+    //     message: "Please enter a strong password",
+    //   },
+    // },
     email: {
       type: String,
       required: [true, "Email is required"],

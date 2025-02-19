@@ -63,17 +63,8 @@ export class AuthController {
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
     const profilePicture = req.file;
-    const {
-      firstName,
-      lastName,
-      password,
-      age,
-      gender,
-      email,
-      photoUrl,
-      about,
-      skills,
-    } = req.body;
+    const { firstName, lastName, age, gender, email, photoUrl, about, skills } =
+      req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -96,7 +87,7 @@ export class AuthController {
     }
 
     //bcrypt returns us a promise hence we need to await it
-    const encryptedPassword = await bcrypt.hash(password, 10);
+    // const encryptedPassword = await bcrypt.hash(password, 10);
 
     // const user = await User.create(userData);
     // res.status(201).json({
@@ -126,7 +117,7 @@ export class AuthController {
       const user = new User({
         firstName,
         lastName,
-        password: encryptedPassword,
+        // password: encryptedPassword,
         gender,
         age,
         email,
@@ -168,7 +159,15 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response) {
-    const { email, password } = req.body;
+    const { otp, hash, email } = req.body;
+    const { isVerified, message } = await verifyOtp(email, hash, otp);
+    if (!isVerified) {
+      res.status(400).json({
+        isVerified,
+        message,
+      });
+      return;
+    }
 
     //first we will try finding email
     try {
@@ -181,18 +180,18 @@ export class AuthController {
         });
         return;
       }
-      const isValidPassword = await verifyPassword(
-        password,
-        user?.password || ""
-      );
+      // const isValidPassword = await verifyPassword(
+      //   password,
+      //   user?.password || ""
+      // );
 
-      if (!isValidPassword) {
-        res.status(404).json({
-          message: "Invalid Credentials",
-          user: null,
-        });
-        return;
-      }
+      // if (!isValidPassword) {
+      //   res.status(404).json({
+      //     message: "Invalid Credentials",
+      //     user: null,
+      //   });
+      //   return;
+      // }
       const userId = user._id.toString();
       //create a token with user id
       const token = tokenGenerator(userId);
