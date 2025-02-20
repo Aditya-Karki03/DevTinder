@@ -9,11 +9,7 @@ const authController = new AuthController();
 authRoutes.post("/send-otp", authController.sendOtpForEmailVerification);
 authRoutes.post("/verify-otp", authController.otpVerification);
 //user signup route
-authRoutes.post(
-  "/signup",
-  upload.single("profile_picture"),
-  authController.createUser
-);
+authRoutes.post("/signup", upload.single("image"), authController.createUser);
 authRoutes.post("/login", authController.login);
 authRoutes.post("/logout", userAuth, authController.logout);
 // userRoutes.get("/feed", userAuth, userController.getAllUser);

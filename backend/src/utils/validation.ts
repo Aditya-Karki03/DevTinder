@@ -14,11 +14,11 @@ export const signupDataValidation = (req: Request) => {
       error: true,
       message: "Please Enter Your Last Name",
     };
-  } else if (!password) {
-    return {
-      error: true,
-      message: "Please Enter Your Password",
-    };
+    // } else if (!password) {
+    //   return {
+    //     error: true,
+    //     message: "Please Enter Your Password",
+    //   };
   } else if (!gender) {
     return {
       error: true,

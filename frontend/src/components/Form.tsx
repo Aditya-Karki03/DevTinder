@@ -14,6 +14,7 @@ import ReactOtpInput from "react-otp-input";
 import { useDispatch } from "react-redux";
 import { signUpRequest } from "../pages/Register/slice";
 import { IRegistrationFormData } from "../Types/types";
+import { UseSignup } from "../hooks/useSignup";
 
 type fieldName = keyof regitrationFormSchemaType;
 
@@ -54,9 +55,23 @@ const Form = () => {
   };
 
   const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
-    // console.log(data);
+    console.log(data);
     // console.log(registeredUser);
-    dispatch(signUpRequest(data));
+    // dispatch(signUpRequest(data));
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      // Handle objects differently
+      if (typeof value === "object" && value !== null) {
+        // If it's the image object
+        if (key === "image" && value[0]) {
+          formData.append("image", value[0]);
+        }
+      } else {
+        formData.append(key, value);
+      }
+    });
+    UseSignup(formData);
   };
 
   //to handle right
