@@ -3,6 +3,8 @@ name: Build on PR
 # the above named workflow will run on the Pull request and will only work for the master branch
 on:
   pull_request:
+    paths:
+      -'frontend/**'
     branches: -master
 jobs:
   build:
