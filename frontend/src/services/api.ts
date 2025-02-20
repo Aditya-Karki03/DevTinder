@@ -1,6 +1,33 @@
 import axios from "axios";
-import { ILoginFormData } from "../Types/types";
+import {
+  ILoginFormData,
+  IOtpVerifier,
+  IRegistrationFormData,
+} from "../Types/types";
+import { regitrationFormSchemaType } from "../schema/schema";
 const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
+
+//api to send otp
+export const sendOtp = (data: { email: string }) => {
+  console.log("Sending OTP");
+  return axios.post(`${API_URL}/v1/user/send-otp`, data, {
+    withCredentials: true,
+  });
+};
+
+//api to verify otp
+export const verifyOtp = (data: IOtpVerifier) => {
+  return axios.post(`${API_URL}/v1/user/verify-otp`, data, {
+    withCredentials: true,
+  });
+};
+
+//api to sign up
+export const signUpRequest = (data: regitrationFormSchemaType) => {
+  return axios.post(`${API_URL}/v1/user/signup`, data, {
+    withCredentials: true,
+  });
+};
 
 export const loginApiCall = (data: ILoginFormData) => {
   //below code returns a promise because axios.post is a async function

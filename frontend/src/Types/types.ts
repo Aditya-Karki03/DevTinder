@@ -176,10 +176,67 @@ export interface IRegistrationFormData {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   age: string;
   gender: string;
-  photoUrl: any;
+  image: any; //changed from photoUrl to image
   about: string;
   skills: string;
+}
+
+export interface IOtpVerifier {
+  email: string;
+  hash: string;
+  otp: string;
+}
+
+export interface IOtpGeneratorResponse {
+  data: {
+    message: string;
+    hash: string;
+  };
+}
+
+export interface IOtpVerificationResponse {
+  data: {
+    isVerified: boolean;
+    message: string;
+  };
+}
+
+export interface IRegistrationInitialState {
+  //for OTP Generation
+  otpGenerationSuccess: boolean;
+  otpGenerationFailure: boolean;
+  error: IError | null;
+  otpLoading: boolean;
+  userData: IRegistrationFormData;
+  hash?: string | null;
+  //for OTP Verification
+  otpVerificationSuccess: boolean;
+  otpVerificationFailure: boolean;
+  verifyingOtp: boolean;
+}
+
+export interface IStepTwoData {
+  firstName: string;
+  lastName: string;
+  age: string;
+  gender: string;
+  skills: string;
+  about: string;
+}
+
+export interface ISignUpInitialState {
+  signUpSuccessful: boolean;
+  signUpFailure: boolean;
+  userData: IRegistrationFormData | null;
+  error: IError | null;
+  loading: boolean;
+}
+
+export interface ISignupResponse {
+  data: {
+    message: string;
+    user: IRegistrationFormData;
+  };
 }

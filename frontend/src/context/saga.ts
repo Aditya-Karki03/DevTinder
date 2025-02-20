@@ -91,9 +91,8 @@ function* fetchMyProfile() {
 //only the 5 one or the latest one will be taken in to account, rest will be ignored
 //but incase of the takeEvery all the 5 task will run in parallel, nothing will be ignored
 //
-const authSaga = [
+export const authSaga = [
   takeLatest(loginRequest, getLoginData),
   takeLatest(logoutRequest, loggingOut),
   takeLatest(fetchUserProfileRequest, fetchMyProfile),
 ];
-export default authSaga;
