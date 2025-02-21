@@ -14,9 +14,10 @@ export const upload = multer({
       file.mimetype.endsWith("webp")
     ) {
       cb(null, true);
+    } else {
+      cb(null, false);
+      cb(new Error("Uploaded file is not supported"));
     }
-    cb(null, false);
-    cb(new Error("Uploaded file is not supported"));
   },
 });
 

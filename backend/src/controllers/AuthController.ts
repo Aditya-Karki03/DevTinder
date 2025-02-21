@@ -4,7 +4,8 @@ import { signupDataValidation, verifyPassword } from "../utils/validation";
 import { tokenGenerator } from "../utils/tokenGenerator";
 import { generateOtp, verifyOtp } from "../utils/otpGenerator";
 import { sendOtpEmail } from "../utils/email";
-import { upload } from "../middleware/imageUploads";
+import { uploadToS3 } from "../utils/S3";
+import { apiCallToUpload } from "../utils/apiCallS3";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
   async sendOtpForEmailVerification(req: Request, res: Response) {
@@ -98,9 +99,10 @@ export class AuthController {
     // });
 
     //check if the provided email already exist in the db
+
     try {
-      const userEmail = await User.find({ email });
-      if (userEmail.length > 0) {
+      const userEmail = await User.findOne({ email });
+      if (userEmail) {
         res.status(403).json({
           message: "User with this email already exist",
           data: null,
@@ -127,6 +129,18 @@ export class AuthController {
         skills,
         photoUrl,
       });
+
+      const s3UploadPresignedUrl = await uploadToS3({
+        userId: user?._id?.toString() ?? "",
+        contentType: profilePicture?.mimetype ?? "",
+        fileName: profilePicture?.originalname ?? "",
+      });
+      const imgUrl = await apiCallToUpload(
+        s3UploadPresignedUrl,
+        profilePicture
+      );
+      console.log(imgUrl);
+      console.log("(--------IMG URL------------");
       await user.save();
       res.status(201).json({
         message: "User created successfully!",
@@ -143,6 +157,7 @@ export class AuthController {
         },
       });
     } catch (error: any) {
+      console.log(error);
       if (error.name == "ValidationError") {
         const errors = Object.values(error.errors).map(
           (err: any) => err.message
