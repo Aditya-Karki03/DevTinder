@@ -1,7 +1,7 @@
 import express from "express";
 import { AuthController } from "../../controllers/AuthController";
 import { userAuth } from "../../middleware/userAuth";
-import { upload } from "../../middleware/imageUploads";
+import { imageAuth, upload } from "../../middleware/imageUploads";
 const authRoutes = express.Router();
 
 const authController = new AuthController();
@@ -9,7 +9,12 @@ const authController = new AuthController();
 authRoutes.post("/send-otp", authController.sendOtpForEmailVerification);
 authRoutes.post("/verify-otp", authController.otpVerification);
 //user signup route
-authRoutes.post("/signup", upload.single("image"), authController.createUser);
+authRoutes.post(
+  "/signup",
+  imageAuth,
+  //   upload.single("image"),
+  authController.createUser
+);
 authRoutes.post("/login", authController.login);
 authRoutes.post("/logout", userAuth, authController.logout);
 // userRoutes.get("/feed", userAuth, userController.getAllUser);

@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
 import { signupDataValidation, verifyPassword } from "../utils/validation";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
 import { generateOtp, verifyOtp } from "../utils/otpGenerator";
 import { sendOtpEmail } from "../utils/email";
+import { upload } from "../middleware/imageUploads";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
   async sendOtpForEmailVerification(req: Request, res: Response) {
@@ -62,6 +61,10 @@ export class AuthController {
 
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
+    //while user creation after post request, photo comes here=>should be uploaded to S3 using putObject
+    //afte uploading I should either get a resposne of the URL of the file or get the URL of the image uploaded save it to DB
+    //configure S3 such that only the user of devTinder are allowed to view that image
+
     const profilePicture = req.file;
     const { firstName, lastName, age, gender, email, photoUrl, about, skills } =
       req.body;
@@ -76,7 +79,6 @@ export class AuthController {
     //photoURL, about skills
 
     //just showing
-    console.log(profilePicture);
     const { error, message } = signupDataValidation(req);
     if (error) {
       res.status(400).json({
