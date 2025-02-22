@@ -117,6 +117,20 @@ export class AuthController {
     }
 
     try {
+      //file name should be unique, if not S3 overwrites the prev one if same name
+      const photoName = `${profilePicture?.originalname}-${Date.now()}`;
+      const s3UploadPresignedUrl = await uploadToS3({
+        contentType: profilePicture?.mimetype ?? "",
+        fileName: photoName,
+        fileBuffer: profilePicture?.buffer ?? "",
+      });
+      // const imgUrl = await apiCallToUpload(
+      //   s3UploadPresignedUrl,
+      //   profilePicture
+      // );
+      // console.log(imgUrl);
+      // console.log("(--------IMG URL------------");
+
       //another way of doing the same is by creating new instance of user model and saving in db
       const user = new User({
         firstName,
@@ -127,20 +141,9 @@ export class AuthController {
         email,
         about,
         skills,
-        photoUrl,
+        photoUrl: photoName,
       });
 
-      const s3UploadPresignedUrl = await uploadToS3({
-        userId: user?._id?.toString() ?? "",
-        contentType: profilePicture?.mimetype ?? "",
-        fileName: profilePicture?.originalname ?? "",
-      });
-      const imgUrl = await apiCallToUpload(
-        s3UploadPresignedUrl,
-        profilePicture
-      );
-      console.log(imgUrl);
-      console.log("(--------IMG URL------------");
       await user.save();
       res.status(201).json({
         message: "User created successfully!",

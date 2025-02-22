@@ -19,19 +19,7 @@ const emailValidator = (email: string) => {
 // };
 
 const photoValidator = (url: string) => {
-  const validPhotoExtensions = ["jpg", "jpeg", "png", "svg"];
-  const urlSchema = z
-    .string()
-    .url()
-    .refine(
-      (photo) => {
-        const isValid = validPhotoExtensions.filter((ext) => url.endsWith(ext));
-        return isValid;
-      },
-      {
-        message: "Only jpg, jpeg, png & svg type imamges supported",
-      }
-    );
+  const urlSchema = z.string().url();
   const { success } = urlSchema.safeParse(url);
   return success;
 };
