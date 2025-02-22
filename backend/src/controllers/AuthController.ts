@@ -4,8 +4,7 @@ import { signupDataValidation, verifyPassword } from "../utils/validation";
 import { tokenGenerator } from "../utils/tokenGenerator";
 import { generateOtp, verifyOtp } from "../utils/otpGenerator";
 import { sendOtpEmail } from "../utils/email";
-import { uploadToS3 } from "../utils/S3";
-import { apiCallToUpload } from "../utils/apiCallS3";
+import { getPresignedUrls, uploadToS3 } from "../utils/S3";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
   async sendOtpForEmailVerification(req: Request, res: Response) {
@@ -67,8 +66,7 @@ export class AuthController {
     //configure S3 such that only the user of devTinder are allowed to view that image
 
     const profilePicture = req.file;
-    const { firstName, lastName, age, gender, email, photoUrl, about, skills } =
-      req.body;
+    const { firstName, lastName, age, gender, email, about, skills } = req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -117,13 +115,19 @@ export class AuthController {
     }
 
     try {
-      //file name should be unique, if not S3 overwrites the prev one if same name
-      const photoName = `${profilePicture?.originalname}-${Date.now()}`;
-      const s3UploadPresignedUrl = await uploadToS3({
+      //upload the picture to S3
+      const fileName = `user-uploads/ProfilePicture/${
+        profilePicture?.originalname ?? ""
+      }-${Date.now()}`;
+      await uploadToS3({
+        fileName,
         contentType: profilePicture?.mimetype ?? "",
-        fileName: photoName,
         fileBuffer: profilePicture?.buffer ?? "",
       });
+
+      //file name should be unique, if not S3 overwrites the prev one if same name
+
+      const photoUrl = await getPresignedUrls(fileName);
       // const imgUrl = await apiCallToUpload(
       //   s3UploadPresignedUrl,
       //   profilePicture
@@ -135,13 +139,13 @@ export class AuthController {
       const user = new User({
         firstName,
         lastName,
-        // password: encryptedPassword,
+        photoName: fileName,
         gender,
         age,
         email,
         about,
         skills,
-        photoUrl: photoName,
+        photoUrl,
       });
 
       await user.save();

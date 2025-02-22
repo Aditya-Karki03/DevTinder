@@ -69,6 +69,12 @@ const userSchema = new mongoose.Schema<userInterface>(
       type: String,
       enum: Object.values(Genders),
     },
+    photoName: {
+      type: String,
+      required: [true, "Photo name is required"],
+      maxlength: 100,
+      trim: true,
+    },
     photoUrl: {
       type: String,
       //default value only works if the value provided is undefined, even if null is provided, null is stored

@@ -14,6 +14,7 @@ export interface userInterface {
   email: string;
   age: number;
   gender: Genders;
+  photoName: string;
   photoUrl?: string;
   about: string;
   skills: string[];

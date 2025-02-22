@@ -44,7 +44,7 @@ export const uploadToS3 = async ({
   const BUCKET = process.env.AWS_BUCKET || "";
   const command = new PutObjectCommand({
     Bucket: BUCKET,
-    Key: `user-uploads/ProfilePicture/${fileName}`, //key name should be unique, if same name than s3 overwrites the prev one
+    Key: `${fileName}`, //key name should be unique, if same name than s3 overwrites the prev one
     Body: fileBuffer,
     ContentType: contentType,
   });
@@ -69,7 +69,7 @@ export const getPresignedUrls = async (key: string) => {
     Key: key,
   });
   const url = await getSignedUrl(s3, command, {
-    expiresIn: 86400,
+    expiresIn: 86400, //1 day is the expiration
   });
   return url;
 };
