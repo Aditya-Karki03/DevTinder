@@ -65,7 +65,6 @@ export const userUpdateDataValidator = (req: Request) => {
     "email",
     "about",
     "skills",
-    "photoUrl",
   ];
   const hasExpectedData = Object.keys(req.body).every((value: string) =>
     expectedData.includes(value)

@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
 import { signupDataValidation, verifyPassword } from "../utils/validation";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { tokenGenerator } from "../utils/tokenGenerator";
 import { generateOtp, verifyOtp } from "../utils/otpGenerator";
 import { sendOtpEmail } from "../utils/email";
+import { getPresignedUrls, uploadToS3 } from "../utils/S3";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
   async sendOtpForEmailVerification(req: Request, res: Response) {
@@ -62,9 +61,12 @@ export class AuthController {
 
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
+    //while user creation after post request, photo comes here=>should be uploaded to S3 using putObject
+    //afte uploading I should either get a resposne of the URL of the file or get the URL of the image uploaded save it to DB
+    //configure S3 such that only the user of devTinder are allowed to view that image
+
     const profilePicture = req.file;
-    const { firstName, lastName, age, gender, email, photoUrl, about, skills } =
-      req.body;
+    const { firstName, lastName, age, gender, email, about, skills } = req.body;
     //always validate the data first even if you have schema defined for that data
     //because schema will be checked only when attempting to save data into db
     //after validation encrypt the password using bycrypt
@@ -76,7 +78,6 @@ export class AuthController {
     //photoURL, about skills
 
     //just showing
-    console.log(profilePicture);
     const { error, message } = signupDataValidation(req);
     if (error) {
       res.status(400).json({
@@ -96,9 +97,10 @@ export class AuthController {
     // });
 
     //check if the provided email already exist in the db
+
     try {
-      const userEmail = await User.find({ email });
-      if (userEmail.length > 0) {
+      const userEmail = await User.findOne({ email });
+      if (userEmail) {
         res.status(403).json({
           message: "User with this email already exist",
           data: null,
@@ -113,11 +115,31 @@ export class AuthController {
     }
 
     try {
+      //upload the picture to S3
+      const fileName = `user-uploads/ProfilePicture/${
+        profilePicture?.originalname ?? ""
+      }-${Date.now()}`;
+      await uploadToS3({
+        fileName,
+        contentType: profilePicture?.mimetype ?? "",
+        fileBuffer: profilePicture?.buffer ?? "",
+      });
+
+      //file name should be unique, if not S3 overwrites the prev one if same name
+
+      const photoUrl = await getPresignedUrls(fileName);
+      // const imgUrl = await apiCallToUpload(
+      //   s3UploadPresignedUrl,
+      //   profilePicture
+      // );
+      // console.log(imgUrl);
+      // console.log("(--------IMG URL------------");
+
       //another way of doing the same is by creating new instance of user model and saving in db
       const user = new User({
         firstName,
         lastName,
-        // password: encryptedPassword,
+        photoName: fileName,
         gender,
         age,
         email,
@@ -125,7 +147,12 @@ export class AuthController {
         skills,
         photoUrl,
       });
+
       await user.save();
+      //generate and send the access token
+      const userId = user._id.toString();
+      const token = tokenGenerator(userId);
+      res.cookie("loginToken", token);
       res.status(201).json({
         message: "User created successfully!",
         user: {
@@ -141,6 +168,7 @@ export class AuthController {
         },
       });
     } catch (error: any) {
+      console.log(error);
       if (error.name == "ValidationError") {
         const errors = Object.values(error.errors).map(
           (err: any) => err.message

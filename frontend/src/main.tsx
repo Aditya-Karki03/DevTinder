@@ -14,6 +14,7 @@ import ErrorComponent from "./components/ErrorComponent.tsx";
 import Register from "./pages/Register/Register.tsx";
 import Connection from "./pages/connections/Connection.tsx";
 import FramerMotion from "./components/FramerMotion.tsx";
+import { Toaster } from "react-hot-toast";
 
 // import Protection from "./components/Protection.tsx";
 
@@ -22,6 +23,14 @@ createRoot(document.getElementById("root")!).render(
     <Provider store={store}>
       <BrowserRouter>
         <AuthProvider>
+          <Toaster
+            toastOptions={{
+              style: {
+                backgroundColor: "#D6D6D6",
+                color: "black",
+              },
+            }}
+          />
           <Routes>
             <Route>
               <Route index element={<Login />} />

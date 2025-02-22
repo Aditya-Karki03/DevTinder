@@ -1,24 +1,46 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Loader2, MoveLeft, MoveRight } from "lucide-react";
-import { formSteps } from "../services/constants";
+import { formSteps } from "../../services/constants";
 import { useEffect, useState } from "react";
 import {
   registerFormSchema,
   regitrationFormSchemaType,
   otpSchema,
-} from "../schema/schema";
+} from "../../schema/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
-import { useRegistration } from "../context/register-context";
 import ReactOtpInput from "react-otp-input";
-import { useDispatch } from "react-redux";
-import { signUpRequest } from "../pages/Register/slice";
-import { IRegistrationFormData } from "../Types/types";
-import { UseSignup } from "../hooks/useSignup";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import {
+  emailVerificationRequest,
+  otpVerificationRequest,
+  registrationRequest,
+} from "./slice";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 type fieldName = keyof regitrationFormSchemaType;
 
 const Form = () => {
+  const {
+    verifyingEmail,
+    emailVerificationSuccessful,
+    emailVerificationFailure,
+    emailVerificationError,
+    otpHash,
+    verifyingOtp,
+    otpVerificationSuccessful,
+    otpVerificationFailure,
+    otpVerificationError,
+    otpStatusMessage,
+    sendingData,
+    dataSendingSuccessful,
+    dataSendingStatusMessage,
+    dataSendingFailure,
+    dataSendingError,
+  } = useSelector((store: RootState) => store?.signup);
+
   const dispatch = useDispatch();
   const {
     register,
@@ -31,22 +53,50 @@ const Form = () => {
   });
   const [step, setStep] = useState(0);
   const [otp, setOtp] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
-    //autmatically trigger the handleOtpSubmit function
-    if (otp.length == 6) {
-      handleNext();
+    if (!verifyingEmail) {
+      if (emailVerificationFailure) {
+        toast.error(emailVerificationError?.error || "");
+      } else if (emailVerificationSuccessful && step == 0) {
+        toast.success("OTP sent successfully. Please Check Your Email");
+        setStep((prev) => prev + 1);
+      }
     }
-  }, [otp]);
-  const {
-    sendOtp,
-    verifyOtp,
-    otpVerified,
-    error,
-    personalInfo,
-    hash,
-    registeredUser,
-    otpVerificationInProgress,
-  } = useRegistration();
+    if (!verifyingOtp) {
+      // Only process when verification is complete
+      if (otpVerificationError) {
+        toast.error(otpVerificationError.error);
+        // dispatch(resetOtpState());
+      } else if (otpVerificationSuccessful && step == 1) {
+        toast.success(otpStatusMessage);
+        setStep((prev) => prev + 1);
+        // dispatch(resetOtpState());
+      }
+    }
+    if (!sendingData) {
+      if (dataSendingError) {
+        toast.error(dataSendingError.error);
+      } else if (dataSendingSuccessful && step == 3) {
+        toast.success(dataSendingStatusMessage);
+        navigate("/dashboard/profile");
+      }
+    }
+  }, [
+    emailVerificationSuccessful,
+    verifyingEmail,
+    emailVerificationError,
+    verifyingOtp,
+    otpVerificationError,
+    otpVerificationSuccessful,
+    otpStatusMessage,
+    sendingData,
+    dataSendingSuccessful,
+    dataSendingStatusMessage,
+    dataSendingError,
+  ]);
+
   //to move left
   const handlePrev = () => {
     if (step > 0) {
@@ -54,10 +104,9 @@ const Form = () => {
     }
   };
 
-  const processForm: SubmitHandler<regitrationFormSchemaType> = (data) => {
-    console.log(data);
-    // console.log(registeredUser);
-    // dispatch(signUpRequest(data));
+  const processForm: SubmitHandler<regitrationFormSchemaType> = async (
+    data
+  ) => {
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -71,7 +120,7 @@ const Form = () => {
         formData.append(key, value);
       }
     });
-    UseSignup(formData);
+    dispatch(registrationRequest(formData));
   };
 
   //to handle right
@@ -90,65 +139,29 @@ const Form = () => {
     //if 1st step than make api request to generate OTP
     if (step == 0) {
       const email = getValues("email");
-      sendOtp({ email });
-      if (error) return;
+      dispatch(emailVerificationRequest({ email }));
     }
     if (step == 1) {
-      const { success, message } = handleOtp();
-      //give a message for the toaster
-      if (!success) {
+      const data = otpSchema.safeParse({ otp });
+      if (!data.success) {
+        toast.error("Invalid OTP");
         return;
       }
+      const otpData = {
+        email: getValues("email") || "",
+        otp,
+        hash: otpHash || "",
+      };
+      dispatch(otpVerificationRequest(otpData));
     }
 
     if (step == 2) {
-      const inpData = getValues([
-        "firstName",
-        "lastName",
-        "age",
-        "gender",
-        "skills",
-        "about",
-      ]);
-      const data = {
-        firstName: inpData[0],
-        lastName: inpData[1],
-        age: inpData[2],
-        gender: inpData[3],
-        skills: inpData[4],
-        about: inpData[5],
-      };
-      personalInfo(data);
-    }
-    if (step < 3) {
       setStep((prev) => prev + 1);
     }
 
     if (step == 3) {
-      console.log("Final Form Submission");
-      // handleSubmit(() => processForm());
+      //upload the image and submit the form
     }
-  };
-
-  const handleOtp = () => {
-    const data = otpSchema.safeParse({ otp });
-    if (!data.success) {
-      return {
-        success: false,
-        message: "Invalid OTP input",
-      };
-    }
-    verifyOtp({ email: registeredUser?.email || "", otp, hash: hash || "" });
-    if (!otpVerified) {
-      return {
-        success: false,
-        message: "Invalid OTP input",
-      };
-    }
-    return {
-      success: true,
-      message: "OTP verified successfully",
-    };
   };
 
   return (
@@ -183,7 +196,6 @@ const Form = () => {
           }`}
         ></span>
       </div>
-      {/* onSubmit={handleSubmit(onSubmit)} */}
       <form
         onSubmit={handleSubmit(processForm)}
         className="w-full min-h-8/10 overflow-hidden"
@@ -194,14 +206,19 @@ const Form = () => {
             initial={{ x: `${step >= 0 ? "50%" : "-50%"}`, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm"
+            className="w-full h-full flex flex-col items-center justify-center gap-8 border border-white/10 bg-white/5 rounded-lg p-8 backdrop-blur-sm relative" // Added relative
           >
+            {verifyingEmail && (
+              <div className="absolute inset-0 bg-black/20 flex justify-center items-center rounded-lg z-50">
+                <Loader2 className="w-14 h-14 text-white animate-spin" />
+              </div>
+            )}
             <div className="w-full max-w-md">
               <h2 className="text-2xl font-semibold text-center text-gray-100 mb-1">
                 Enter Your Email & Click on Verify
               </h2>
               <p className="text-gray-400 text-sm text-center">
-                Please provide your credentials to continue
+                Please provide your email to continue
               </p>
             </div>
             <div className="w-full max-w-md space-y-4">
@@ -226,28 +243,6 @@ const Form = () => {
                   </p>
                 )}
               </div>
-
-              {/* <div className="space-y-2">
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-300"
-        >
-          Password
-        </label>
-        <input
-          type="password"
-          {...register("password")}
-          className={`w-full px-4 py-3 rounded-md bg-black/20 border ${
-            errors?.password ? "border-red-500/50" : "border-white/10"
-          } text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200`}
-          placeholder="Enter your password"
-        />
-        {errors?.password && (
-          <p className="text-sm text-red-500">
-            {errors?.password?.message}
-          </p>
-        )}
-      </div> */}
             </div>
           </motion.div>
         )}
@@ -288,7 +283,7 @@ const Form = () => {
                 className="bg-blue-500 px-5 py-2 rounded-md cursor-pointer hover:bg-blue-600 duration-100 w-30 flex justify-center items-center"
                 onClick={handleNext}
               >
-                {otpVerificationInProgress ? (
+                {verifyingOtp ? (
                   <Loader2 className="h-6 w-6 flex justify-center items-center animate-spin text-white" />
                 ) : (
                   "Verify"
@@ -383,8 +378,6 @@ const Form = () => {
                   )}
                 </div>
               </div>
-
-              {/* Right Column */}
               <div className="space-y-6">
                 <div className="space-y-2">
                   <label
