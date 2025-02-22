@@ -149,6 +149,10 @@ export class AuthController {
       });
 
       await user.save();
+      //generate and send the access token
+      const userId = user._id.toString();
+      const token = tokenGenerator(userId);
+      res.cookie("loginToken", token);
       res.status(201).json({
         message: "User created successfully!",
         user: {
