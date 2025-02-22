@@ -1,7 +1,19 @@
-import Form from "../../components/Form";
+import { useEffect } from "react";
+import Form from "../../components/SignupForm/Form";
 import RegistrationProvider from "../../context/register-context";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const registrationSuccessful = useSelector(
+    (store: RootState) => store?.signUp?.signUpSuccessful
+  );
+  const navigate = useNavigate();
+  console.log(registrationSuccessful);
+  useEffect(() => {
+    if (registrationSuccessful) navigate("/dashboard/profile");
+  }, [registrationSuccessful]);
   return (
     <RegistrationProvider>
       <div className="h-screen flex justify-center items-center ">

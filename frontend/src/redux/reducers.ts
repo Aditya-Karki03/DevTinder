@@ -5,6 +5,7 @@ import userFriendReducer from "../pages/connections/slice";
 import feeds from "../pages/feed/slice";
 import registrationReducer from "../context/register-context/slice";
 import signUpReducer from "../pages/Register/slice";
+import signupReducer from "../components/SignupForm/slice";
 const reducers = {
   auth: userReducer,
   profile: profileReducer,
@@ -13,5 +14,6 @@ const reducers = {
   feeds: feeds,
   registration: registrationReducer,
   signUp: signUpReducer,
+  signup: signupReducer,
 };
 export default reducers;
