@@ -1,18 +1,6 @@
-import { useEffect } from "react";
 import Form from "../../components/SignupForm/Form";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const registrationSuccessful = useSelector(
-    (store: RootState) => store?.signUp?.signUpSuccessful
-  );
-  const navigate = useNavigate();
-  console.log(registrationSuccessful);
-  useEffect(() => {
-    if (registrationSuccessful) navigate("/dashboard/profile");
-  }, [registrationSuccessful]);
   return (
     <div className="h-screen flex justify-center items-center ">
       <div className="flex h-11/12 flex-col bg-white/10 rounded-2xl  p-4 ">
