@@ -18,7 +18,7 @@ import {
   registrationRequest,
 } from "./slice";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 type fieldName = keyof regitrationFormSchemaType;
 
@@ -244,6 +244,12 @@ const Form = () => {
                 )}
               </div>
             </div>
+            <p className="text-center py-2 ">
+              Already have an account?{" "}
+              <Link className="text-blue-400" to={"/"}>
+                Sign In
+              </Link>
+            </p>
           </motion.div>
         )}
 
