@@ -1,6 +1,6 @@
 export interface ILoginFormData {
   email: string;
-  password: string;
+  otp: string;
 }
 
 export interface IUserLoginData {

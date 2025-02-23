@@ -17,6 +17,7 @@ const Login = () => {
     register,
     formState: { errors },
     handleSubmit,
+    trigger,
   } = useForm<ILoginFormData>({
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit",
@@ -34,7 +35,7 @@ const Login = () => {
 
   //form submission and api call
   const submitForm = (data: ILoginFormData) => {
-    login(data);
+    // login(data);
     // navigate("/dashboard");
   };
 
@@ -45,15 +46,19 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  const handlePrev = () => {
+  const handlePrev = async () => {
     //only 2 steps if it is not one than we don't move to 0
     if (step == 1) {
+      const success = await trigger("otp");
+      if (!success) return;
       setStep((prev) => prev - 1);
     }
   };
-  const handleNext = () => {
+  const handleNext = async () => {
     //only 2 steps if it is not 0 than we don't move to one
     if (step == 0) {
+      const success = await trigger("email", { shouldFocus: true });
+      if (!success) return;
       setStep((prev) => prev + 1);
     }
   };
