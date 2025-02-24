@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ILoginFormData, IProfileData, IError } from "../Types/types";
+import {
+  ILoginFormData,
+  IProfileData,
+  IError,
+  IOtpVerifier,
+} from "../Types/types";
 
 interface IUser {
   _id: string;
@@ -13,58 +18,56 @@ interface IUser {
 //user field can also take the user profile
 interface loginState {
   // user: IUser | null;
-  // isLoggedIn: boolean;
-  // isLoggedOut: boolean;
   // loading: boolean;
-  // error: null | string;
   loggedInUser: IUser | null;
   isLoggedIn: boolean;
   isLoggedOut: boolean;
-  loginInProgress: boolean;
+  // loginInProgress: boolean;
   logoutInProgress: boolean;
   fetchingUserProfile: boolean;
   fetchingUserSuccess: boolean;
   fetchingUserFailure: boolean;
   error: IError | null;
+  //types to generate OTP
+  generateOtpSuccess: boolean;
+  generateOtpFailure: boolean;
+  otpHash: null | string;
+  generatingOtp: boolean;
+  generateOtpError: IError | null;
+  //types to verify otp
+  verifyOtpSuccess: boolean;
+  verifyOtpFailure: boolean;
+  verifyOtpError: IError | null;
+  verifyingOtp: boolean;
 }
 
 const initialState: loginState = {
   loggedInUser: null,
   isLoggedIn: false,
   isLoggedOut: false,
-  loginInProgress: false,
+  // loginInProgress: false,
   logoutInProgress: false,
   fetchingUserProfile: false,
   fetchingUserSuccess: false,
   fetchingUserFailure: false,
   error: null,
+  //initial state to generate OTP
+  generateOtpSuccess: false,
+  generateOtpFailure: false,
+  otpHash: null,
+  generatingOtp: false,
+  generateOtpError: null,
+  //initial state to verify otp
+  verifyOtpSuccess: false,
+  verifyOtpFailure: false,
+  verifyingOtp: false,
+  verifyOtpError: null,
 };
 
 const loginUserSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginRequest: (state, _action: PayloadAction<ILoginFormData>) => {
-      state.loginInProgress = true;
-      //remove any previous error
-      state.error = null;
-    },
-    loginSuccessfull: (state, _action: PayloadAction<IUser>) => {
-      state.loginInProgress = false;
-      state.isLoggedIn = true;
-      state.isLoggedOut = false;
-      //we will not put data from the response of login
-      // state.loggedInUser = action.payload;
-    },
-    loginFail: (state, action: PayloadAction<IError>) => {
-      state.loginInProgress = false;
-      state.loggedInUser = null;
-      state.isLoggedIn = false;
-      state.isLoggedOut = true;
-      state.error =
-        action.payload ||
-        "An error occurrred during login. Please check email/password or try again later";
-    },
     logoutRequest: (state) => {
       state.logoutInProgress = true;
       state.error = null;
@@ -94,17 +97,61 @@ const loginUserSlice = createSlice({
       state.fetchingUserProfile = false;
       state.error = action.payload;
     },
+    //reducers to generate OTP
+    generateOtpRequest: (state, _action: PayloadAction<{ email: string }>) => {
+      state.generatingOtp = true;
+      state.generateOtpError = null;
+      state.otpHash = null;
+    },
+    generateOtpSuccessful: (state, action: PayloadAction<{ hash: string }>) => {
+      state.generatingOtp = false;
+      state.generateOtpSuccess = true;
+      state.otpHash = action.payload.hash;
+    },
+    generateOtpFail: (state, action: PayloadAction<IError>) => {
+      state.generatingOtp = false;
+      state.generateOtpFailure = true;
+      state.otpHash = null;
+      state.generateOtpError = action.payload;
+    },
+    //reducers to verify otp
+    verifyOtpRequest: (state, _action: PayloadAction<IOtpVerifier>) => {
+      state.verifyingOtp = true;
+      state.verifyOtpError = null;
+    },
+    verifyOtpSuccessful: (state) => {
+      state.verifyingOtp = false;
+      state.verifyOtpSuccess = true;
+      state.isLoggedIn = true;
+      state.isLoggedOut = false;
+    },
+    verifyOtpFail: (state, action: PayloadAction<IError>) => {
+      state.verifyingOtp = false;
+      state.verifyOtpFailure = true;
+      state.verifyOtpError = action.payload;
+      state.loggedInUser = null;
+      state.isLoggedIn = false;
+      state.isLoggedOut = true;
+    },
   },
 });
 export const {
-  loginRequest,
-  loginSuccessfull,
-  loginFail,
+  // loginRequest,
+  // loginSuccessfull,
+  // loginFail,
   logoutRequest,
   logoutSuccessfull,
   logoutFailure,
   fetchUserProfileRequest,
   fetchUserProfileSuccess,
   fetchUserProfileFailure,
+  //actions to generate otp
+  generateOtpFail,
+  generateOtpRequest,
+  generateOtpSuccessful,
+  //actions to verify otp
+  verifyOtpFail,
+  verifyOtpRequest,
+  verifyOtpSuccessful,
 } = loginUserSlice.actions;
 export default loginUserSlice.reducer;

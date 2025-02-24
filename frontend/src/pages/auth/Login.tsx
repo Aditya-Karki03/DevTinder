@@ -2,13 +2,13 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, LoaderCircle } from "lucide-react";
+import { ArrowLeft, Loader2, LoaderCircle } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { formSteps } from "../../services/constants";
 import ReactOtpInput from "react-otp-input";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [step, setStep] = useState(0);
@@ -16,28 +16,48 @@ const Login = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
     trigger,
+    handleSubmit,
+    getValues,
   } = useForm<ILoginFormData>({
     resolver: zodResolver(loginFormSchema),
     mode: "onSubmit",
   });
-  const { login, error, loginInProgress, isLoggedIn } = useAuth();
-  // //to navigate
-  const navigate = useNavigate();
-  // //to dispatch action
-  // const dispatch = useDispatch();
-  // //subscribing to the store
-  // const loading = useSelector((state: RootState) => state?.auth?.loading);
-  // const isLoggedIn = useSelector((state: RootState) => state?.auth?.isLoggedIn);
-  // const error = useSelector((state: RootState) => state?.auth?.error);
-  // // const loggedInUser = useSelector((state: RootState) => state?.auth?.user);
+  const {
+    verifyOtp,
+    generateOtpError,
+    verifyOtpError,
+    generatingOtp,
+    verifyingOtp,
+    isLoggedIn,
+    generateOtp,
+    otpHash,
+    generateOtpFailure,
+    generateOtpSuccess,
+    verifyOtpSuccess,
+    verifyOtpFailure,
+  } = useAuth();
 
-  //form submission and api call
-  const submitForm = (data: ILoginFormData) => {
-    // login(data);
-    // navigate("/dashboard");
-  };
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!generatingOtp) {
+      if (generateOtpFailure && generateOtpError) {
+        toast.error(generateOtpError.error);
+      } else if (generateOtpSuccess && step <= 0) {
+        toast.success(`OTP sent to ${getValues("email")}`);
+        setStep((prev) => prev + 1);
+      }
+    }
+
+    if (!verifyingOtp) {
+      if (verifyOtpFailure && verifyOtpError) {
+        toast.error(verifyOtpError.error);
+      } else if (verifyOtpSuccess && step == 1) {
+        toast.success(`OTP Verified Successfully`);
+      }
+    }
+  }, [generateOtp, verifyOtp]);
 
   // if loggedIn move to dashboard
   useEffect(() => {
@@ -45,12 +65,11 @@ const Login = () => {
       navigate("/dashboard");
     }
   }, [isLoggedIn]);
-
+  const submitForm = (data: ILoginFormData) => {
+    //required for form validation
+  };
   const handlePrev = async () => {
-    //only 2 steps if it is not one than we don't move to 0
-    if (step == 1) {
-      const success = await trigger("otp");
-      if (!success) return;
+    if (step > 0) {
       setStep((prev) => prev - 1);
     }
   };
@@ -59,9 +78,25 @@ const Login = () => {
     if (step == 0) {
       const success = await trigger("email", { shouldFocus: true });
       if (!success) return;
-      setStep((prev) => prev + 1);
+      //call generateOtp method
+      const data = {
+        email: getValues("email"),
+      };
+      generateOtp(data);
+    }
+    //only 2 steps if it is not one than we don't move to 0
+    if (step == 1) {
+      const success = await trigger("otp");
+      if (!success) return;
+      const data = {
+        email: getValues("email"),
+        otp,
+        hash: otpHash ?? "",
+      };
+      verifyOtp(data);
     }
   };
+
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
@@ -109,8 +144,14 @@ const Login = () => {
             initial={{ x: step != 0 ? "50%" : "-50%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
-            className="space-y-2"
+            className="space-y-2 relative"
           >
+            {/* {" "}
+            {generatingOtp && (
+              <div className="absolute w-full h-full bg-black/10 flex justify-center items-center">
+                <Loader2 className="w-10 h-10 text-white animate-spin" />
+              </div>
+            )} */}
             <label htmlFor="email" className="block font-medium">
               Email:
             </label>
@@ -163,7 +204,7 @@ const Login = () => {
           className="w-full flex justify-center bg-blue-500 py-3 rounded-md cursor-pointer hover:bg-blue-600 transition-all"
           onClick={handleNext}
         >
-          {loginInProgress ? (
+          {generatingOtp || verifyingOtp ? (
             <LoaderCircle className="w-6 h-6 text-center text-white animate-spin" />
           ) : step == 0 ? (
             "Generate OTP"
@@ -178,25 +219,8 @@ const Login = () => {
           </Link>{" "}
           here
         </p>
-        {/* <div className="flex w-full justify-between">
-          <button
-            className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors ease-in-out duration-200"
-            onClick={handlePrev}
-          >
-            <MoveLeft />
-          </button>
-          {step !== 3 && (
-            <button
-              className="w-10 h-10 rounded-lg flex justify-center items-center bg-blue-500 hover:bg-blue-600 cursor-pointer  transition-colors ease-in-out duration-200"
-              onClick={handleNext}
-            >
-              <MoveRight />
-            </button>
-          )}
-        </div> */}
       </div>
     </form>
   );
 };
-
 export default Login;
