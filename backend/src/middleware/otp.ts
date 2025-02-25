@@ -102,10 +102,6 @@ export const otpVerifier = async (
     if (user) {
       req.user = user;
     }
-    res.status(200).json({
-      message,
-      isVerified,
-    });
     next();
   } catch (error) {
     res.status(500).json({
