@@ -4,7 +4,7 @@ import { regitrationFormSchemaType } from "../schema/schema";
 const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
 
 //api to send otp
-export const sendOtp = (data: { email: string }) => {
+export const sendOtp = (data: { email: string; authType: string }) => {
   return axios.post(`${API_URL}/v1/user/send-otp`, data, {
     withCredentials: true,
   });
@@ -27,7 +27,7 @@ export const signUpRequest = (data: regitrationFormSchemaType) => {
 export const loginApiCall = (data: ILoginFormData) => {
   //below code returns a promise because axios.post is a async function
   //we handle this promise in the saga using yield call(...)
-  return axios.post(`${API_URL}/v1/user/login`, data, {
+  return axios.post(`${API_URL}/v1/user/verify-otp-and-login`, data, {
     withCredentials: true,
   });
 };

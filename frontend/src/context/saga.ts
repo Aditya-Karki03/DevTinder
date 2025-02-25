@@ -1,6 +1,7 @@
 import {
   IError,
   ILoginFormData,
+  ILoginResponse,
   ILoginResponseData,
   IOtpGeneratorResponse,
   IOtpVerificationResponse,
@@ -26,7 +27,9 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import * as Api from "../services/api";
 
 //saga to generate OTP
-function* generateOtp(action: PayloadAction<{ email: string }>) {
+function* generateOtp(
+  action: PayloadAction<{ email: string; authType: string }>
+) {
   try {
     const data: IOtpGeneratorResponse = yield call(() =>
       Api.sendOtp(action.payload)
@@ -61,17 +64,22 @@ function* generateOtp(action: PayloadAction<{ email: string }>) {
 
 function* verifyOtp(action: PayloadAction<IOtpVerifier>) {
   try {
-    const data: IOtpVerificationResponse = yield call(() =>
-      Api.verifyOtp(action.payload)
+    //below api verifies and sets the cookies as well
+    const data: ILoginResponse = yield call(() =>
+      Api.loginApiCall(action.payload)
     );
-    if (data?.data?.isVerified) {
-      yield put(verifyOtpSuccessful());
+    console.log("I am here");
+    console.log(data);
+    if (data?.data?.isVerified && data?.user) {
+      console.log("I am here");
+      yield put(verifyOtpSuccessful(data?.user));
     } else {
       const message = data?.data?.message;
       const error: IError = {
         error: message,
         errorCode: "404",
       };
+      console.log(error);
       yield put(verifyOtpFail(error));
     }
   } catch (error: any) {

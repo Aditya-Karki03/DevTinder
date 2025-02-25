@@ -98,7 +98,10 @@ const loginUserSlice = createSlice({
       state.error = action.payload;
     },
     //reducers to generate OTP
-    generateOtpRequest: (state, _action: PayloadAction<{ email: string }>) => {
+    generateOtpRequest: (
+      state,
+      _action: PayloadAction<{ email: string; authType: string }>
+    ) => {
       state.generatingOtp = true;
       state.generateOtpError = null;
       state.otpHash = null;
@@ -119,11 +122,13 @@ const loginUserSlice = createSlice({
       state.verifyingOtp = true;
       state.verifyOtpError = null;
     },
-    verifyOtpSuccessful: (state) => {
+    verifyOtpSuccessful: (state, action: PayloadAction<IProfileData>) => {
       state.verifyingOtp = false;
       state.verifyOtpSuccess = true;
       state.isLoggedIn = true;
       state.isLoggedOut = false;
+      //attach the loggedin user as well
+      state.loggedInUser = action.payload;
     },
     verifyOtpFail: (state, action: PayloadAction<IError>) => {
       state.verifyingOtp = false;

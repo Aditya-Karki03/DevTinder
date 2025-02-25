@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { verifyOtp } from "../services/api";
 
 interface IContextData {
-  generateOtp: (data: { email: string }) => void;
+  generateOtp: (data: { email: string; authType: string }) => void;
   verifyOtp: (data: IOtpVerifier) => void;
   logout: () => void;
   generatingOtp: boolean;
@@ -86,7 +86,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     otpHash,
   } = useSelector((store: RootState) => store?.auth);
   //generate otp action dispatch
-  const generateOtp = (data: { email: string }) => {
+  const generateOtp = (data: { email: string; authType: string }) => {
     dispatch(generateOtpRequest(data));
   };
   const verifyOtp = (data: IOtpVerifier) => {

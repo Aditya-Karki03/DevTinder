@@ -52,6 +52,7 @@ const Login = () => {
 
     if (!verifyingOtp) {
       if (verifyOtpFailure && verifyOtpError) {
+        console.log(verifyOtpError.error);
         toast.error(verifyOtpError.error);
       } else if (verifyOtpSuccess && step == 1) {
         toast.success(`OTP Verified Successfully`);
@@ -81,6 +82,9 @@ const Login = () => {
       //call generateOtp method
       const data = {
         email: getValues("email"),
+        //authType is required to let backend know if you are login or registering
+        //if logging in there is a sepaate logic and if registering there is a separate one
+        authType: "login",
       };
       generateOtp(data);
     }
