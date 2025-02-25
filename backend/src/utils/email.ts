@@ -25,7 +25,6 @@ export const sendOtpEmail = async (otp: string, toEmail: string) => {
             <o>Valid for 2 minutes</p>
       `,
     });
-    console.log("Email info", info);
     if (!info) {
       return {
         error: true,
