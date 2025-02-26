@@ -240,7 +240,3 @@ export interface ISignupResponse {
     user: IRegistrationFormData;
   };
 }
-
-export interface ILoginResponse extends IOtpVerificationResponse {
-  user: IProfileData | null;
-}

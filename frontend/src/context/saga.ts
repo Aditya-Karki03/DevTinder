@@ -1,10 +1,6 @@
 import {
   IError,
-  ILoginFormData,
-  ILoginResponse,
-  ILoginResponseData,
   IOtpGeneratorResponse,
-  IOtpVerificationResponse,
   IOtpVerifier,
   IProfileResponseData,
 } from "../Types/types";
@@ -65,21 +61,17 @@ function* generateOtp(
 function* verifyOtp(action: PayloadAction<IOtpVerifier>) {
   try {
     //below api verifies and sets the cookies as well
-    const data: ILoginResponse = yield call(() =>
+    const data: IProfileResponseData = yield call(() =>
       Api.loginApiCall(action.payload)
     );
-    console.log("I am here");
-    console.log(data);
-    if (data?.data?.isVerified && data?.user) {
-      console.log("I am here");
-      yield put(verifyOtpSuccessful(data?.user));
+    if (data?.data?.user) {
+      yield put(verifyOtpSuccessful(data?.data?.user));
     } else {
       const message = data?.data?.message;
       const error: IError = {
         error: message,
         errorCode: "404",
       };
-      console.log(error);
       yield put(verifyOtpFail(error));
     }
   } catch (error: any) {
