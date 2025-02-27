@@ -8,7 +8,7 @@ const authRoutes = express.Router();
 const authController = new AuthController();
 
 authRoutes.post("/send-otp", otpGenerator);
-authRoutes.post("/verify-otp", otpVerifier);
+authRoutes.post("/verify-otp", otpVerifier, authController.createUser);
 //user signup route
 authRoutes.post(
   "/signup",

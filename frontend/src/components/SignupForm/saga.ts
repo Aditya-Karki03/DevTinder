@@ -71,6 +71,7 @@ function* verifyOtp(action: PayloadAction<IOtpVerifier>) {
       yield put(otpVerificationFail(error));
     }
   } catch (error: any) {
+    console.log(error);
     let message: string = "Something went wrong while verifying otp";
     if (error?.response?.data?.message) {
       message = error?.response?.data?.message;

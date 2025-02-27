@@ -100,9 +100,17 @@ export const otpVerifier = async (
     }
     const user = await User.findOne({ email });
     if (user) {
+      //if user is found with that email, that means we are working for login else registration,
+      //incase of login we send the user to the next middleware
       req.user = user;
+      next();
+    } else {
+      //else it means it is registration we send the user a resposne message
+      res.status(200).json({
+        message,
+        isVerified,
+      });
     }
-    next();
   } catch (error) {
     res.status(500).json({
       message:
