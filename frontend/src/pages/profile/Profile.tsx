@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { profileRequest } from "./slice";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { Edit2 } from "lucide-react";
+import Modal from "../../components/Modal";
 
 const Profile = () => {
+  const [showModal, setShowModal] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const error = useSelector((store: RootState) => store?.profile?.error);
@@ -19,13 +21,29 @@ const Profile = () => {
       navigate("/");
     }
   }, [error]);
+
+  //handles the show modal
+  const handleShowModal = () => {
+    setShowModal((prev) => !prev);
+    console.log(showModal);
+  };
+  console.log(showModal);
   return (
-    <div className="relative w-full h-full">
-      <div className="absolute w-full bg-gradient-to-r from-pink-500 via-orange-500 to-blue-500 h-4/10 "></div>
-      <div className="h-full flex flex-col flex-grow justify-center items-center p-6">
+    <div className="relative w-full h-full ">
+      <div
+        onClick={() => setShowModal(false)}
+        className="absolute w-full bg-gradient-to-r from-pink-500 via-orange-500 to-blue-500 h-4/10 "
+      ></div>
+      <div
+        // onClick={() => setShowModal(false)}
+        className="h-full flex flex-col flex-grow justify-center items-center p-6"
+      >
         <div className="relative z-20 flex flex-col items-center bg-gray-900 rounded-2xl shadow-xl p-8 max-w-2xl w-full space-y-6 transition-all duration-300 hover:shadow-2xl border border-white/10">
           <div className="flex justify-end w-full cursor-pointer ">
-            <div className="w-10 h-10 rounded-full hover:bg-gray-700 flex justify-center items-center">
+            <div
+              onClick={handleShowModal}
+              className="w-12 h-12 p-3 rounded-full hover:bg-gray-700 flex justify-center items-center"
+            >
               <Edit2 />
             </div>
           </div>
@@ -74,6 +92,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {showModal && <Modal setShowModal={handleShowModal} />}
     </div>
   );
 };

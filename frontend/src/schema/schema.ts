@@ -60,4 +60,33 @@ export const registerFormSchema = z.object({
     ),
 });
 
+export const modifyFormSchema = z.object({
+  firstName: z.string().refine((name) => name.length > 2 && name.length < 40, {
+    message: "Invalid Firstname",
+  }),
+  lastName: z.string().refine((name) => name.length > 2 && name.length < 40, {
+    message: "Invalid Lastname",
+  }),
+  age: z.string().refine((val) => Number(val) > 18, {
+    message: "Age must be more than 18+",
+  }),
+  gender: z.enum(["male", "female", "others"], {
+    message: "Invalid Gender",
+  }),
+  skills: z.string().min(1, {
+    message: "Please Enter your skills",
+  }),
+  image: z
+    .any()
+    .refine((images) => !images?.[0] || images?.[0]?.size <= maxImgSize, {
+      message: "Image size should be within 5 MB",
+    })
+    .refine(
+      (images) => !images?.[0] || acceptedImgTypes.includes(images?.[0]?.type),
+      {
+        message: "Only .jpg, .jpeg, .png and .webp formats are supported ",
+      }
+    ),
+});
+
 export type regitrationFormSchemaType = z.infer<typeof registerFormSchema>;
