@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  ILoginFormData,
-  IProfileData,
-  IError,
-  IOtpVerifier,
-} from "../Types/types";
+import { IProfileData, IError, IOtpVerifier } from "../Types/types";
 
 interface IUser {
   _id: string;
@@ -129,6 +124,12 @@ const loginUserSlice = createSlice({
       state.isLoggedOut = false;
       //attach the loggedin user as well
       state.loggedInUser = action.payload;
+      //take the generate otp state to its inital state
+      state.generateOtpSuccess = false;
+      state.generateOtpFailure = false;
+      state.otpHash = null;
+      state.generatingOtp = false;
+      state.generateOtpError = null;
     },
     verifyOtpFail: (state, action: PayloadAction<IError>) => {
       state.verifyingOtp = false;
