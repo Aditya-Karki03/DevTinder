@@ -20,7 +20,9 @@ import {
 } from "./slice";
 import { PayloadAction } from "@reduxjs/toolkit";
 
-function* verifyEmail(action: PayloadAction<{ email: string }>) {
+function* verifyEmail(
+  action: PayloadAction<{ email: string; authType: string }>
+) {
   try {
     const data: IOtpGeneratorResponse = yield call(() =>
       API.sendOtp(action.payload)

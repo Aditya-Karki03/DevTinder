@@ -51,7 +51,7 @@ const signup = createSlice({
     //reducers for emailVerification
     emailVerificationRequest: (
       state,
-      _action: PayloadAction<{ email: string }>
+      _action: PayloadAction<{ email: string; authType: string }>
     ) => {
       state.emailVerificationError = null;
       state.verifyingEmail = true;

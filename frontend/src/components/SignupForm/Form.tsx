@@ -59,6 +59,7 @@ const Form = () => {
     if (!verifyingEmail) {
       if (emailVerificationFailure) {
         toast.error(emailVerificationError?.error || "");
+        console.log(emailVerificationError);
       } else if (emailVerificationSuccessful && step == 0) {
         toast.success("OTP sent successfully. Please Check Your Email");
         setStep((prev) => prev + 1);
@@ -68,7 +69,7 @@ const Form = () => {
       // Only process when verification is complete
       if (otpVerificationError) {
         toast.error(otpVerificationError.error);
-        // dispatch(resetOtpState());
+        console.log(otpVerificationError.error);
       } else if (otpVerificationSuccessful && step == 1) {
         toast.success(otpStatusMessage);
         setStep((prev) => prev + 1);
@@ -139,7 +140,11 @@ const Form = () => {
     //if 1st step than make api request to generate OTP
     if (step == 0) {
       const email = getValues("email");
-      dispatch(emailVerificationRequest({ email }));
+      const requestData = {
+        email,
+        authType: "registration",
+      };
+      dispatch(emailVerificationRequest(requestData));
     }
     if (step == 1) {
       const data = otpSchema.safeParse({ otp });
