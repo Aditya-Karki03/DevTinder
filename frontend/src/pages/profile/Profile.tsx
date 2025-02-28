@@ -25,9 +25,8 @@ const Profile = () => {
   //handles the show modal
   const handleShowModal = () => {
     setShowModal((prev) => !prev);
-    console.log(showModal);
   };
-  console.log(showModal);
+
   return (
     <div className="relative w-full h-full ">
       <div
