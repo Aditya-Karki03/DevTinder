@@ -3,12 +3,7 @@
 //success should be there
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  IProfileData,
-  IProfileInitialState,
-  IError,
-  IEditProfileData,
-} from "../../Types/types";
+import { IProfileData, IProfileInitialState, IError } from "../../Types/types";
 
 const initialState: IProfileInitialState = {
   profileFetchingSuccessfull: false,
@@ -41,7 +36,7 @@ const profileDataSlice = createSlice({
       state.error = action.payload;
     },
     //reducers for edit profile
-    editProfileRequest: (state, _action: PayloadAction<IEditProfileData>) => {
+    editProfileRequest: (state, _action: PayloadAction<any>) => {
       state.editingInProgress = true;
       state.errorOnEdit = null;
     },

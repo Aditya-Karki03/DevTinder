@@ -1,9 +1,5 @@
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
-import {
-  IEditProfileData,
-  IError,
-  IProfileResponseData,
-} from "../../Types/types";
+import { IError, IProfileResponseData } from "../../Types/types";
 import * as API from "../../services/api";
 import {
   editProfileFailure,
@@ -32,7 +28,7 @@ function* getProfile() {
   }
 }
 
-function* editProfile(action: PayloadAction<IEditProfileData>) {
+function* editProfile(action: PayloadAction<any>) {
   try {
     const data: IProfileResponseData = yield call(() =>
       API.editProfile(action.payload)

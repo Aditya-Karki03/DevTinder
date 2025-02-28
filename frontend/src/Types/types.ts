@@ -62,6 +62,11 @@ export interface IProfileInitialState {
   profileData: IProfileData | null;
   error: IError | null;
   loading: boolean;
+  //types for edit profile
+  editProfileSuccess: boolean;
+  errorOnEdit: IError | null;
+  editProfileFailure: boolean;
+  editingInProgress: boolean;
 }
 
 export interface IUserConnectionData {
@@ -239,4 +244,13 @@ export interface ISignupResponse {
     message: string;
     user: IRegistrationFormData;
   };
+}
+export interface IEditProfileData {
+  firstName: string;
+  lastName: string;
+  age: string;
+  gender: string;
+  skills: string;
+  about: string;
+  image: any;
 }
