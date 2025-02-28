@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ILoginFormData, IOtpVerifier } from "../Types/types";
+import { IEditProfileData, ILoginFormData, IOtpVerifier } from "../Types/types";
 import { regitrationFormSchemaType } from "../schema/schema";
 const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
 
@@ -99,6 +99,13 @@ export const sendIgnoreConnectionRequest = (status: string, _id: string) => {
 
 export const registerUser = (data: any) => {
   return axios.post(`${API_URL}/v1/user/signup`, data, {
+    withCredentials: true,
+  });
+};
+
+//api to edit proifle
+export const editProfile = (data: IEditProfileData) => {
+  return axios.patch(`${API_URL}/v1/user-profile/profile`, data, {
     withCredentials: true,
   });
 };

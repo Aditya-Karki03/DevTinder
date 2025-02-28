@@ -3,7 +3,12 @@
 //success should be there
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IProfileData, IProfileInitialState, IError } from "../../Types/types";
+import {
+  IProfileData,
+  IProfileInitialState,
+  IError,
+  IEditProfileData,
+} from "../../Types/types";
 
 const initialState: IProfileInitialState = {
   profileFetchingSuccessfull: false,
@@ -11,6 +16,11 @@ const initialState: IProfileInitialState = {
   profileData: null,
   error: null,
   loading: false,
+  //initial state for edit profile request
+  editProfileSuccess: false,
+  errorOnEdit: null,
+  editProfileFailure: false,
+  editingInProgress: false,
 };
 const profileDataSlice = createSlice({
   name: "profileData",
@@ -30,8 +40,28 @@ const profileDataSlice = createSlice({
       state.profileFetchingFailure = true;
       state.error = action.payload;
     },
+    //reducers for edit profile
+    editProfileRequest: (state, _action: PayloadAction<IEditProfileData>) => {
+      state.editingInProgress = true;
+      state.errorOnEdit = null;
+    },
+    editProfileSuccessfull: (state) => {
+      state.editProfileSuccess = true;
+      state.editingInProgress = false;
+    },
+    editProfileFailure: (state, action: PayloadAction<IError>) => {
+      state.editProfileFailure = true;
+      state.errorOnEdit = action.payload;
+      state.editingInProgress = false;
+    },
   },
 });
-export const { profileRequest, profileFailure, profileSuccessfull } =
-  profileDataSlice.actions;
+export const {
+  profileRequest,
+  profileFailure,
+  profileSuccessfull,
+  editProfileRequest,
+  editProfileFailure,
+  editProfileSuccessfull,
+} = profileDataSlice.actions;
 export default profileDataSlice.reducer;
