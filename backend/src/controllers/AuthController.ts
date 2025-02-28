@@ -7,57 +7,57 @@ import { sendOtpEmail } from "../utils/email";
 import { getPresignedUrls, uploadToS3 } from "../utils/S3";
 export class AuthController {
   //method to verify email, if email does not exist send OTP
-  async sendOtpForEmailVerification(req: Request, res: Response) {
-    const { email } = req.body;
-    //check if email exist in the db
-    try {
-      const user = await User.findOne({ email });
-      if (user) {
-        res.status(400).json({
-          message:
-            "User with this email already exist. Try with different email",
-          hash: null,
-        });
-        return;
-      }
-      const { hashedData, otp } = await generateOtp(email);
-      //write a logic to send otp via email
-      const mailResponse = await sendOtpEmail(otp.toString(), email);
-      if (mailResponse.error) {
-        res.status(500).json({
-          message:
-            "Unable to send OTP, please contact CEO: adityakarki03@gmail.com",
-          hash: null,
-        });
-        return;
-      }
-      res.status(200).json({
-        message: `OTP sent to ${email}`,
-        hash: hashedData,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: "Something went wrong, while processing OTP. Please try again",
-        hash: null,
-      });
-    }
-  }
+  // async sendOtpForEmailVerification(req: Request, res: Response) {
+  //   const { email } = req.body;
+  //   //check if email exist in the db
+  //   try {
+  //     const user = await User.findOne({ email });
+  //     if (user) {
+  //       res.status(400).json({
+  //         message:
+  //           "User with this email already exist. Try with different email",
+  //         hash: null,
+  //       });
+  //       return;
+  //     }
+  //     const { hashedData, otp } = await generateOtp(email);
+  //     //write a logic to send otp via email
+  //     const mailResponse = await sendOtpEmail(otp.toString(), email);
+  //     if (mailResponse.error) {
+  //       res.status(500).json({
+  //         message:
+  //           "Unable to send OTP, please contact CEO: adityakarki03@gmail.com",
+  //         hash: null,
+  //       });
+  //       return;
+  //     }
+  //     res.status(200).json({
+  //       message: `OTP sent to ${email}`,
+  //       hash: hashedData,
+  //     });
+  //   } catch (error) {
+  //     res.status(500).json({
+  //       message: "Something went wrong, while processing OTP. Please try again",
+  //       hash: null,
+  //     });
+  //   }
+  // }
 
-  async otpVerification(req: Request, res: Response) {
-    const { otp, hash, email } = req.body;
-    const { isVerified, message } = await verifyOtp(email, hash, otp);
-    if (!isVerified) {
-      res.status(400).json({
-        isVerified,
-        message,
-      });
-      return;
-    }
-    res.status(200).json({
-      isVerified,
-      message,
-    });
-  }
+  // async otpVerification(req: Request, res: Response) {
+  //   const { otp, hash, email } = req.body;
+  //   const { isVerified, message } = await verifyOtp(email, hash, otp);
+  //   if (!isVerified) {
+  //     res.status(400).json({
+  //       isVerified,
+  //       message,
+  //     });
+  //     return;
+  //   }
+  //   res.status(200).json({
+  //     isVerified,
+  //     message,
+  //   });
+  // }
 
   //method to create instance of user in the database
   async createUser(req: Request, res: Response) {
@@ -187,57 +187,27 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response) {
-    const { otp, hash, email } = req.body;
-    const { isVerified, message } = await verifyOtp(email, hash, otp);
-    if (!isVerified) {
-      res.status(400).json({
-        isVerified,
-        message,
-      });
-      return;
-    }
-
+    const { user } = req;
     //first we will try finding email
     try {
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        res.status(404).json({
-          message: "Invalid Credentials",
-          user: null,
-        });
-        return;
-      }
-      // const isValidPassword = await verifyPassword(
-      //   password,
-      //   user?.password || ""
-      // );
-
-      // if (!isValidPassword) {
-      //   res.status(404).json({
-      //     message: "Invalid Credentials",
-      //     user: null,
-      //   });
-      //   return;
-      // }
-      const userId = user._id.toString();
+      const userId = user?._id.toString();
       //create a token with user id
-      const token = tokenGenerator(userId);
+      const token = tokenGenerator(userId || "");
       res.cookie("loginToken", token);
       //provide user with all data except the password in the response
       //using destructuring separated password from the userData and rest of the data goes to the user
       res.status(201).json({
         message: "User verified successfully",
         user: {
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          gender: user.gender,
-          age: user.age,
-          email: user.email,
-          about: user.about,
-          skills: user.skills,
-          photoUrl: user.photoUrl,
+          _id: user?._id,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          gender: user?.gender,
+          age: user?.age,
+          email: user?.email,
+          about: user?.about,
+          skills: user?.skills,
+          photoUrl: user?.photoUrl,
         },
       });
     } catch (error) {

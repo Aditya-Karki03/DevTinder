@@ -5,17 +5,31 @@
 //we need to get the loggedInUser if successful
 import { createContext, useContext, useEffect } from "react";
 
-import { IError, IUserLoginData } from "../Types/types";
+import { IError, IOtpVerifier, IUserLoginData } from "../Types/types";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { fetchUserProfileRequest, loginRequest, logoutRequest } from "./slice";
+import {
+  fetchUserProfileRequest,
+  generateOtpRequest,
+  logoutRequest,
+  verifyOtpRequest,
+} from "./slice";
 import { useNavigate } from "react-router-dom";
+import { verifyOtp } from "../services/api";
 
 interface IContextData {
-  login: (data: { email: string; password: string }) => void;
+  generateOtp: (data: { email: string; authType: string }) => void;
+  verifyOtp: (data: IOtpVerifier) => void;
   logout: () => void;
-  error: IError | null;
-  loginInProgress: boolean;
+  generatingOtp: boolean;
+  otpHash: string | null;
+  generateOtpFailure: boolean;
+  generateOtpSuccess: boolean;
+  verifyOtpSuccess: boolean;
+  verifyOtpFailure: boolean;
+  verifyingOtp: boolean;
+  generateOtpError: IError | null;
+  verifyOtpError: IError | null;
   logoutInProgress: boolean;
   loggedInUser: IUserLoginData | null;
   isLoggedIn: boolean;
@@ -23,14 +37,24 @@ interface IContextData {
   fetchingLoggedInUser: () => void;
 }
 export const AuthContext = createContext<IContextData>({
-  login: () => {
+  generateOtp: () => {
+    console.log("Generating OTP");
+  },
+  verifyOtp: () => {
     console.log("Login");
   },
   logout: () => {
     console.log("Logout");
   },
-  error: null,
-  loginInProgress: false,
+  generateOtpFailure: false,
+  generateOtpSuccess: false,
+  verifyOtpSuccess: false,
+  verifyOtpFailure: false,
+  generatingOtp: false,
+  verifyingOtp: false,
+  otpHash: null,
+  generateOtpError: null,
+  verifyOtpError: null,
   logoutInProgress: false,
   loggedInUser: null,
   isLoggedIn: false,
@@ -46,23 +70,27 @@ export const useAuth = (): IContextData => {
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const fetchProfile = useRef(true);
-  const error = useSelector((store: RootState) => store?.auth?.error);
-  const loginInProgress = useSelector(
-    (store: RootState) => store?.auth?.loginInProgress
-  );
-  const logoutInProgress = useSelector(
-    (store: RootState) => store?.auth?.logoutInProgress
-  );
-  const loggedInUser = useSelector(
-    (store: RootState) => store?.auth?.loggedInUser
-  );
-  const isLoggedIn = useSelector((store: RootState) => store?.auth?.isLoggedIn);
-  const isLoggedOut = useSelector(
-    (store: RootState) => store?.auth?.isLoggedOut
-  );
-  const login = (data: { email: string; password: string }) => {
-    dispatch(loginRequest(data));
+  const {
+    generatingOtp,
+    generateOtpError,
+    generateOtpFailure,
+    generateOtpSuccess,
+    verifyingOtp,
+    verifyOtpError,
+    verifyOtpSuccess,
+    verifyOtpFailure,
+    logoutInProgress,
+    loggedInUser,
+    isLoggedIn,
+    isLoggedOut,
+    otpHash,
+  } = useSelector((store: RootState) => store?.auth);
+  //generate otp action dispatch
+  const generateOtp = (data: { email: string; authType: string }) => {
+    dispatch(generateOtpRequest(data));
+  };
+  const verifyOtp = (data: IOtpVerifier) => {
+    dispatch(verifyOtpRequest(data));
   };
   const logout = () => {
     dispatch(logoutRequest());
@@ -70,15 +98,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchingLoggedInUser = () => {
     dispatch(fetchUserProfileRequest());
   };
-  useEffect(() => {
-    console.log(error);
+  // useEffect(() => {
+  //   console.log(error);
 
-    // if (error?.errorCode == "401") {
-    //   navigate("/");
-    // }
+  //   // if (error?.errorCode == "401") {
+  //   //   navigate("/");
+  //   // }
 
-    //or a notification saying this was the error
-  }, [error]);
+  //   //or a notification saying this was the error
+  // }, [error]);
   useEffect(() => {
     if (isLoggedOut) {
       navigate("/");
@@ -93,14 +121,22 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   //make useEffect call to get the getTheLoggedInUser
   useEffect(() => {
     dispatch(fetchUserProfileRequest());
-  }, [isLoggedIn]); //isLoggedIn
+  }, [isLoggedIn]);
 
   const authValues = {
-    error,
-    loginInProgress,
+    generateOtpError,
+    verifyOtpError,
+    generatingOtp,
+    otpHash,
+    verifyingOtp,
     logoutInProgress,
     loggedInUser,
-    login,
+    generateOtpFailure,
+    generateOtpSuccess,
+    verifyOtpSuccess,
+    verifyOtpFailure,
+    generateOtp,
+    verifyOtp,
     logout,
     isLoggedIn,
     isLoggedOut,

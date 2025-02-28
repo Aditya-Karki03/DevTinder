@@ -3,8 +3,8 @@ export const loginFormSchema = z.object({
   email: z.string().email({
     message: "Invalid Email",
   }),
-  password: z.string().min(5, {
-    message: "Password must be 5 characters",
+  otpVal: z.string().length(6, {
+    message: "Invalid OTP",
   }),
 });
 
@@ -56,6 +56,35 @@ export const registerFormSchema = z.object({
       (images) => !images?.[0] || acceptedImgTypes.includes(images?.[0]?.type),
       {
         message: "Only .jpg, .jpeg, .png and .webp formats are supported",
+      }
+    ),
+});
+
+export const modifyFormSchema = z.object({
+  firstName: z.string().refine((name) => name.length > 2 && name.length < 40, {
+    message: "Invalid Firstname",
+  }),
+  lastName: z.string().refine((name) => name.length > 2 && name.length < 40, {
+    message: "Invalid Lastname",
+  }),
+  age: z.string().refine((val) => Number(val) > 18, {
+    message: "Age must be more than 18+",
+  }),
+  gender: z.enum(["male", "female", "others"], {
+    message: "Invalid Gender",
+  }),
+  skills: z.string().min(1, {
+    message: "Please Enter your skills",
+  }),
+  image: z
+    .any()
+    .refine((images) => !images?.[0] || images?.[0]?.size <= maxImgSize, {
+      message: "Image size should be within 5 MB",
+    })
+    .refine(
+      (images) => !images?.[0] || acceptedImgTypes.includes(images?.[0]?.type),
+      {
+        message: "Only .jpg, .jpeg, .png and .webp formats are supported ",
       }
     ),
 });

@@ -20,7 +20,9 @@ import {
 } from "./slice";
 import { PayloadAction } from "@reduxjs/toolkit";
 
-function* verifyEmail(action: PayloadAction<{ email: string }>) {
+function* verifyEmail(
+  action: PayloadAction<{ email: string; authType: string }>
+) {
   try {
     const data: IOtpGeneratorResponse = yield call(() =>
       API.sendOtp(action.payload)
@@ -69,6 +71,7 @@ function* verifyOtp(action: PayloadAction<IOtpVerifier>) {
       yield put(otpVerificationFail(error));
     }
   } catch (error: any) {
+    console.log(error);
     let message: string = "Something went wrong while verifying otp";
     if (error?.response?.data?.message) {
       message = error?.response?.data?.message;
