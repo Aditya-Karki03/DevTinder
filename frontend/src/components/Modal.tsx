@@ -21,12 +21,6 @@ const Modal = ({ setShowModal }: ModalProps) => {
   const age = useSelector(
     (state: RootState) => state?.profile?.profileData?.age
   );
-  const gender = useSelector(
-    (state: RootState) => state?.profile?.profileData?.gender
-  );
-  const skills = useSelector(
-    (state: RootState) => state?.profile?.profileData?.skills
-  );
   const about = useSelector(
     (state: RootState) => state?.profile?.profileData?.about
   );
@@ -95,6 +89,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
         }
       });
       dispatch(editProfileRequest(formData));
+      setShowModal();
     }
   };
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { profileRequest } from "./slice";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import Modal from "../../components/Modal";
 
 const Profile = () => {
@@ -14,13 +14,15 @@ const Profile = () => {
   const userProfileData = useSelector(
     (store: RootState) => store?.profile?.profileData
   );
+  const { editProfileFailure, editProfileSuccess, editingInProgress } =
+    useSelector((store: RootState) => store?.profile);
   //const loading = useSelector((store: RootState) => store?.profile?.loading);
   useEffect(() => {
     dispatch(profileRequest());
     if (error?.errorCode == "401") {
       navigate("/");
     }
-  }, [error]);
+  }, [error, editingInProgress, editProfileFailure, editProfileSuccess]);
 
   //handles the show modal
   const handleShowModal = () => {
@@ -29,6 +31,11 @@ const Profile = () => {
 
   return (
     <div className="relative w-full h-full ">
+      {editingInProgress && (
+        <div className="absolute w-full h-full top-0 left-0 bg-black/40 z-30 flex justify-center items-center">
+          <Loader2 className="w-14 h-14 text-white animate-spin" />
+        </div>
+      )}
       <div
         onClick={() => setShowModal(false)}
         className="absolute w-full bg-gradient-to-r from-pink-500 via-orange-500 to-blue-500 h-4/10 "
