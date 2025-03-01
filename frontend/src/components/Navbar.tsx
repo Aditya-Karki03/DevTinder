@@ -48,7 +48,7 @@ const Navbar = () => {
       </div>
       <div className="navbar-center">
         <Link to={"/dashboard"} className="btn btn-ghost text-xl">
-          DevTinder
+          DevAmor
         </Link>
       </div>
       <div className="navbar-end space-x-2">
@@ -63,12 +63,10 @@ const Navbar = () => {
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow right-24"
           >
-
             <li
               onClick={() => navigate("/dashboard/profile")}
               className="bg-gray-700 rounded-lg"
             >
-
               <div className="w-2xs h-20  shadow-2xl  flex items-center ">
                 <User />
                 <span className="font-bold text-gray-200">

@@ -11,36 +11,7 @@ import { Loader2 } from "lucide-react";
 
 const Feed = () => {
   const [rightSwipe, setRightSwipe] = useState(0);
-  // const [isSwiped, setIsSwiped] = useState(false);
-  const [id, setId] = useState("");
-  const dispatch = useDispatch();
-  const feedsData = useSelector((store: RootState) => store?.feeds?.feedData);
-  const loading = useSelector((store: RootState) => store?.feeds?.loading);
-  useEffect(() => {
-    // dispatch(getFeedDataRequest());
-    dispatch(manipulateFeedData(feeds));
-  }, []);
-  // useEffect(() => {
-  //   if (isSwiped) {
-  //     const newFeed = feedsData?.filter((data) => data._id !== id);
-  //     dispatch(manipulateFeedData(newFeed || []));
-  //   }
-  // }, [isSwiped]);
-
-  if (rightSwipe >= 150) {
-    //use a boolean value called flag to just send one connection request and also dispatching the action
-    //  setIsSwiped(true);
-    const status = "send";
-    dispatch(connectionRejectionRequest({ status, id }));
-  } else if (rightSwipe <= -250) {
-    // setIsSwiped(true);
-    const status = "ignore";
-    dispatch(connectionRejectionRequest({ status, id }));
-  } else {
-    // setIsSwiped(false);
-  }
-
-  const feeds = [
+  const [feeds, setFeed] = useState([
     {
       _id: "feed001",
       firstName: "Sarah",
@@ -86,7 +57,41 @@ const Feed = () => {
         "Full-stack developer specializing in MERN stack. Currently building a startup focused on AI-powered education tools. Open to collaborations and always excited to learn from others in the tech community.",
       skills: ["MongoDB", "Express.js", "React", "Node.js", "TypeScript"],
     },
-  ];
+  ]);
+  const [id, setId] = useState("");
+  const dispatch = useDispatch();
+  const feedsData = useSelector((store: RootState) => store?.feeds?.feedData);
+  const loading = useSelector((store: RootState) => store?.feeds?.loading);
+  useEffect(() => {
+    // dispatch(getFeedDataRequest());
+    dispatch(manipulateFeedData(feeds));
+  }, []);
+  // useEffect(() => {
+  //   if (isSwiped) {
+  //     const newFeed = feedsData?.filter((data) => data._id !== id);
+  //     dispatch(manipulateFeedData(newFeed || []));
+  //   }
+  // }, [isSwiped]);
+
+  useEffect(() => {
+    console.log(Math.round(rightSwipe));
+    console.log(id);
+    if (rightSwipe >= 150 && rightSwipe <= 155) {
+      //once swiped remove the user card from there
+      console.log(id);
+
+      //use a boolean value called flag to just send one connection request and also dispatching the action
+      //  setIsSwiped(true);
+      const status = "send";
+      dispatch(connectionRejectionRequest({ status, id }));
+    } else if (rightSwipe <= -150 && rightSwipe >= -155) {
+      // setIsSwiped(true);
+      const status = "ignore";
+      dispatch(connectionRejectionRequest({ status, id }));
+    } else {
+      // setIsSwiped(false);
+    }
+  }, [rightSwipe]);
 
   //optimize the below to send only 1 api call as of now it is making multiple
 

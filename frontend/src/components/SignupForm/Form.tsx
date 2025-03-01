@@ -460,7 +460,12 @@ const Form = () => {
           </motion.div>
         )}
         {step === 3 && (
-          <motion.div className="w-full h-full">
+          <motion.div className="w-full h-full relative">
+            {sendingData && (
+              <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center z-30 bg-black/20">
+                <Loader2 className="h-14 w-14 text-white animate-spin" />
+              </div>
+            )}
             <div className="relative w-full h-1/4 min-h-[200px]">
               <input
                 type="file"
