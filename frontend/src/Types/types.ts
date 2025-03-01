@@ -11,6 +11,7 @@ export interface IUserLoginData {
   firstName: string;
   lastName: string;
   gender: string;
+  photoUrl: string;
   _id: string;
 }
 

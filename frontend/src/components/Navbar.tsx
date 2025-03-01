@@ -1,13 +1,19 @@
-import { BellDot, User } from "lucide-react";
+import { BellDot, Handshake, LogOut, User } from "lucide-react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context";
+import { useState } from "react";
 
 const Navbar = () => {
-  const navigate = useNavigate();
+  const [showOptions, setShowOptions] = useState(false);
   const { logout, loggedInUser } = useAuth();
   const handleLogout = () => {
+    setShowOptions(false);
     logout();
+  };
+  const handleShowOptions = () => {
+    console.log(showOptions);
+    setShowOptions((prev) => !prev);
   };
   return (
     <div className="navbar bg-base-100 shadow-sm">
@@ -55,11 +61,44 @@ const Navbar = () => {
         <button className="btn btn-ghost btn-circle">
           <BellDot className="w-5 h-5" />
         </button>
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn m-1">
-            <User className="w-5 h-5" />
+        <div className=" relative">
+          <div tabIndex={0} role="button" className="btn m-1 ">
+            <User className="w-5 h-5" onClick={handleShowOptions} />
           </div>
-          <ul
+          {showOptions && (
+            <div className="absolute z-50 bg-gray-700 top-14 -right-1 cursor-pointer rounded-md">
+              <ul>
+                <li className="border border-white/20 rounded-lg hover:bg-gray-800">
+                  <Link
+                    to={"/dashboard/profile"}
+                    onClick={() => setShowOptions(false)}
+                    className="w-2xs h-20  flex  space-x-4 items-center px-2 "
+                  >
+                    <img
+                      src={loggedInUser?.photoUrl}
+                      alt="Profile Photo"
+                      className="w-12 h-12 rounded-full object-fill"
+                    />
+                    <span className="font-bold text-gray-200">
+                      {loggedInUser?.firstName} {loggedInUser?.lastName}
+                    </span>
+                  </Link>
+                </li>
+                <li className="py-3 px-2 flex border border-white/20 hover:bg-gray-800 cursor-pointer space-x-4">
+                  <Handshake /> <span>Incoming Requests</span>
+                </li>
+                <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer">
+                  <button
+                    onClick={handleLogout}
+                    className="flex w-full h-full space-x-4 cursor-pointer"
+                  >
+                    <LogOut /> <span>Logout</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+          {/* <ul
             tabIndex={0}
             className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow right-24"
           >
@@ -74,10 +113,12 @@ const Navbar = () => {
                 </span>
               </div>
             </li>
-            <li>
-              <button onClick={handleLogout}>Logout</button>
+            <li className="w-full">
+              <button className="w-2xs" onClick={handleLogout}>
+                Logout
+              </button>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
     </div>
