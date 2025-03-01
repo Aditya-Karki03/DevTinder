@@ -89,7 +89,7 @@ export const getAllFeedData = () => {
 //api to "send" or "ignore" connection request
 export const sendIgnoreConnectionRequest = (status: string, _id: string) => {
   return axios.post(
-    `${API_URL}/v1user-connection/send-connection/${status}/${_id}`,
+    `${API_URL}/v1/user-connection/send-connection/${status}/${_id}`,
     {},
     {
       withCredentials: true,

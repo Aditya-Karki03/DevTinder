@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface ILoginFormData {
   email: string;
   otp: string;
@@ -253,4 +255,27 @@ export interface IEditProfileData {
   skills: string;
   about: string;
   image: any;
+}
+export interface IFeed {
+  id: string;
+  about: string;
+  photoUrl: string;
+  firstName: string;
+  lastName: string;
+  setRightSwipe: (data: number) => void;
+
+  feeds: IUserProfile[];
+  setFeed: Dispatch<SetStateAction<IUserProfile[] | null>>;
+}
+
+export interface IUserProfile {
+  about: string;
+  age: number;
+  email: string;
+  firstName: string;
+  gender: string;
+  lastName: string;
+  photoUrl: string;
+  skills: string[];
+  _id: string;
 }
