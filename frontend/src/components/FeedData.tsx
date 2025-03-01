@@ -1,21 +1,23 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   motion,
   useMotionValue,
   useMotionValueEvent,
   useTransform,
 } from "motion/react";
+import { connectionRejectionRequest } from "../pages/feed/slice";
+import { useDispatch } from "react-redux";
+import { IFeed, IUserProfile } from "../Types/types";
 
-interface IFeed {
-  about: string;
-  photoUrl: string;
-  firstName: string;
-  lastName: string;
-  setRightSwipe: (data: number) => void;
-  setId: (data: string) => void;
-}
-
-const FeedData = ({ about, photoUrl, setRightSwipe }: IFeed) => {
+const FeedData = ({
+  about,
+  photoUrl,
+  setRightSwipe,
+  setFeed,
+  feeds,
+  id,
+}: IFeed) => {
+  const dispatch = useDispatch();
   const [readMore, setReadMore] = useState(false);
   //very similar to useState, here value of x is set to 0
   //the x defines, how mch we moved into x direction in the browser
@@ -32,6 +34,26 @@ const FeedData = ({ about, photoUrl, setRightSwipe }: IFeed) => {
   const rotate = useTransform(x, [-250, 250], [-20, 20]);
   // const backgroundColor = useTransform(x, [-10, 10], ["white", "blue"]);
 
+  //function which tell what will happen when drag is completed
+  const handleDragEnd = () => {
+    // below x is a motion value, so we can get the value of x by x.get()
+    if (x.get() > 150) {
+      //TODO:get rid of the front card
+      const status = "send";
+      dispatch(connectionRejectionRequest({ status, id }));
+      //once left or right swiped the card, set the rightSwipe to 0
+      setRightSwipe(0);
+      setFeed((prev) => prev && prev.filter((V) => V._id !== id));
+    } else if (x.get() < -150) {
+      {
+        const status = "ignore";
+        dispatch(connectionRejectionRequest({ status, id }));
+        //once left or right swiped the card, set the rightSwipe to 0
+        // setRightSwipe(0);
+        setFeed((prev) => prev && prev.filter((V) => V._id !== id));
+      }
+    }
+  };
   return (
     <motion.div
       style={{ gridRow: 1, gridColumn: 1, x, opacity, rotate }}
@@ -41,6 +63,7 @@ const FeedData = ({ about, photoUrl, setRightSwipe }: IFeed) => {
         left: 0,
         right: 0,
       }}
+      onDragEnd={handleDragEnd}
     >
       <img
         draggable={false}

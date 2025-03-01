@@ -8,85 +8,28 @@ import {
 } from "./slice";
 import FeedData from "../../components/FeedData";
 import { Loader2 } from "lucide-react";
+import { IUserProfile } from "../../Types/types";
 
 const Feed = () => {
   const [rightSwipe, setRightSwipe] = useState(0);
-  // const [isSwiped, setIsSwiped] = useState(false);
-  const [id, setId] = useState("");
+  const [feeds, setFeed] = useState<IUserProfile[] | null>(null);
   const dispatch = useDispatch();
   const feedsData = useSelector((store: RootState) => store?.feeds?.feedData);
   const loading = useSelector((store: RootState) => store?.feeds?.loading);
   useEffect(() => {
     // dispatch(getFeedDataRequest());
-    dispatch(manipulateFeedData(feeds));
+    // if (feeds) dispatch(manipulateFeedData(feeds));
+    dispatch(getFeedDataRequest());
   }, []);
+  useEffect(() => {
+    setFeed(feedsData);
+  }, [feedsData]);
   // useEffect(() => {
   //   if (isSwiped) {
   //     const newFeed = feedsData?.filter((data) => data._id !== id);
   //     dispatch(manipulateFeedData(newFeed || []));
   //   }
   // }, [isSwiped]);
-
-  if (rightSwipe >= 150) {
-    //use a boolean value called flag to just send one connection request and also dispatching the action
-    //  setIsSwiped(true);
-    const status = "send";
-    dispatch(connectionRejectionRequest({ status, id }));
-  } else if (rightSwipe <= -250) {
-    // setIsSwiped(true);
-    const status = "ignore";
-    dispatch(connectionRejectionRequest({ status, id }));
-  } else {
-    // setIsSwiped(false);
-  }
-
-  const feeds = [
-    {
-      _id: "feed001",
-      firstName: "Sarah",
-      lastName: "Johnson",
-      email: "sarah.johnson@example.com",
-      age: 28,
-      gender: "Female",
-      photoUrl:
-        "https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D",
-      about:
-        "Web developer passionate about creating beautiful and functional user interfaces. I love working with React and exploring new technologies. When I'm not coding, you can find me hiking or reading tech blogs.",
-      skills: ["React", "JavaScript", "CSS", "UI Design", "Redux"],
-    },
-    {
-      _id: "feed002",
-      firstName: "Michael",
-      lastName: "Chen",
-      email: "michael.chen@example.com",
-      age: 32,
-      gender: "Male",
-      photoUrl:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D",
-      about:
-        "UI/UX designer with 5 years of experience. Currently working on designing intuitive mobile applications. I believe in minimalist design and user-centered approaches. Always looking to connect with fellow designers!",
-      skills: [
-        "Figma",
-        "Adobe XD",
-        "Wireframing",
-        "Prototyping",
-        "User Research",
-      ],
-    },
-    {
-      _id: "feed003",
-      firstName: "Emily",
-      lastName: "Rodriguez",
-      email: "emily.rodriguez@example.com",
-      age: 30,
-      gender: "Female",
-      photoUrl:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D",
-      about:
-        "Full-stack developer specializing in MERN stack. Currently building a startup focused on AI-powered education tools. Open to collaborations and always excited to learn from others in the tech community.",
-      skills: ["MongoDB", "Express.js", "React", "Node.js", "TypeScript"],
-    },
-  ];
 
   //optimize the below to send only 1 api call as of now it is making multiple
 
@@ -105,12 +48,15 @@ const Feed = () => {
           feeds?.map((feed) => (
             <FeedData
               key={feed._id}
+              id={feed._id}
               about={feed.about}
               photoUrl={feed.photoUrl}
               firstName={feed.firstName}
               lastName={feed.lastName}
               setRightSwipe={setRightSwipe}
-              setId={setId}
+              //also send feeds and setFeeds to the FeedData component
+              feeds={feeds}
+              setFeed={setFeed}
             />
           ))
         ) : (

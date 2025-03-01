@@ -46,13 +46,6 @@ export const getProfileApiCall = () => {
   });
 };
 
-//api to get user feed
-export const getFeedApiCall = () => {
-  return axios.get(`${API_URL}/v1/user-feed/all`, {
-    withCredentials: true,
-  });
-};
-
 //api to accept or reject connection request, status and id of the user who sent the connection request will come
 export const reviewConnectionRequest = (status: string, id: string) => {
   const data = {};
@@ -89,7 +82,7 @@ export const getAllFeedData = () => {
 //api to "send" or "ignore" connection request
 export const sendIgnoreConnectionRequest = (status: string, _id: string) => {
   return axios.post(
-    `${API_URL}/v1user-connection/send-connection/${status}/${_id}`,
+    `${API_URL}/v1/user-connection/send-connection/${status}/${_id}`,
     {},
     {
       withCredentials: true,
@@ -99,6 +92,13 @@ export const sendIgnoreConnectionRequest = (status: string, _id: string) => {
 
 export const registerUser = (data: any) => {
   return axios.post(`${API_URL}/v1/user/signup`, data, {
+    withCredentials: true,
+  });
+};
+
+//api to edit proifle
+export const editProfile = (data: any) => {
+  return axios.patch(`${API_URL}/v1/user-profile/profile`, data, {
     withCredentials: true,
   });
 };

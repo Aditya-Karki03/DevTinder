@@ -8,6 +8,7 @@ interface IUser {
   lastName: string;
   gender: string;
   age: number;
+  photoUrl: string;
 }
 //after logging in we also need to fetch the user profile, so we will have initialstate & reducers for it as well
 //user field can also take the user profile

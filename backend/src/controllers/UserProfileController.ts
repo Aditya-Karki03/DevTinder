@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../schema/user";
 import { userUpdateDataValidator } from "../utils/validation";
+import { GetBucketMetadataTableConfigurationCommand } from "@aws-sdk/client-s3";
+import { getPresignedUrls, uploadToS3 } from "../utils/S3";
 
 export class UserProfileController {
   getProfile(req: Request, res: Response) {
@@ -28,8 +30,8 @@ export class UserProfileController {
   }
   async updateProfile(req: Request, res: Response) {
     const { user } = req;
-    const { firstName, lastName, gender, email, age, about, skills, photoUrl } =
-      req.body;
+    const profilePicture = req.file;
+    const { firstName, lastName, gender, email, age, about, skills } = req.body;
     //check if user is sending unnecessary data as well
     const { error, message } = userUpdateDataValidator(req);
     if (error) {
@@ -39,6 +41,17 @@ export class UserProfileController {
       });
     }
     try {
+      //upload the profile picture to S3 bucket
+      const fileName = `user-uploads/ProfilePicture/${
+        profilePicture?.originalname
+      }-${Date.now()}`;
+      await uploadToS3({
+        fileName,
+        contentType: profilePicture?.mimetype ?? "",
+        fileBuffer: profilePicture?.buffer ?? "",
+      });
+      //generate presigned URL
+      const photoUrl = await getPresignedUrls(fileName);
       const userData = await User.findByIdAndUpdate(
         user?._id,
         {

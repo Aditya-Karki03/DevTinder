@@ -76,6 +76,12 @@ export const modifyFormSchema = z.object({
   skills: z.string().min(1, {
     message: "Please Enter your skills",
   }),
+  about: z
+    .string()
+    .min(1, { message: "Please enter about yourself" })
+    .refine((text) => text.length < 100, {
+      message: "About should be within 100 words",
+    }),
   image: z
     .any()
     .refine((images) => !images?.[0] || images?.[0]?.size <= maxImgSize, {
@@ -88,5 +94,6 @@ export const modifyFormSchema = z.object({
       }
     ),
 });
+export type modifyFormSchemaType = z.infer<typeof modifyFormSchema>;
 
 export type regitrationFormSchemaType = z.infer<typeof registerFormSchema>;

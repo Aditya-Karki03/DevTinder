@@ -4,37 +4,17 @@ import {
   acceptOrRejectConnectionFailure,
   acceptOrRejectConnectionRequest,
   acceptOrRejectConnectionSuccessfull,
-  feedRecievedFailure,
-  feedRecievedSuccessful,
-  feedRequest,
   getAllIncomingConnectionRequest,
   getConnectionsFailure,
   getConnectionsSuccessful,
 } from "./slice";
 import {
+  IAcceptRejectConnectionResponse,
   IError,
   IGetConnectionResponse,
   IUserFeedResponse,
 } from "../../Types/types";
 import { PayloadAction } from "@reduxjs/toolkit";
-
-function* getUserFeedData() {
-  try {
-    const data: IUserFeedResponse = yield call(API.getFeedApiCall);
-    yield put(feedRecievedSuccessful(data?.data?.user));
-  } catch (error: any) {
-    let message =
-      "Something went wrong, while fetching user profile, please try again later";
-    if (error?.response?.data?.message) {
-      message = error?.response?.data?.message;
-    }
-    const data = {
-      error: message,
-      errorCode: error?.response?.status,
-    };
-    yield put(feedRecievedFailure(data));
-  }
-}
 
 function* getAllConnectionsRequest() {
   try {
@@ -60,11 +40,12 @@ function* acceptConnectionRequest(
   action: PayloadAction<{ id: string; status: string }>
 ) {
   try {
-    const data: string = yield call(() =>
+    const data: IAcceptRejectConnectionResponse = yield call(() =>
       API.reviewConnectionRequest(action.payload.status, action.payload.id)
     );
-    console.log(data);
-    yield put(acceptOrRejectConnectionSuccessfull(data));
+    //sending the id of the request to the reducer needed to remove that particular id from the array of connections
+    const dataWithId = { message: data?.data?.message, id: action.payload.id };
+    yield put(acceptOrRejectConnectionSuccessfull(dataWithId));
   } catch (error: any) {
     let errorMessage =
       "Something went wrong, while accepting/rejecing connection request";
@@ -79,8 +60,7 @@ function* acceptConnectionRequest(
   }
 }
 
-export const getFeedSaga = [
-  takeLatest(feedRequest, getUserFeedData),
+export const getConnectionRequestSaga = [
   takeLatest(acceptOrRejectConnectionRequest, acceptConnectionRequest),
   takeLatest(getAllIncomingConnectionRequest, getAllConnectionsRequest),
 ];

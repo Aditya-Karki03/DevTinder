@@ -5,6 +5,8 @@ import {
   getAllIncomingConnectionRequest,
 } from "./slice";
 import { RootState } from "../../redux/store";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 const Lovers = () => {
   const fetchData = useRef(true);
@@ -12,9 +14,16 @@ const Lovers = () => {
   // const feedData = useSelector(
   //   (store: RootState) => store?.feed?.userReviewConnections
   // );
-  const connectionRequests = useSelector(
-    (store: RootState) => store?.feed?.wantToConnectUsers
-  );
+  const {
+    wantToConnectUsers,
+    acceptOrRejectionMessage,
+    reviewingTheRequest,
+    connectionsLoading,
+    errorInGettingConnection,
+    errorInReviewingRequest,
+    acceptOrRejectionFailure,
+    acceptOrRejectionSuccessful,
+  } = useSelector((store: RootState) => store?.feed);
   // const error = useSelector((store: RootState) => store?.feed?.error);
   // const feedIsLoading = useSelector(
   //   (store: RootState) => store?.feed?.userAllRequestLoading
@@ -24,7 +33,26 @@ const Lovers = () => {
       fetchData.current = false;
       dispatch(getAllIncomingConnectionRequest());
     }
-  }, []);
+    if (!reviewingTheRequest) {
+      if (errorInReviewingRequest && acceptOrRejectionFailure) {
+        toast.error(errorInReviewingRequest.error);
+      } else if (acceptOrRejectionSuccessful) {
+        console.log(errorInReviewingRequest);
+        console.log(acceptOrRejectionMessage);
+        toast.success(acceptOrRejectionMessage);
+      }
+    }
+  }, [
+    reviewingTheRequest,
+    errorInGettingConnection,
+    acceptOrRejectionMessage,
+    acceptOrRejectionSuccessful,
+    acceptOrRejectionFailure,
+  ]);
+
+  // const removeFromRequestList=(id:string)=>{
+  //   const updat
+  // }
 
   //to accept or reject, we need to get the senders id
   const handleAccept = (_id: string) => {
@@ -44,15 +72,17 @@ const Lovers = () => {
   };
 
   return (
-    <>
-      {connectionRequests &&
-        connectionRequests?.map((request) => (
-          <div
-            key={request._id}
-            className="w-screen flex justify-center items-center flex-grow"
-          >
-            <div className="card bg-base-300 w-96 shadow-xl">
-              <figure className="pt-5 flex items-center space-x-4 ">
+    <div className="w-screen h-screen flex flex-col justify-center items-center relative">
+      {connectionsLoading && (
+        <div className="absolute top-0 left-0 h-full w-full h-s bg-black/20 flex  flex-grow justify-center items-center">
+          <Loader2 className="h-12 w-12 text-white animate-spin" />
+        </div>
+      )}
+      {wantToConnectUsers &&
+        wantToConnectUsers?.map((request) => (
+          <div key={request._id} className="card bg-base-300 w-4xl shadow-xl ">
+            <div className="w-full flex justify-between py-5 px-3">
+              <div className="flex items-center space-x-4 ">
                 <img
                   src={`${request?.fromRequest?.photoUrl}`}
                   alt={`${request?.fromRequest?.firstName} ${request?.fromRequest?.lastName}`}
@@ -61,41 +91,44 @@ const Lovers = () => {
                 <div className="">
                   <h2 className="card-title relative">
                     {`${request?.fromRequest?.firstName} ${request?.fromRequest?.lastName}`}
-                    <div className="bg-blue-600 px-2 py-1 rounded-3xl text-sm text-center absolute left-30 bottom-5">
+                    <div className="bg-blue-600 px-2 py-1 rounded-3xl text-sm text-center absolute left-20 bottom-5">
                       NEW
                     </div>
                   </h2>
-                  <div className="pt-2">
-                    <p className="text-sm font-semibold text-gray-200">
-                      Age:{request?.fromRequest?.age}
-                    </p>
-                    <p className="text-sm font-semibold text-gray-200">
-                      Gender:{request?.fromRequest?.gender}
-                    </p>
-                  </div>
+                  <p className="text-sm font-semibold text-gray-200">
+                    Age:{request?.fromRequest?.age}
+                  </p>
+                  <p className="text-sm font-semibold text-gray-200">
+                    Gender:{request?.fromRequest?.gender}
+                  </p>
+                  <p className="w-xl text-wrap mt-2">{`${request?.fromRequest?.about}`}</p>
                 </div>
-              </figure>
-              <div className="card-body">
-                <p>{`${request?.fromRequest?.about}`}</p>
-                <div className="card-actions justify-between mt-5">
-                  <button
-                    onClick={() => handleAccept(`${request._id}`)}
-                    className="px-5 py-2 bg-blue-500 rounded-lg hover:cursor-pointer outline-none hover:bg-blue-600 transition-all duration-200"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleReject(`${request._id}`)}
-                    className="px-5 py-2 bg-red-500 rounded-lg hover:cursor-pointer outline-none hover:bg-red-600 transition-all duration-200"
-                  >
-                    Reject
-                  </button>
-                </div>
+              </div>
+              <div className="h-full  flex flex-col justify-between ">
+                <button
+                  onClick={() => handleAccept(request._id)}
+                  className="btn btn-primary"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleReject(request._id)}
+                  className="btn btn-secondary"
+                >
+                  Reject
+                </button>
               </div>
             </div>
           </div>
         ))}
-    </>
+      {!wantToConnectUsers?.length && (
+        <div className="h-full w-full flex justify-center items-center">
+          <div className="card bg-base-300 w-4xl shadow-xl p-5 flex justify-center items-center">
+            <h2 className="card-title">No Connection Requests!</h2>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 export default Lovers;

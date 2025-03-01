@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface ILoginFormData {
   email: string;
   otp: string;
@@ -9,6 +11,7 @@ export interface IUserLoginData {
   firstName: string;
   lastName: string;
   gender: string;
+  photoUrl: string;
   _id: string;
 }
 
@@ -62,6 +65,11 @@ export interface IProfileInitialState {
   profileData: IProfileData | null;
   error: IError | null;
   loading: boolean;
+  //types for edit profile
+  editProfileSuccess: boolean;
+  errorOnEdit: IError | null;
+  editProfileFailure: boolean;
+  editingInProgress: boolean;
 }
 
 export interface IUserConnectionData {
@@ -76,19 +84,16 @@ export interface IUserConnectionData {
 }
 
 export interface IFeedState {
-  userReviewConnections: IUserConnectionData[] | null;
-  userAllRequestLoading: boolean;
-  fetchReviewConnectionsSuccessfull: boolean;
-  fetchReviewConnectionsFailure: boolean;
-  error: IError | null;
+  // allConnectionRequest: boolean;
+  wantToConnectUsers: ILovers[] | null;
+  connectionsLoading: boolean;
+  errorInGettingConnection: IError | null;
   //following data is for reviewing/rejecting the connection request
   acceptOrRejectionMessage: string | null;
   reviewingTheRequest: boolean;
   errorInReviewingRequest: IError | null;
-  allConnectionRequest: boolean;
-  wantToConnectUsers: ILovers[] | null;
-  connectionsLoading: boolean;
-  errorInGettingConnection: IError | null;
+  acceptOrRejectionSuccessful: boolean;
+  acceptOrRejectionFailure: boolean;
 }
 export interface IUserFeedResponse {
   data: {
@@ -238,5 +243,43 @@ export interface ISignupResponse {
   data: {
     message: string;
     user: IRegistrationFormData;
+  };
+}
+export interface IEditProfileData {
+  firstName: string;
+  lastName: string;
+  age: string;
+  gender: string;
+  skills: string;
+  about: string;
+  image: any;
+}
+export interface IFeed {
+  id: string;
+  about: string;
+  photoUrl: string;
+  firstName: string;
+  lastName: string;
+  setRightSwipe: (data: number) => void;
+
+  feeds: IUserProfile[];
+  setFeed: Dispatch<SetStateAction<IUserProfile[] | null>>;
+}
+
+export interface IUserProfile {
+  about: string;
+  age: number;
+  email: string;
+  firstName: string;
+  gender: string;
+  lastName: string;
+  photoUrl: string;
+  skills: string[];
+  _id: string;
+}
+
+export interface IAcceptRejectConnectionResponse {
+  data: {
+    message: string;
   };
 }
