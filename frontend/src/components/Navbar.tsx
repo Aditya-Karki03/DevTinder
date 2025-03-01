@@ -84,8 +84,14 @@ const Navbar = () => {
                     </span>
                   </Link>
                 </li>
-                <li className="py-3 px-2 flex border border-white/20 hover:bg-gray-800 cursor-pointer space-x-4">
-                  <Handshake /> <span>Incoming Requests</span>
+                <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer space-x-4">
+                  <Link
+                    to={"/dashboard/requests"}
+                    onClick={() => setShowOptions(false)}
+                    className="flex space-x-4"
+                  >
+                    <Handshake /> <span>Incoming Requests</span>
+                  </Link>
                 </li>
                 <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer">
                   <button

@@ -84,19 +84,16 @@ export interface IUserConnectionData {
 }
 
 export interface IFeedState {
-  userReviewConnections: IUserConnectionData[] | null;
-  userAllRequestLoading: boolean;
-  fetchReviewConnectionsSuccessfull: boolean;
-  fetchReviewConnectionsFailure: boolean;
-  error: IError | null;
+  // allConnectionRequest: boolean;
+  wantToConnectUsers: ILovers[] | null;
+  connectionsLoading: boolean;
+  errorInGettingConnection: IError | null;
   //following data is for reviewing/rejecting the connection request
   acceptOrRejectionMessage: string | null;
   reviewingTheRequest: boolean;
   errorInReviewingRequest: IError | null;
-  allConnectionRequest: boolean;
-  wantToConnectUsers: ILovers[] | null;
-  connectionsLoading: boolean;
-  errorInGettingConnection: IError | null;
+  acceptOrRejectionSuccessful: boolean;
+  acceptOrRejectionFailure: boolean;
 }
 export interface IUserFeedResponse {
   data: {
@@ -279,4 +276,10 @@ export interface IUserProfile {
   photoUrl: string;
   skills: string[];
   _id: string;
+}
+
+export interface IAcceptRejectConnectionResponse {
+  data: {
+    message: string;
+  };
 }

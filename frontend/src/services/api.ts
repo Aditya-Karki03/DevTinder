@@ -46,13 +46,6 @@ export const getProfileApiCall = () => {
   });
 };
 
-//api to get user feed
-export const getFeedApiCall = () => {
-  return axios.get(`${API_URL}/v1/user-feed/all`, {
-    withCredentials: true,
-  });
-};
-
 //api to accept or reject connection request, status and id of the user who sent the connection request will come
 export const reviewConnectionRequest = (status: string, id: string) => {
   const data = {};

@@ -11,43 +11,22 @@ import {
 } from "../../Types/types";
 
 const initialState: IFeedState = {
-  userReviewConnections: null,
-  userAllRequestLoading: false,
-  fetchReviewConnectionsSuccessfull: false,
-  fetchReviewConnectionsFailure: false,
-  error: null,
+  //getting all the connection request
+  wantToConnectUsers: null,
+  connectionsLoading: false,
+  errorInGettingConnection: null,
   //following data is for reviewing/rejecting the connection request
   acceptOrRejectionMessage: null,
   reviewingTheRequest: false,
   errorInReviewingRequest: null,
-  //getting all the connection request
-  wantToConnectUsers: null,
-  allConnectionRequest: false,
-  connectionsLoading: false,
-  errorInGettingConnection: null,
+  acceptOrRejectionSuccessful: false,
+  acceptOrRejectionFailure: false,
 };
 
 const userFeedSlice = createSlice({
   name: "feed",
   initialState,
   reducers: {
-    feedRequest: (state) => {
-      state.userAllRequestLoading = true;
-      state.error = null;
-    },
-    feedRecievedSuccessful: (
-      state,
-      action: PayloadAction<IUserConnectionData[]>
-    ) => {
-      state.fetchReviewConnectionsSuccessfull = true;
-      state.userAllRequestLoading = false;
-      state.userReviewConnections = action.payload;
-    },
-    feedRecievedFailure: (state, action: PayloadAction<IError>) => {
-      state.error = action.payload;
-      state.userAllRequestLoading = false;
-    },
-    //reducers to get all the connection request
     getAllIncomingConnectionRequest: (state) => {
       state.connectionsLoading = true;
       state.errorInGettingConnection = null;
@@ -70,22 +49,26 @@ const userFeedSlice = createSlice({
     },
     acceptOrRejectConnectionSuccessfull: (
       state,
-      action: PayloadAction<string>
+      action: PayloadAction<{ message: string; id: string }>
     ) => {
       state.reviewingTheRequest = false;
-      state.acceptOrRejectionMessage = action.payload;
+      state.acceptOrRejectionMessage = action.payload.message;
+      state.acceptOrRejectionSuccessful = true;
+      //if user accepts or rejects we need to remove it from the array
+      state.wantToConnectUsers =
+        state.wantToConnectUsers?.filter(
+          (user) => user?._id !== action.payload.id
+        ) || state.wantToConnectUsers;
     },
     acceptOrRejectConnectionFailure: (state, action: PayloadAction<IError>) => {
       state.reviewingTheRequest = false;
       state.errorInReviewingRequest = action.payload;
+      state.acceptOrRejectionFailure = true;
     },
   },
 });
 
 export const {
-  feedRequest,
-  feedRecievedFailure,
-  feedRecievedSuccessful,
   getAllIncomingConnectionRequest,
   getConnectionsSuccessful,
   getConnectionsFailure,
