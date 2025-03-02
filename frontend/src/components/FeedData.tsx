@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -7,16 +7,9 @@ import {
 } from "motion/react";
 import { connectionRejectionRequest } from "../pages/feed/slice";
 import { useDispatch } from "react-redux";
-import { IFeed, IUserProfile } from "../Types/types";
+import { IFeed } from "../Types/types";
 
-const FeedData = ({
-  about,
-  photoUrl,
-  setRightSwipe,
-  setFeed,
-  feeds,
-  id,
-}: IFeed) => {
+const FeedData = ({ about, photoUrl, setRightSwipe, setFeed, id }: IFeed) => {
   const dispatch = useDispatch();
   const [readMore, setReadMore] = useState(false);
   //very similar to useState, here value of x is set to 0

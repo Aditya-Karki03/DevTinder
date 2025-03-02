@@ -31,13 +31,11 @@ const Form = () => {
     otpHash,
     verifyingOtp,
     otpVerificationSuccessful,
-    otpVerificationFailure,
     otpVerificationError,
     otpStatusMessage,
     sendingData,
     dataSendingSuccessful,
     dataSendingStatusMessage,
-    dataSendingFailure,
     dataSendingError,
   } = useSelector((store: RootState) => store?.signup);
 

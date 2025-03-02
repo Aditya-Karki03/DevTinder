@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IError } from "../../Types/types";
-import { regitrationFormSchemaType } from "../../schema/schema";
 
 interface ISignup {
   //types for email

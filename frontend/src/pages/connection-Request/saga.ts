@@ -12,7 +12,6 @@ import {
   IAcceptRejectConnectionResponse,
   IError,
   IGetConnectionResponse,
-  IUserFeedResponse,
 } from "../../Types/types";
 import { PayloadAction } from "@reduxjs/toolkit";
 

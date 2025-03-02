@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Loader2, LoaderCircle } from "lucide-react";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context";
 import { useEffect, useState } from "react";
@@ -66,7 +66,7 @@ const Login = () => {
       navigate("/dashboard");
     }
   }, [isLoggedIn]);
-  const submitForm = (data: ILoginFormData) => {
+  const submitForm = () => {
     //required for form validation
   };
   const handlePrev = async () => {
