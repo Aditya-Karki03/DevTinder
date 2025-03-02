@@ -3,12 +3,7 @@
 //userFeed failure
 //error
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  IError,
-  IFeedState,
-  ILovers,
-  IUserConnectionData,
-} from "../../Types/types";
+import { IError, IFeedState, ILovers } from "../../Types/types";
 
 const initialState: IFeedState = {
   //getting all the connection request

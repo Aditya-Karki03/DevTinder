@@ -1,11 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
-import {
-  connectionRejectionRequest,
-  getFeedDataRequest,
-  manipulateFeedData,
-} from "./slice";
+import { getFeedDataRequest } from "./slice";
 import FeedData from "../../components/FeedData";
 import { Loader2 } from "lucide-react";
 import { IUserProfile } from "../../Types/types";
@@ -15,7 +11,7 @@ const Feed = () => {
   const [feeds, setFeed] = useState<IUserProfile[] | null>(null);
   const dispatch = useDispatch();
   const feedsData = useSelector((store: RootState) => store?.feeds?.feedData);
-  const loading = useSelector((store: RootState) => store?.feeds?.loading);
+  // const loading = useSelector((store: RootState) => store?.feeds?.loading);
   useEffect(() => {
     // dispatch(getFeedDataRequest());
     // if (feeds) dispatch(manipulateFeedData(feeds));

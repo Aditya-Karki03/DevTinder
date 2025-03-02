@@ -15,7 +15,6 @@ import {
   verifyOtpRequest,
 } from "./slice";
 import { useNavigate } from "react-router-dom";
-import { verifyOtp } from "../services/api";
 
 interface IContextData {
   generateOtp: (data: { email: string; authType: string }) => void;
