@@ -72,7 +72,7 @@ const Lovers = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center relative">
+    <div className="w-screen h-screen py-4 flex flex-col space-y-4 items-center relative">
       {connectionsLoading && (
         <div className="absolute top-0 left-0 h-full w-full h-s bg-black/20 flex  flex-grow justify-center items-center">
           <Loader2 className="h-12 w-12 text-white animate-spin" />
@@ -80,8 +80,11 @@ const Lovers = () => {
       )}
       {wantToConnectUsers &&
         wantToConnectUsers?.map((request) => (
-          <div key={request._id} className="card bg-base-300 w-4xl shadow-xl ">
-            <div className="w-full flex justify-between py-5 px-3">
+          <div
+            key={request._id}
+            className="card bg-gray-950 w-4xl shadow-xl rounded-xl "
+          >
+            <div className="w-full flex justify-between py-5 px-5">
               <div className="flex items-center space-x-4 ">
                 <img
                   src={`${request?.fromRequest?.photoUrl}`}
@@ -91,7 +94,7 @@ const Lovers = () => {
                 <div className="">
                   <h2 className="card-title relative">
                     {`${request?.fromRequest?.firstName} ${request?.fromRequest?.lastName}`}
-                    <div className="bg-blue-600 px-2 py-1 rounded-3xl text-sm text-center absolute left-20 bottom-5">
+                    <div className="bg-blue-600 px-2 py-1 rounded-3xl text-sm text-center absolute -left-14 bottom-6">
                       NEW
                     </div>
                   </h2>
