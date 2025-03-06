@@ -1,4 +1,4 @@
-import { BellDot, Handshake, LogOut, User } from "lucide-react";
+import { BellDot, Contact, Handshake, LogOut, User } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { useAuth } from "../context";
@@ -91,6 +91,16 @@ const Navbar = () => {
                     className="flex space-x-4"
                   >
                     <Handshake /> <span>Incoming Requests</span>
+                  </Link>
+                </li>
+                <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer space-x-4">
+                  <Link
+                    to={"/dashboard/connections"}
+                    onClick={() => setShowOptions(false)}
+                    className="flex space-x-4"
+                  >
+                    <Contact />
+                    <span>Connections</span>
                   </Link>
                 </li>
                 <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer">
