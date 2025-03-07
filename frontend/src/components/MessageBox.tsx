@@ -1,5 +1,4 @@
 import { X } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
 
 interface MessageBoxProps {
   firstName: string;
