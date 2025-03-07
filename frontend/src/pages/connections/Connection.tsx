@@ -11,7 +11,7 @@ const Connection = () => {
     dispatch(getAllFriendsRequest());
   }, [dispatch]);
   return (
-    <div className="flex flex-grow ">
+    <div className="flex flex-grow flex-col">
       {friends?.map((friend) => (
         <FriendsProfile key={friend._id} friend={friend} />
       ))}

@@ -1,19 +1,34 @@
-import { BellDot, Handshake, LogOut, User } from "lucide-react";
+import {
+  BellDot,
+  Contact,
+  Handshake,
+  LogOut,
+  MessageCircle,
+  User,
+} from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { useAuth } from "../context";
 import { useState } from "react";
+import ListOfFriends from "./ListOfFriends";
 
 const Navbar = () => {
   const [showOptions, setShowOptions] = useState(false);
+  const [showAllFriends, setShowAllFriends] = useState(false);
   const { logout, loggedInUser } = useAuth();
   const handleLogout = () => {
     setShowOptions(false);
     logout();
   };
   const handleShowOptions = () => {
-    console.log(showOptions);
     setShowOptions((prev) => !prev);
+    //if we show options than we close the show friends options
+    setShowAllFriends(false);
+  };
+  const handleShowAllFriends = () => {
+    setShowAllFriends((prev) => !prev);
+    //if we show options than we close the show  options
+    setShowOptions(false);
   };
   return (
     <div className="navbar bg-base-100 shadow-sm">
@@ -59,8 +74,9 @@ const Navbar = () => {
       </div>
       <div className="navbar-end space-x-2">
         <button className="btn btn-ghost btn-circle">
-          <BellDot className="w-5 h-5" />
+          <MessageCircle className="w-5 h-5" onClick={handleShowAllFriends} />
         </button>
+        <div className="relative ">{showAllFriends && <ListOfFriends />}</div>
         <div className=" relative">
           <div tabIndex={0} role="button" className="btn m-1 ">
             <User className="w-5 h-5" onClick={handleShowOptions} />
@@ -93,6 +109,16 @@ const Navbar = () => {
                     <Handshake /> <span>Incoming Requests</span>
                   </Link>
                 </li>
+                <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer space-x-4">
+                  <Link
+                    to={"/dashboard/connections"}
+                    onClick={() => setShowOptions(false)}
+                    className="flex space-x-4"
+                  >
+                    <Contact />
+                    <span>Connections</span>
+                  </Link>
+                </li>
                 <li className="py-3 px-2  border border-white/20 hover:bg-gray-800 cursor-pointer">
                   <button
                     onClick={handleLogout}
@@ -104,27 +130,6 @@ const Navbar = () => {
               </ul>
             </div>
           )}
-          {/* <ul
-            tabIndex={0}
-            className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow right-24"
-          >
-            <li
-              onClick={() => navigate("/dashboard/profile")}
-              className="bg-gray-700 rounded-lg"
-            >
-              <div className="w-2xs h-20  shadow-2xl  flex items-center ">
-                <User />
-                <span className="font-bold text-gray-200">
-                  {loggedInUser?.firstName} {loggedInUser?.lastName}
-                </span>
-              </div>
-            </li>
-            <li className="w-full">
-              <button className="w-2xs" onClick={handleLogout}>
-                Logout
-              </button>
-            </li>
-          </ul> */}
         </div>
       </div>
     </div>
