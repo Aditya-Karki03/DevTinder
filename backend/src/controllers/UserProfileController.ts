@@ -11,6 +11,7 @@ export class UserProfileController {
       res.status(201).json({
         message: "Profile Fetched successfully",
         user: {
+          _id: user?._id,
           firstName: user?.firstName,
           lastName: user?.lastName,
           gender: user?.gender,

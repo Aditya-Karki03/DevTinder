@@ -13,9 +13,6 @@ export const initializeSocketIO = (server: any) => {
       const roomId = [loggedInUserId, friendId].join("");
       //roomId is guessable if both loggedInUserId & friendId are known to third user, better hash it
       const hashedRoomId = await bcrypt.hash(roomId, 10);
-      console.log(loggedInUserId);
-      console.log("--------Logged IN ID--------");
-      console.log(friendId);
       // console.log(hashedRoomId);
       // socket.join(hashedRoomId);
     });
