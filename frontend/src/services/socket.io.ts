@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
 
 export const createSocketConnection = () => {
-  return io(process.env.API_ENDPOINT || "");
+  return io(import.meta.env.API_ENDPOINT || "http://localhost:3000");
 };

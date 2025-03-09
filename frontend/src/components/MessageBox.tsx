@@ -23,22 +23,23 @@ const MessageBox = ({
     setShowMessageBox(false);
   };
   const loggedInUserId = useSelector(
-    (store: RootState) => store?.profile?.profileData?._id
+    (store: RootState) => store?.auth?.loggedInUser?._id
   );
   // whenever this component mounts I want to connect to socket io and on umounts disconnect
   //chat message will be between 2 people, so need the id of both to create a room
   useEffect(() => {
     //if friend & loggedInuserId not there, no connection
-    if (!friendId && !loggedInUserId) {
-      return;
+    console.log(loggedInUserId);
+    if (friendId && loggedInUserId) {
+      const socket = createSocketConnection();
+      console.log(loggedInUserId);
+      //alongside emitting an event I will send loggedInUserId + friendId
+      socket.emit("joinChat", loggedInUserId, friendId);
+      //whenever the component unmounts I want to disconnect the socket connection
+      return () => {
+        socket.disconnect();
+      };
     }
-    const socket = createSocketConnection();
-    //alongside emitting an event I will send loggedInUserId + friendId
-    socket.emit("join chat", loggedInUserId, friendId);
-    //whenever the component unmounts I want to disconnect the socket connection
-    return () => {
-      socket.disconnect();
-    };
   }, [friendId, loggedInUserId]);
 
   return (
