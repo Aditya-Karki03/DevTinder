@@ -1,4 +1,8 @@
 import { X } from "lucide-react";
+import { useEffect } from "react";
+import { createSocketConnection } from "../services/socket.io";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 interface MessageBoxProps {
   firstName: string;
@@ -18,9 +22,25 @@ const MessageBox = ({
   const handleClose = () => {
     setShowMessageBox(false);
   };
-  //send id, firstname, lastname, photoUrl to the message box
-  //id of both from and to, to get the previous messages of both talking together
-  //need the state variable as well to control the component
+  const loggedInUserId = useSelector(
+    (store: RootState) => store?.profile?.profileData?._id
+  );
+  // whenever this component mounts I want to connect to socket io and on umounts disconnect
+  //chat message will be between 2 people, so need the id of both to create a room
+  useEffect(() => {
+    //if friend & loggedInuserId not there, no connection
+    if (!friendId && !loggedInUserId) {
+      return;
+    }
+    const socket = createSocketConnection();
+    //alongside emitting an event I will send loggedInUserId + friendId
+    socket.emit("join chat", loggedInUserId, friendId);
+    //whenever the component unmounts I want to disconnect the socket connection
+    return () => {
+      socket.disconnect();
+    };
+  }, [friendId, loggedInUserId]);
+
   return (
     <div className="fixed right-1.5 bottom-2 border border-white/20 z-50 w-xl h-[450px] bg-black/80 rounded-lg flex flex-col">
       <div className="w-full py-1 px-3 flex justify-between items-center border-b border-white/20">
