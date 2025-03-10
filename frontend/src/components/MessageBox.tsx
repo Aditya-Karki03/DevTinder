@@ -1,8 +1,9 @@
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { createSocketConnection } from "../services/socket.io";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useForm } from "react-hook-form";
 
 interface MessageBoxProps {
   firstName: string;
@@ -12,6 +13,12 @@ interface MessageBoxProps {
   setShowMessageBox: (data: boolean) => void;
 }
 
+interface messagesData {
+  incomingMsg?: boolean;
+  outgoingmsg?: boolean;
+  msg: string;
+}
+
 const MessageBox = ({
   firstName,
   lastName,
@@ -19,28 +26,88 @@ const MessageBox = ({
   photoUrl,
   setShowMessageBox,
 }: MessageBoxProps) => {
-  const handleClose = () => {
-    setShowMessageBox(false);
-  };
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    getValues,
+    setValue,
+  } = useForm();
+
   const loggedInUserId = useSelector(
     (store: RootState) => store?.auth?.loggedInUser?._id
   );
+
+  const [messages, setMessages] = useState<messagesData[]>([]);
+
   // whenever this component mounts I want to connect to socket io and on umounts disconnect
   //chat message will be between 2 people, so need the id of both to create a room
   useEffect(() => {
     //if friend & loggedInuserId not there, no connection
-    console.log(loggedInUserId);
     if (friendId && loggedInUserId) {
       const socket = createSocketConnection();
-      console.log(loggedInUserId);
       //alongside emitting an event I will send loggedInUserId + friendId
       socket.emit("joinChat", loggedInUserId, friendId);
+      //listen to the event emiited from the server
+      socket.on("messageRecieved", (message, user, fromUser) => {
+        setMessages((prevMsg) => [
+          ...prevMsg,
+          { incomingMsg: true, msg: message, outgoingmsg: false },
+        ]);
+        // console.log(message, user, fromUser);
+      });
       //whenever the component unmounts I want to disconnect the socket connection
       return () => {
         socket.disconnect();
       };
     }
   }, [friendId, loggedInUserId]);
+
+  //the below solves the problem of aligning messages to right or left based on who is sender and receiever
+  const arrOfObjs = [
+    {
+      incomingMsg: true,
+      message: "Hello world",
+    },
+    {
+      outgoingMsg: true,
+      message: "I am Aditya karki",
+    },
+    {
+      outgoingMsg: true,
+      message: "Looking for employment",
+    },
+    {
+      incomingMsg: true,
+      message: "Hello world",
+    },
+    {
+      incomingMsg: true,
+      message: "Hello world",
+    },
+    {
+      incomingMsg: true,
+      message: "Hello world",
+    },
+  ];
+
+  const handleClose = () => {
+    setShowMessageBox(false);
+  };
+
+  const handleSendMessage = () => {
+    const message = getValues("messageInput");
+    if (message.length == 0 || message == undefined) {
+      return;
+    }
+    const socket = createSocketConnection();
+    setMessages((prevMsg) => [
+      ...prevMsg,
+      { outgoingmsg: true, msg: message, incomingMsg: false },
+    ]);
+    socket.emit("sendMessage", message, loggedInUserId, friendId);
+    setValue("messageInput", "");
+  };
 
   return (
     <div className="fixed right-1.5 bottom-2 border border-white/20 z-50 w-xl h-[450px] bg-black/80 rounded-lg flex flex-col">
@@ -57,93 +124,33 @@ const MessageBox = ({
         </div>
         <X className="cursor-pointer " onClick={handleClose} />
       </div>
-      <div className="flex flex-col    px-2 py-3 overflow-y-scroll">
-        <div className="chat chat-start">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hours ago</time>
-          </div>
-          <div className="chat-bubble">You were the Chosen One!</div>
-          <div className="chat-footer opacity-50">Seen</div>
-        </div>
-        <div className="chat chat-start  flex flex-col items-end">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hour ago</time>
-          </div>
-          <div className="chat-bubble">I loved you.</div>
-          <div className="chat-footer opacity-50">Delivered</div>
-        </div>
-        <div className="chat chat-start">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hours ago</time>
-          </div>
-          <div className="chat-bubble">You were the Chosen One!</div>
-          <div className="chat-footer opacity-50">Seen</div>
-        </div>
-        <div className="chat chat-start  flex flex-col items-end">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hour ago</time>
-          </div>
-          <div className="chat-bubble">I loved you.</div>
-          <div className="chat-footer opacity-50">Delivered</div>
-        </div>
-        <div className="chat chat-start">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hours ago</time>
-          </div>
-          <div className="chat-bubble">You were the Chosen One!</div>
-          <div className="chat-footer opacity-50">Seen</div>
-        </div>
-        <div className="chat chat-start  flex flex-col items-end">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hour ago</time>
-          </div>
-          <div className="chat-bubble">I loved you.</div>
-          <div className="chat-footer opacity-50">Delivered</div>
-        </div>
-        <div className="chat chat-start">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hours ago</time>
-          </div>
-          <div className="chat-bubble">You were the Chosen One!</div>
-          <div className="chat-footer opacity-50">Seen</div>
-        </div>
-        <div className="chat chat-start  flex flex-col items-end">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hour ago</time>
-          </div>
-          <div className="chat-bubble">I loved you.</div>
-          <div className="chat-footer opacity-50">Delivered</div>
-        </div>
-        <div className="chat chat-start">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hours ago</time>
-          </div>
-          <div className="chat-bubble">You were the Chosen One!</div>
-          <div className="chat-footer opacity-50">Seen</div>
-        </div>
-        <div className="chat chat-start  flex flex-col items-end">
-          <div className="chat-header">
-            Obi-Wan Kenobi
-            <time className="text-xs opacity-50">2 hour ago</time>
-          </div>
-          <div className="chat-bubble">I loved you.</div>
-          <div className="chat-footer opacity-50">Delivered</div>
-        </div>
+      {/* flex flex-col    px-2 py-3 overflow-y-scroll */}
+      <div className="h-full px-2 py-3 overflow-y-scroll">
+        {messages &&
+          messages?.map((data, index) => {
+            return (
+              <Fragment key={index}>
+                {data.incomingMsg && (
+                  <div key={index} className="block text-left">
+                    {data?.msg}
+                  </div>
+                )}
+                {data?.outgoingmsg && (
+                  <div key={index} className="block text-right ">
+                    {data?.msg}
+                  </div>
+                )}
+              </Fragment>
+            );
+          })}
       </div>
-      <div className="w-full flex justify-center px-2 gap-2 my-2">
+      <form
+        onSubmit={handleSubmit(handleSendMessage)}
+        className="w-full flex justify-center px-2 gap-2 my-2"
+      >
         <input
           type="text"
-          name=""
-          id=""
+          {...register("messageInput")}
           className="w-full p-2 rounded-md border border-white/30 outline-none"
         />
         <button
@@ -152,7 +159,7 @@ const MessageBox = ({
         >
           Send
         </button>
-      </div>
+      </form>
     </div>
   );
 };
