@@ -26,13 +26,7 @@ const MessageBox = ({
   photoUrl,
   setShowMessageBox,
 }: MessageBoxProps) => {
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-    getValues,
-    setValue,
-  } = useForm();
+  const { handleSubmit, register, getValues, setValue } = useForm();
 
   const loggedInUserId = useSelector(
     (store: RootState) => store?.auth?.loggedInUser?._id
@@ -49,7 +43,8 @@ const MessageBox = ({
       //alongside emitting an event I will send loggedInUserId + friendId
       socket.emit("joinChat", loggedInUserId, friendId);
       //listen to the event emiited from the server
-      socket.on("messageRecieved", (message, user, fromUser) => {
+      socket.on("messageRecieved", (message, userId, friendId) => {
+        if (userId == loggedInUserId) return;
         setMessages((prevMsg) => [
           ...prevMsg,
           { incomingMsg: true, msg: message, outgoingmsg: false },
@@ -62,34 +57,6 @@ const MessageBox = ({
       };
     }
   }, [friendId, loggedInUserId]);
-
-  //the below solves the problem of aligning messages to right or left based on who is sender and receiever
-  const arrOfObjs = [
-    {
-      incomingMsg: true,
-      message: "Hello world",
-    },
-    {
-      outgoingMsg: true,
-      message: "I am Aditya karki",
-    },
-    {
-      outgoingMsg: true,
-      message: "Looking for employment",
-    },
-    {
-      incomingMsg: true,
-      message: "Hello world",
-    },
-    {
-      incomingMsg: true,
-      message: "Hello world",
-    },
-    {
-      incomingMsg: true,
-      message: "Hello world",
-    },
-  ];
 
   const handleClose = () => {
     setShowMessageBox(false);
