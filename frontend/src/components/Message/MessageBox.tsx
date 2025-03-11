@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
-import { createSocketConnection } from "../services/socket.io";
+import { createSocketConnection } from "../../services/socket.io";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import { useForm } from "react-hook-form";
 
 interface MessageBoxProps {

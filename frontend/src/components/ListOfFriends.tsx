@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
-import MessageBox from "./MessageBox";
+import MessageBox from "./Message/MessageBox";
 
 const ListOfFriends = () => {
   const [showMessageBox, setShowMessageBox] = useState(false);
