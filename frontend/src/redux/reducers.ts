@@ -4,6 +4,7 @@ import userFeedReducer from "../pages/connection-Request/slice";
 import userFriendReducer from "../pages/connections/slice";
 import feeds from "../pages/feed/slice";
 import signupReducer from "../components/SignupForm/slice";
+import messageReducer from "../components/Message/slice";
 const reducers = {
   auth: userReducer,
   profile: profileReducer,
@@ -11,5 +12,6 @@ const reducers = {
   friends: userFriendReducer,
   feeds: feeds,
   signup: signupReducer,
+  messages: messageReducer,
 };
 export default reducers;
