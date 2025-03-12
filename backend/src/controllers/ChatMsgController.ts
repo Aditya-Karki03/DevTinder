@@ -3,19 +3,29 @@ import { Message } from "../schema/messages";
 
 export class ChatMessages {
   async getMessages(req: Request, res: Response) {
-    const { recieverId } = req.body;
+    console.log(req.body);
+    const { friendsId } = req.body;
     try {
       const userId = req?.user?._id;
-      const response = await Message.findOne({
+      let data = await Message.findOne({
         participants: {
-          $all: [userId, recieverId],
+          $all: [userId, friendsId],
         },
-      });
+      }).populate("participants", "firstName lastName");
+      //if no data than we need to create one
+      if (!data) {
+        data = new Message({
+          participants: [userId, friendsId],
+          messages: [],
+        });
+        await data.save();
+      }
       res.status(200).json({
         message: "Chat retreived Successfully!",
-        chats: response,
+        chats: data,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         message: "Something went wrong, while retrieving chats",
         chats: null,
