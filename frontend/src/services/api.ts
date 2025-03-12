@@ -102,3 +102,17 @@ export const editProfile = (data: any) => {
     withCredentials: true,
   });
 };
+
+//api to get all the previous messages
+export const getOldMessages = (data: { friendsId: string }) => {
+  return axios.post(`${API_URL}/v1/chat/get-message`, data, {
+    withCredentials: true,
+  });
+};
+
+//api to post all the new messages
+export const saveNewMessages = (data: { recieverId: string; msg: string }) => {
+  return axios.post(`${API_URL}/v1/chat/save-message`, data, {
+    withCredentials: true,
+  });
+};

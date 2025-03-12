@@ -5,6 +5,7 @@ import { getConnectionRequestSaga } from "../pages/connection-Request/saga";
 import { getFriendsSaga } from "../pages/connections/saga";
 import { feedSaga } from "../pages/feed/saga";
 import { signupSaga } from "../components/SignupForm/saga";
+import { messagesSaga } from "../components/Message/saga";
 
 export default function* rootSaga() {
   yield all([
@@ -14,5 +15,6 @@ export default function* rootSaga() {
     ...getFriendsSaga,
     ...feedSaga,
     ...signupSaga,
+    ...messagesSaga,
   ]);
 }
