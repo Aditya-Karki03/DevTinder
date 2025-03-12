@@ -283,3 +283,27 @@ export interface IAcceptRejectConnectionResponse {
     message: string;
   };
 }
+
+interface Participant {
+  _id: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface Message {
+  senderId: string;
+  message: string;
+}
+
+export interface Chat {
+  _id: string;
+  participants: Participant[];
+  messages: Message[];
+}
+
+export interface ChatResponse {
+  data: {
+    message: string;
+    chats: Chat;
+  };
+}
