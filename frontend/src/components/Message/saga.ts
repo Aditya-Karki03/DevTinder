@@ -15,7 +15,6 @@ function* getOldMessages(action: PayloadAction<{ friendsId: string }>) {
     const response: ChatResponse = yield call(() =>
       API.getOldMessages(action.payload)
     );
-    console.log(response?.data?.chats?.messages);
     if (response?.data?.chats) {
       yield put(oldMsgRetrieveSuccessfully(response?.data?.chats?.messages));
     } else {
