@@ -1,9 +1,11 @@
 import { X } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { createSocketConnection } from "../../services/socket.io";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useForm } from "react-hook-form";
+import { oldMsgRequest } from "./slice";
+import { Message } from "../../Types/types";
 
 interface MessageBoxProps {
   firstName: string;
@@ -27,30 +29,44 @@ const MessageBox = ({
   setShowMessageBox,
 }: MessageBoxProps) => {
   const { handleSubmit, register, getValues, setValue } = useForm();
+  const dispatch = useDispatch();
 
   const loggedInUserId = useSelector(
     (store: RootState) => store?.auth?.loggedInUser?._id
   );
 
-  const [messages, setMessages] = useState<messagesData[]>([]);
+  const { msgLoading, messages } = useSelector(
+    (store: RootState) => store?.messages
+  );
+
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    if (msgLoading) return;
+    setAllMessages((prevMsg) => [...prevMsg, ...messages]);
+  }, [friendId, msgLoading]);
 
   // whenever this component mounts I want to connect to socket io and on umounts disconnect
   //chat message will be between 2 people, so need the id of both to create a room
   useEffect(() => {
     //if friend & loggedInuserId not there, no connection
     if (friendId && loggedInUserId) {
+      //api call to get all prev chats between the user
+      dispatch(oldMsgRequest({ friendsId: friendId }));
       const socket = createSocketConnection();
       //alongside emitting an event I will send loggedInUserId + friendId
       socket.emit("joinChat", loggedInUserId, friendId);
       //listen to the event emiited from the server
-      socket.on("messageRecieved", (message, userId, friendId) => {
-        if (userId == loggedInUserId) return;
-        setMessages((prevMsg) => [
-          ...prevMsg,
-          { incomingMsg: true, msg: message, outgoingmsg: false },
-        ]);
-        // console.log(message, user, fromUser);
+      socket.on("messageRecieved", (message, fromId, toId) => {
+        if (fromId == loggedInUserId) return; //because I don't want to recieve my own msg from the server
+        const messageWithUserId = {
+          senderId: friendId,
+          message,
+        };
+
+        setAllMessages((prev) => [...prev, messageWithUserId]);
       });
+
       //whenever the component unmounts I want to disconnect the socket connection
       return () => {
         socket.disconnect();
@@ -63,15 +79,16 @@ const MessageBox = ({
   };
 
   const handleSendMessage = () => {
-    const message = getValues("messageInput");
+    const message: string = getValues("messageInput");
     if (message.length == 0 || message == undefined) {
       return;
     }
+    const msgWithSenderId = {
+      senderId: loggedInUserId ?? "",
+      message,
+    };
     const socket = createSocketConnection();
-    setMessages((prevMsg) => [
-      ...prevMsg,
-      { outgoingmsg: true, msg: message, incomingMsg: false },
-    ]);
+    setAllMessages((prevMsg) => [...prevMsg, msgWithSenderId]);
     socket.emit("sendMessage", message, loggedInUserId, friendId);
     setValue("messageInput", "");
   };
@@ -93,18 +110,23 @@ const MessageBox = ({
       </div>
       {/* flex flex-col    px-2 py-3 overflow-y-scroll */}
       <div className="h-full px-2 py-3 overflow-y-scroll">
-        {messages &&
-          messages?.map((data, index) => {
+        {allMessages.length > 0 &&
+          allMessages?.map((data, index) => {
             return (
               <Fragment key={index}>
-                {data.incomingMsg && (
-                  <div key={index} className="block text-left">
-                    {data?.msg}
+                {/* if message is sent to you, render it onto left */}
+                {data?.senderId == loggedInUserId ? (
+                  <div className="flex justify-end px-2">
+                    <div className=" max-w-fit px-4 rounded-sm my-2 py-1 bg-gray-800">
+                      {data?.message}
+                    </div>
                   </div>
-                )}
-                {data?.outgoingmsg && (
-                  <div key={index} className="block text-right ">
-                    {data?.msg}
+                ) : (
+                  <div className="flex justify-items-start">
+                    {" "}
+                    <div className=" max-w-fit px-4 rounded-sm my-2 py-1 bg-gray-800">
+                      {data?.message}
+                    </div>
                   </div>
                 )}
               </Fragment>
