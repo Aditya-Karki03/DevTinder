@@ -127,7 +127,9 @@ export class AuthController {
 
       //file name should be unique, if not S3 overwrites the prev one if same name
 
-      const photoUrl = await getPresignedUrls(fileName);
+      // const photoUrl = await getPresignedUrls(fileName);
+      //cloudfront is a CDN which makes the delivery of the files from the private bucket of S3 much faster
+      const photoUrl = `https://d1fh7jyuhei6w9.cloudfront.net/${fileName}`;
       // const imgUrl = await apiCallToUpload(
       //   s3UploadPresignedUrl,
       //   profilePicture
