@@ -15,6 +15,8 @@ import Register from "./pages/Register/Register.tsx";
 import Connection from "./pages/connections/Connection.tsx";
 import FramerMotion from "./components/FramerMotion.tsx";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoutes from "./components/ProtectedRoutes.tsx";
+import PublicRoutes from "./components/PublicRoutes.tsx";
 
 // import Protection from "./components/Protection.tsx";
 
@@ -33,17 +35,29 @@ createRoot(document.getElementById("root")!).render(
           />
           <Routes>
             <Route>
-              <Route index element={<Login />} />
+              <PublicRoutes>
+                <Route index element={<Login />} />
+              </PublicRoutes>
             </Route>
             <Route>
-              <Route path="dashboard" element={<Dashboard />}>
+              {/* Everything inside the dashboard inside is protected */}
+              <Route
+                path="dashboard"
+                element={
+                  <ProtectedRoutes>
+                    <Dashboard />
+                  </ProtectedRoutes>
+                }
+              >
                 <Route index element={<Feed />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="requests" element={<Lovers />} />
                 <Route path="connections" element={<Connection />} />
                 <Route path="framer-motion" element={<FramerMotion />} />
               </Route>
-              <Route path="register" element={<Register />} />
+              <PublicRoutes>
+                <Route path="register" element={<Register />} />
+              </PublicRoutes>
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>
