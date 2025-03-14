@@ -3,7 +3,6 @@ import { RootState } from "../../redux/store";
 import { useEffect, useState } from "react";
 import { getFeedDataRequest } from "./slice";
 import FeedData from "../../components/FeedData";
-import { Loader2 } from "lucide-react";
 import { IUserProfile } from "../../Types/types";
 
 const Feed = () => {

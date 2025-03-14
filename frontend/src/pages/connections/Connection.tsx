@@ -18,9 +18,10 @@ const Connection = () => {
       {loading ? (
         <Loader2 className="h-12 w-12 text-white animate-spin m-auto" />
       ) : friends?.length == 0 ? (
-        <p>
-          You don't have any friends, try swiping first or wait to be swiped
-        </p>
+        <div className="w-full h-full flex justify-center items-center">
+          You don't have any friends, try swiping first or wait to be swiped by
+          someone.
+        </div>
       ) : (
         friends?.map((friend) => (
           <FriendsProfile key={friend._id} friend={friend} />
