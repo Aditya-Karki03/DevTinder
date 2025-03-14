@@ -2,10 +2,12 @@ import React, { useEffect } from "react";
 import { useAuth } from "../context";
 import { useNavigate } from "react-router-dom";
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-  const { isLoggedIn, loggedInUser } = useAuth();
+  const { isLoggedIn, loggedInUser, fetchingLoggedInUser } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!isLoggedIn) {
+    fetchingLoggedInUser();
+
+    if (!isLoggedIn && !loggedInUser) {
       navigate("/");
     }
   }, [isLoggedIn, loggedInUser, navigate]);

@@ -60,17 +60,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="connections" element={<Connection />} />
                 <Route path="framer-motion" element={<FramerMotion />} />
               </Route>
-              {/* <PublicRoutes> */}
-              <Route
-                path="register"
-                index
-                element={
-                  <PublicRoutes>
-                    <Register />
-                  </PublicRoutes>
-                }
-              />
-              {/* </PublicRoutes> */}
+              <Route path="register" index element={<Register />} />
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>
