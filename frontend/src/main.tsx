@@ -35,9 +35,14 @@ createRoot(document.getElementById("root")!).render(
           />
           <Routes>
             <Route>
-              <PublicRoutes>
-                <Route index element={<Login />} />
-              </PublicRoutes>
+              <Route
+                index
+                element={
+                  <PublicRoutes>
+                    <Login />
+                  </PublicRoutes>
+                }
+              />
             </Route>
             <Route>
               {/* Everything inside the dashboard inside is protected */}
@@ -55,9 +60,17 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="connections" element={<Connection />} />
                 <Route path="framer-motion" element={<FramerMotion />} />
               </Route>
-              <PublicRoutes>
-                <Route path="register" element={<Register />} />
-              </PublicRoutes>
+              {/* <PublicRoutes> */}
+              <Route
+                path="register"
+                index
+                element={
+                  <PublicRoutes>
+                    <Register />
+                  </PublicRoutes>
+                }
+              />
+              {/* </PublicRoutes> */}
               <Route path="*" element={<ErrorComponent />} />
             </Route>
           </Routes>
