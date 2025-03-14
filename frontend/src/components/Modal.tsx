@@ -223,22 +223,18 @@ const Modal = ({ setShowModal }: ModalProps) => {
           <div className="text-black h-full ">
             <div className=" h-full">
               <div className="px-2 ">
-                <div className="h-8/10 flex  justify-center rounded-md">
+                <div className="h-8/10 flex  justify-center rounded-md mb-4">
                   <img
-                    src={
-                      newPhotoUrl
-                      // ? newPhotoUrl
-                      // : "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D"
-                    }
+                    src={newPhotoUrl}
                     alt="profile-photo"
-                    className="object-cover rounded-md block"
+                    className="object-cover rounded-md block h-[500px] w-full"
                   />
                 </div>
-                <div className="w-full h-full ">
-                  <div className=" w-full px-10 py-2 flex justify-around gap-2">
-                    <div className="w-full  h-12 flex items-center space-x-3 ">
+                <div className="w-full h-full rounded-md px-1 bg-gray-200 border border-black/20">
+                  <div className=" w-full  py-2 flex justify-around ">
+                    <div className="w-full  h-12 flex items-center space-x-2 ">
                       <img
-                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D"
+                        src={photoUrl}
                         alt="profile-photo"
                         className="w-10 h-10 object-fill rounded-full block"
                       />
