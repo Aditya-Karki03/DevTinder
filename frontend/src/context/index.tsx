@@ -112,11 +112,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isLoggedOut]);
 
-  useEffect(() => {
-    if (loggedInUser) {
-      navigate("/dashboard");
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   if (loggedInUser) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [dispatch]);
   //make useEffect call to get the getTheLoggedInUser
   useEffect(() => {
     dispatch(fetchUserProfileRequest());
