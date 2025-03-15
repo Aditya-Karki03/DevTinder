@@ -14,7 +14,6 @@ import {
   logoutRequest,
   verifyOtpRequest,
 } from "./slice";
-import { useNavigate } from "react-router-dom";
 
 interface IContextData {
   generateOtp: (data: { email: string; authType: string }) => void;
@@ -68,7 +67,6 @@ export const useAuth = (): IContextData => {
 };
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const {
     generatingOtp,
     generateOtpError,
