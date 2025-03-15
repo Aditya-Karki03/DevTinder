@@ -2,6 +2,7 @@ import { useState } from "react";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 import MessageBox from "./Message/MessageBox";
+import { Loader2 } from "lucide-react";
 
 const ListOfFriends = () => {
   const [showMessageBox, setShowMessageBox] = useState(false);
@@ -11,7 +12,9 @@ const ListOfFriends = () => {
     photoUrl: "",
     friendId: "",
   });
-  const friends = useSelector((store: RootState) => store?.friends?.friends);
+  const { friends, loading } = useSelector(
+    (store: RootState) => store?.friends
+  );
 
   const handleMessage = (
     firstName: string,
@@ -32,7 +35,17 @@ const ListOfFriends = () => {
 
   return (
     <div className="h-fit w-sm absolute top-8 right-3 z-50 rounded-md border border-white/20 bg-gray-700 ">
-      {friends && friends?.length > 0 ? (
+      {loading ? (
+        <div className="w-full h-full py-4">
+          <Loader2 className="w-12 h-12 text-white animate-spin mx-auto" />
+        </div>
+      ) : (
+        friends?.length == 0 && (
+          <p className="p-2">Please make friends to message</p>
+        )
+      )}
+      {friends &&
+        friends?.length > 0 &&
         friends.map((friend) => (
           <div
             key={friend._id}
@@ -55,12 +68,7 @@ const ListOfFriends = () => {
               {friend.firstName} {friend.lastName}
             </span>
           </div>
-        ))
-      ) : (
-        <div className="h-full w-2xl">
-          <p>Please make friends to message</p>
-        </div>
-      )}
+        ))}
       {showMessageBox && (
         <MessageBox
           firstName={data.firstName}

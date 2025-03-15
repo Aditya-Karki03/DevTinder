@@ -52,7 +52,9 @@ export class UserProfileController {
         fileBuffer: profilePicture?.buffer ?? "",
       });
       //generate presigned URL
-      const photoUrl = await getPresignedUrls(fileName);
+      // const photoUrl = await getPresignedUrls(fileName);
+      //cloudfront is a CDN which makes the delivery of the files much faster with the help of caching
+      const photoUrl = `https://d1fh7jyuhei6w9.cloudfront.net/${fileName}`;
       const userData = await User.findByIdAndUpdate(
         user?._id,
         {

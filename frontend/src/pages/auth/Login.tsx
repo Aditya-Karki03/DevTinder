@@ -61,11 +61,11 @@ const Login = () => {
   }, [generateOtp, verifyOtp]);
 
   // if loggedIn move to dashboard
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/dashboard");
-    }
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [isLoggedIn]);
   const submitForm = () => {
     //required for form validation
   };

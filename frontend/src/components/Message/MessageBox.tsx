@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createSocketConnection } from "../../services/socket.io";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -15,12 +15,6 @@ interface MessageBoxProps {
   setShowMessageBox: (data: boolean) => void;
 }
 
-interface messagesData {
-  incomingMsg?: boolean;
-  outgoingmsg?: boolean;
-  msg: string;
-}
-
 const MessageBox = ({
   firstName,
   lastName,
@@ -30,6 +24,7 @@ const MessageBox = ({
 }: MessageBoxProps) => {
   const { handleSubmit, register, getValues, setValue } = useForm();
   const dispatch = useDispatch();
+  const scrollToBottom = useRef<HTMLDivElement>(null);
 
   const loggedInUserId = useSelector(
     (store: RootState) => store?.auth?.loggedInUser?._id
@@ -77,6 +72,12 @@ const MessageBox = ({
   const handleClose = () => {
     setShowMessageBox(false);
   };
+  //incase of new message scroll to bottom
+  useEffect(() => {
+    if (scrollToBottom.current) {
+      scrollToBottom.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [allMessages]);
 
   const handleSendMessage = () => {
     const message: string = getValues("messageInput");
@@ -113,7 +114,7 @@ const MessageBox = ({
         {allMessages.length > 0 &&
           allMessages?.map((data, index) => {
             return (
-              <Fragment key={index}>
+              <div key={index} className="">
                 {/* if message is sent to you, render it onto left */}
                 {data?.senderId == loggedInUserId ? (
                   <div className="flex justify-end px-2">
@@ -129,10 +130,13 @@ const MessageBox = ({
                     </div>
                   </div>
                 )}
-              </Fragment>
+              </div>
             );
           })}
+        {/* empty div for auto scroll event incase of new messge */}
+        <div ref={scrollToBottom}></div>
       </div>
+
       <form
         onSubmit={handleSubmit(handleSendMessage)}
         className="w-full flex justify-center px-2 gap-2 my-2"
