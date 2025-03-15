@@ -52,7 +52,7 @@ const MessageBox = ({
       //alongside emitting an event I will send loggedInUserId + friendId
       socket.emit("joinChat", loggedInUserId, friendId);
       //listen to the event emiited from the server
-      socket.on("messageRecieved", (message, fromId, toId) => {
+      socket.on("messageRecieved", (message, fromId) => {
         if (fromId == loggedInUserId) return; //because I don't want to recieve my own msg from the server
         const messageWithUserId = {
           senderId: friendId,

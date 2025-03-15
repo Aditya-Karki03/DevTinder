@@ -41,9 +41,7 @@ function* saveNewMessage(
   action: PayloadAction<{ recieverId: string; msg: string }>
 ) {
   try {
-    const response: string = yield call(() =>
-      API.saveNewMessages(action.payload)
-    );
+    yield call(() => API.saveNewMessages(action.payload));
   } catch (error: any) {
     let message = "Something went wrong while saving the messages";
     if (error) {

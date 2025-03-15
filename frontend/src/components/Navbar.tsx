@@ -1,11 +1,4 @@
-import {
-  BellDot,
-  Contact,
-  Handshake,
-  LogOut,
-  MessageCircle,
-  User,
-} from "lucide-react";
+import { Contact, Handshake, LogOut, MessageCircle, User } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { useAuth } from "../context";

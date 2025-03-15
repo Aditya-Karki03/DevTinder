@@ -3,7 +3,7 @@ import { loginFormSchema } from "../../schema/schema";
 import { ILoginFormData } from "../../Types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../context";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
@@ -29,7 +29,6 @@ const Login = () => {
     verifyOtpError,
     generatingOtp,
     verifyingOtp,
-    isLoggedIn,
     generateOtp,
     otpHash,
     generateOtpFailure,
@@ -37,8 +36,6 @@ const Login = () => {
     verifyOtpSuccess,
     verifyOtpFailure,
   } = useAuth();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!generatingOtp) {
