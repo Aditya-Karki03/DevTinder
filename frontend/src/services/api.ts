@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ILoginFormData, IOtpVerifier } from "../Types/types";
 import { regitrationFormSchemaType } from "../schema/schema";
-const API_URL = import.meta.env.API_ENDPOINT || "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_ENDPOINT || "";
 
 //api to send otp
 export const sendOtp = (data: { email: string; authType: string }) => {
