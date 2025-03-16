@@ -1,9 +1,10 @@
 module.exports = [
   {
     name: "devamor-apis",
-    script: "./dist/index.js",
+    script: "src/index.ts",
+    interpreter: "node",
+    interpreter_args: "--loader ts-node/esm",
     exec_mode: "cluster",
-    instances: 2,
     env_production: {
       NODE_ENV: "production",
     },
