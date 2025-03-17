@@ -7,6 +7,8 @@ import cors from "cors";
 import { createServer } from "node:http";
 import { initializeSocketIO } from "./utils/socket.io";
 
+//checking the CI pipeline test-1
+
 config();
 const app = express();
 //we want to handle routes using express and socketio needs raw http server to work upon
