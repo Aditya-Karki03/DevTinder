@@ -19,7 +19,7 @@ export const sendOtpEmail = async (otp: string, toEmail: string) => {
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: toEmail,
-      subject: "OTP Verification - CodeBond",
+      subject: "OTP Verification - DEVAMOR",
       html: `<h1>Please Confirm your OTP</h1>
             <p>${otp}</p>
             <o>Valid for 2 minutes</p>

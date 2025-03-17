@@ -1,21 +1,35 @@
-# name of the CI (Continous Integration)
-name: Build on PR
-# the above named workflow will run on the Pull request and will only work for the master branch
+name: Frontend Build Check
+
 on:
   pull_request:
+    branches:
+      - main
     paths:
-      -'frontend/**'
-    branches: -master
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      -uses: actions/checkout@v3
-      -name: Use Node.js
-      uses: actions/setup-node@v3
-      with: node-version: '23'
-      -name: Install Dependencies
-      run: npm install
-      -name: Run Build
-      run: npm run build
+      - "frontend/**" # Runs only when frontend files are modified
 
+jobs:
+  build-frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend # Set working directory to frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Use the required Node.js version
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Verify Build Output
+        run: ls -l build || ls -l dist # Check if build folder exists (adjust based on framework)
