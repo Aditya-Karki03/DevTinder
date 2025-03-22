@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { modifyFormSchema, modifyFormSchemaType } from "../schema/schema";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { editProfileRequest } from "../pages/profile/slice";
 
 interface ModalProps {
@@ -27,6 +27,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
   const photoUrl = useSelector(
     (state: RootState) => state?.profile?.profileData?.photoUrl
   );
+  const scrollToBottom = useRef<HTMLDivElement>(null);
 
   const {
     handleSubmit,
@@ -94,7 +95,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
   };
 
   return (
-    <div className="min-w-5xl h-9/10 overflow-hidden flex justify-center items-center absolute z-50 top-[5%] left-[50%] translate-x-[-50%] shadow-2xl">
+    <div className="w-5xl overflow-y-scroll   flex justify-center items-center absolute z-50 top-[5%] left-[50%] translate-x-[-50%] shadow-2xl">
       <div className="w-full h-full bg-white rounded-3xl  border-black/20border">
         <div className="flex w-full justify-end p-3 ">
           <CircleX
@@ -244,7 +245,7 @@ const Modal = ({ setShowModal }: ModalProps) => {
                     </div>
                   </div>
 
-                  <div className="h-20 px-10 flex flex-wrap">
+                  <div className="px-10 py-2 flex flex-wrap">
                     {/* {readMore ? (
                       <>
                         <p className="overflow-y-scroll h-full max-w-full">
@@ -270,7 +271,8 @@ const Modal = ({ setShowModal }: ModalProps) => {
                         </p>
                       </>
                     )} */}
-                    <p className="overflow-y-scroll h-full w-4xl">{aboutVal}</p>
+                    <p className="overflow-y-scroll  w-4xl ">{aboutVal}</p>
+                    <div ref={scrollToBottom}></div>
                   </div>
                 </div>
               </div>
